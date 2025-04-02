@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+package coinflow_api;
+
+option go_package = "gen/cfapi/";
+
+message Transaction {
+    string id = 1;
+    string target = 2;
+    string description = 3;
+    string type = 4;
+    string category = 5;
+    double cost = 6;
+}
+
+// Requests ----------------------------------
+
+message PostTransactionRequest {
+    string user_id = 1;
+    Transaction ts = 2;
+}
+
+message GetTransactionRequest {
+    string user_id = 1;
+    string ts_id = 2;
+}
+
+// Responses ---------------------------------
+
+message PostTransactionResponse {
+    string ts_id = 1;
+}
+
+message GetTransactionResponse {
+    Transaction ts = 1;
+}
+
+// Service -----------------------------------
+
+service Coinflow {
+    rpc PostTransaction(PostTransactionRequest) returns (PostTransactionResponse);
+    rpc GetTransaction(GetTransactionRequest) returns (GetTransactionResponse);
+}
