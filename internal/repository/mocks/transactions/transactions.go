@@ -3,6 +3,7 @@ package transactions
 import (
 	"coinflow/coinflow-server/internal/models"
 	"coinflow/coinflow-server/internal/repository"
+	"time"
 )
 
 type TransactionsRepoMock struct {
@@ -21,6 +22,19 @@ func (r *TransactionsRepoMock) GetTransaction(tsId string) (*models.Transaction,
     }
 
     return &ts, nil
+}
+
+func (r *TransactionsRepoMock) GetUserTransactionsAfterTimestamp(usrId string, tm time.Time) ([]*models.Transaction, error) {
+    tss := make([]*models.Transaction, 0)
+
+    for _, v := range r.mp {
+        if v.UserId == usrId && v.Timestamp.After(tm) {
+            ts := v
+            tss = append(tss, &ts)
+        }
+    }
+
+    return tss, nil
 }
 
 func (r *TransactionsRepoMock) PostTransaction(ts *models.Transaction) error {
