@@ -2,8 +2,8 @@ package grpc
 
 import (
 	pb "coinflow/coinflow-server/gen/cfapi"
-	"coinflow/coinflow-server/internal/api/grpc/types"
-	"coinflow/coinflow-server/internal/usecases"
+	"coinflow/coinflow-server/restful-api/internal/api/grpc/types"
+	"coinflow/coinflow-server/restful-api/internal/usecases"
 	"context"
 )
 

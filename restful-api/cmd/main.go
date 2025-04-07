@@ -1,11 +1,11 @@
 package main
 
 import (
-	"coinflow/coinflow-server/config"
 	pb "coinflow/coinflow-server/gen/cfapi"
-	api "coinflow/coinflow-server/internal/api/grpc"
-	tsRepo "coinflow/coinflow-server/internal/repository/mocks/transactions"
-	tsService "coinflow/coinflow-server/internal/usecases/transactions"
+	"coinflow/coinflow-server/restful-api/config"
+	api "coinflow/coinflow-server/restful-api/internal/api/grpc"
+	tsRepo "coinflow/coinflow-server/restful-api/internal/repository/mocks"
+	tsService "coinflow/coinflow-server/restful-api/internal/usecases/service"
 	"log"
 	"net"
 

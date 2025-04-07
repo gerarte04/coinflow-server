@@ -1,7 +1,7 @@
 package grpc
 
 import (
-	"coinflow/coinflow-server/internal/repository"
+	"coinflow/coinflow-server/restful-api/internal/repository"
 	"fmt"
 
 	"google.golang.org/grpc/codes"

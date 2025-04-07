@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"coinflow/coinflow-server/internal/models"
+	"coinflow/coinflow-server/restful-api/internal/models"
 	"time"
 )
 

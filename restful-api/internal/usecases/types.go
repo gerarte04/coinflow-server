@@ -1,6 +1,6 @@
 package usecases
 
-import "coinflow/coinflow-server/internal/models"
+import "coinflow/coinflow-server/restful-api/internal/models"
 
 type TransactionsService interface {
     GetTransaction(tsId string) (*models.Transaction, error)

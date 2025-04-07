@@ -2,7 +2,7 @@ package types
 
 import (
 	pb "coinflow/coinflow-server/gen/cfapi"
-	"coinflow/coinflow-server/internal/models"
+	"coinflow/coinflow-server/restful-api/internal/models"
 
 	"github.com/jinzhu/copier"
 )

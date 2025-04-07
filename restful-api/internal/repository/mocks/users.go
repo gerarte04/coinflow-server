@@ -1,8 +1,8 @@
-package users
+package mocks
 
 import (
-	"coinflow/coinflow-server/internal/models"
-	"coinflow/coinflow-server/internal/repository"
+	"coinflow/coinflow-server/restful-api/internal/models"
+	"coinflow/coinflow-server/restful-api/internal/repository"
 )
 
 type UsersRepoMock struct {
