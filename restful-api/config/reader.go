@@ -7,12 +7,18 @@ import (
 	"github.com/ilyakaznacheev/cleanenv"
 )
 
+type HttpConfig struct {
+    Host string `yaml:"host" env:"HTTP_HOST"`
+    Port string `yaml:"port" env:"HTTP_PORT"`
+}
+
 type GrpcConfig struct {
     Host string `yaml:"host" env:"GRPC_HOST"`
     Port string `yaml:"port" env:"GRPC_PORT"`
 }
 
 type Config struct {
+    HttpCfg HttpConfig `yaml:"http"`
     GrpcCfg GrpcConfig `yaml:"grpc"`
 }
 

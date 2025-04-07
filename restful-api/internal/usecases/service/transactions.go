@@ -19,13 +19,13 @@ func (s *TransactionsService) GetTransaction(tsId string) (*models.Transaction, 
     return s.tsRepo.GetTransaction(tsId)
 }
 
-func (s *TransactionsService) PostTransaction(ts *models.Transaction) (*models.Transaction, error) {
+func (s *TransactionsService) PostTransaction(ts *models.Transaction) (string, error) {
     id := uuid.New()
     ts.Id = id.String()
 
     if err := s.tsRepo.PostTransaction(ts); err != nil {
-        return nil, err
+        return "", err
     }
 
-    return ts, nil
+    return ts.Id, nil
 }

@@ -12,5 +12,5 @@ type Transaction struct {
 	Category string         `json:"category"`
 	Cost float64            `json:"cost"`
 
-    Timestamp time.Time     `json:"timestamp"`
+    Timestamp time.Time     `json:"timestamp" swaggerignore:"true"`
 }

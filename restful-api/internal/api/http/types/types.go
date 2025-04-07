@@ -2,21 +2,17 @@ package types
 
 import (
 	"coinflow/coinflow-server/restful-api/internal/models"
-	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
-	"path"
-)
 
-// Requests -------------------------------------------
+	"github.com/gin-gonic/gin"
+)
 
 type GetTransactionRequestObject struct {
     TsId string
 }
 
-func CreateGetTransactionRequestObject(r *http.Request) (*GetTransactionRequestObject, error) {
-    tsId, err := ParseStringToTransactionId(path.Base(r.URL.Path))
+func CreateGetTransactionRequestObject(c *gin.Context) (*GetTransactionRequestObject, error) {
+    tsId, err := ParseStringToTransactionId(c.Param("ts_id"))
 
     if err != nil {
         return nil, fmt.Errorf("creating request object: %w", err)
@@ -29,44 +25,12 @@ type PostTransactionRequestObject struct {
     Ts *models.Transaction
 }
 
-func CreatePostTransactionRequestObject(r *http.Request) (*PostTransactionRequestObject, error) {
-    data, err := io.ReadAll(r.Body)
+func CreatePostTransactionRequestObject(c *gin.Context) (*PostTransactionRequestObject, error) {
+    var ts models.Transaction
 
-    if err != nil {
+    if err := c.ShouldBindJSON(&ts); err != nil {
         return nil, fmt.Errorf("creating request object: %w", err)
     }
 
-    ts, err := ParseByteToTransaction(data)
-
-    if err != nil {
-        return nil, fmt.Errorf("creating request object: %w", err)
-    }
-
-    return &PostTransactionRequestObject{Ts: ts}, nil
-}
-
-// Responses -------------------------------------------
-
-func CreateGetTransactionResponse(ts *models.Transaction) ([]byte, error) {
-    data, err := ParseTransactionToByte(ts)
-
-    if err != nil {
-        return nil, fmt.Errorf("creating response object: %w", err)
-    }
-
-    return data, nil
-}
-
-func CreatePostTransactionResponse(ts *models.Transaction) ([]byte, error) {
-    mp := map[string]string{
-        "ts_id": ts.Id,
-    }
-
-    data, err := json.Marshal(mp)
-
-    if err != nil {
-        return nil, fmt.Errorf("creating response object: %w", err)
-    }
-
-    return data, nil
+    return &PostTransactionRequestObject{Ts: &ts}, nil
 }

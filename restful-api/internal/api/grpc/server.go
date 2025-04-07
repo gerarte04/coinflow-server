@@ -46,5 +46,5 @@ func (s *CoinflowServer) PostTransaction(ctx context.Context, r *pb.PostTransact
         return nil, CreateResultStatusError(err)
     }
 
-    return &pb.PostTransactionResponse{TsId: res.Id}, nil
+    return &pb.PostTransactionResponse{TsId: res}, nil
 }

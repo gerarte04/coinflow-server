@@ -3,6 +3,7 @@ package mocks
 import (
 	"coinflow/coinflow-server/restful-api/internal/models"
 	"coinflow/coinflow-server/restful-api/internal/repository"
+	"fmt"
 )
 
 type UsersRepoMock struct {
@@ -17,7 +18,7 @@ func (r *UsersRepoMock) GetUser(usrId string) (*models.User, error) {
     usr, ok := r.mp[usrId]
 
     if !ok {
-        return nil, repository.ErrorUserKeyNotFound
+        return nil, fmt.Errorf("repo: getting user: %w", repository.ErrorUserKeyNotFound)
     }
 
     return &usr, nil
@@ -31,12 +32,12 @@ func (r *UsersRepoMock) GetUserByCred(login string, password string) (*models.Us
         }
     }
 
-    return nil, repository.ErrorNoSuchCredExists
+    return nil, fmt.Errorf("repo: getting user by cred: %w", repository.ErrorNoSuchCredExists)
 }
 
 func (r *UsersRepoMock) PostUser(usr *models.User) error {
     if _, ok := r.mp[usr.Id]; ok {
-        return repository.ErrorUserKeyExists
+        return fmt.Errorf("repo: posting user: %w", repository.ErrorUserKeyExists)
     }
 
     r.mp[usr.Id] = *usr

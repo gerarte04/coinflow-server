@@ -3,6 +3,7 @@ package mocks
 import (
 	"coinflow/coinflow-server/restful-api/internal/models"
 	"coinflow/coinflow-server/restful-api/internal/repository"
+	"fmt"
 	"time"
 )
 
@@ -18,7 +19,7 @@ func (r *TransactionsRepoMock) GetTransaction(tsId string) (*models.Transaction,
     ts, ok := r.mp[tsId]
 
     if !ok {
-        return nil, repository.ErrorTransactionKeyNotFound
+        return nil, fmt.Errorf("repo: getting transaction: %w", repository.ErrorTransactionKeyNotFound)
     }
 
     return &ts, nil
@@ -39,9 +40,10 @@ func (r *TransactionsRepoMock) GetUserTransactionsAfterTimestamp(usrId string, t
 
 func (r *TransactionsRepoMock) PostTransaction(ts *models.Transaction) error {
     if _, ok := r.mp[ts.Id]; ok {
-        return repository.ErrorTransactionKeyExists
+        return fmt.Errorf("repo: posting transaction: %w", repository.ErrorTransactionKeyExists)
     }
 
+    ts.Timestamp = time.Now()
     r.mp[ts.Id] = *ts
 
     return nil

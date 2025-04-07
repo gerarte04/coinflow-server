@@ -1,0 +1,90 @@
+basePath: /
+definitions:
+  models.Transaction:
+    properties:
+      category:
+        type: string
+      cost:
+        type: number
+      description:
+        type: string
+      id:
+        type: string
+      target:
+        type: string
+      type:
+        type: string
+      user_id:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: Restful API for Coinflow service
+  title: Coinflow API
+  version: "1.0"
+paths:
+  /commit:
+    post:
+      consumes:
+      - application/json
+      description: commit transaction
+      parameters:
+      - description: Transaction
+        in: body
+        name: ts_id
+        required: true
+        schema:
+          $ref: '#/definitions/models.Transaction'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            type: string
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "500":
+          description: Internal error
+          schema:
+            type: string
+      summary: PostTransaction
+      tags:
+      - transactions
+  /transaction/{ts_id}:
+    get:
+      consumes:
+      - application/json
+      description: get transaction by id
+      parameters:
+      - description: Transaction ID
+        in: path
+        name: ts_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "404":
+          description: Not found
+          schema:
+            type: string
+        "500":
+          description: Internal error
+          schema:
+            type: string
+      summary: GetTransaction
+      tags:
+      - transactions
+swagger: "2.0"
