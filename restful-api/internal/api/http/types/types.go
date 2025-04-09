@@ -5,10 +5,11 @@ import (
 	"fmt"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 type GetTransactionRequestObject struct {
-    TsId string
+    TsId uuid.UUID
 }
 
 func CreateGetTransactionRequestObject(c *gin.Context) (*GetTransactionRequestObject, error) {

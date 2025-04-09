@@ -8,8 +8,6 @@ definitions:
         type: number
       description:
         type: string
-      id:
-        type: string
       target:
         type: string
       type:

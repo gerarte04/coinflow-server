@@ -6,10 +6,12 @@ import (
 	"github.com/google/uuid"
 )
 
-func ParseStringToTransactionId(s string) (string, error) {
-    if _, err := uuid.Parse(s); err != nil {
-        return "", fmt.Errorf("%w: %s", ErrorInvalidId, err.Error())
+func ParseStringToTransactionId(s string) (uuid.UUID, error) {
+    id, err := uuid.Parse(s)
+
+    if err != nil {
+        return uuid.Nil, fmt.Errorf("%w: %s", ErrorInvalidId, err.Error())
     }
 
-    return s, nil
+    return id, nil
 }

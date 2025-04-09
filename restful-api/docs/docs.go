@@ -125,9 +125,6 @@ const docTemplate = `{
                 "description": {
                     "type": "string"
                 },
-                "id": {
-                    "type": "string"
-                },
                 "target": {
                     "type": "string"
                 },

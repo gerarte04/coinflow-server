@@ -1,4 +1,4 @@
-package transactions
+package service
 
 import (
 	"coinflow/coinflow-server/restful-api/internal/models"
@@ -15,17 +15,16 @@ func NewTransactionsService(tsRepo repository.TransactionsRepo) *TransactionsSer
     return &TransactionsService{tsRepo: tsRepo}
 }
 
-func (s *TransactionsService) GetTransaction(tsId string) (*models.Transaction, error) {
+func (s *TransactionsService) GetTransaction(tsId uuid.UUID) (*models.Transaction, error) {
     return s.tsRepo.GetTransaction(tsId)
 }
 
-func (s *TransactionsService) PostTransaction(ts *models.Transaction) (string, error) {
-    id := uuid.New()
-    ts.Id = id.String()
+func (s *TransactionsService) PostTransaction(ts *models.Transaction) (uuid.UUID, error) {
+    id, err := s.tsRepo.PostTransaction(ts)
 
-    if err := s.tsRepo.PostTransaction(ts); err != nil {
-        return "", err
+    if err != nil {
+        return uuid.Nil, err
     }
 
-    return ts.Id, nil
+    return id, nil
 }

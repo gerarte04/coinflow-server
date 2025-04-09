@@ -3,7 +3,7 @@ package main
 import (
 	"coinflow/coinflow-server/restful-api/config"
 	api "coinflow/coinflow-server/restful-api/internal/api/http"
-	tsRepo "coinflow/coinflow-server/restful-api/internal/repository/mocks"
+	tsRepo "coinflow/coinflow-server/restful-api/internal/repository/stubs"
 	tsService "coinflow/coinflow-server/restful-api/internal/usecases/service"
 	"fmt"
 	"log"

@@ -1,28 +1,30 @@
-package mocks
+package stubs
 
 import (
 	"coinflow/coinflow-server/restful-api/internal/models"
 	"coinflow/coinflow-server/restful-api/internal/repository"
 	"fmt"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 type TransactionsRepoMock struct {
-    mp map[string]models.Transaction
+    mp map[uuid.UUID]*models.Transaction
 }
 
 func NewTransactionsRepoMock() *TransactionsRepoMock {
-    return &TransactionsRepoMock{mp: make(map[string]models.Transaction)}
+    return &TransactionsRepoMock{mp: make(map[uuid.UUID]*models.Transaction)}
 }
 
-func (r *TransactionsRepoMock) GetTransaction(tsId string) (*models.Transaction, error) {
+func (r *TransactionsRepoMock) GetTransaction(tsId uuid.UUID) (*models.Transaction, error) {
     ts, ok := r.mp[tsId]
 
     if !ok {
         return nil, fmt.Errorf("repo: getting transaction: %w", repository.ErrorTransactionKeyNotFound)
     }
 
-    return &ts, nil
+    return ts, nil
 }
 
 func (r *TransactionsRepoMock) GetUserTransactionsAfterTimestamp(usrId string, tm time.Time) ([]*models.Transaction, error) {
@@ -31,20 +33,24 @@ func (r *TransactionsRepoMock) GetUserTransactionsAfterTimestamp(usrId string, t
     for _, v := range r.mp {
         if v.UserId == usrId && v.Timestamp.After(tm) {
             ts := v
-            tss = append(tss, &ts)
+            tss = append(tss, ts)
         }
     }
 
     return tss, nil
 }
 
-func (r *TransactionsRepoMock) PostTransaction(ts *models.Transaction) error {
-    if _, ok := r.mp[ts.Id]; ok {
-        return fmt.Errorf("repo: posting transaction: %w", repository.ErrorTransactionKeyExists)
+func (r *TransactionsRepoMock) PostTransaction(ts *models.Transaction) (uuid.UUID, error) {
+    id := uuid.New()
+
+    if _, ok := r.mp[id]; ok {
+        return uuid.Nil, fmt.Errorf("repo: posting transaction: %w", repository.ErrorTransactionKeyExists)
     }
 
-    ts.Timestamp = time.Now()
-    r.mp[ts.Id] = *ts
+    tsCopy := *ts
+    tsCopy.Id = id
+    tsCopy.Timestamp = time.Now()
+    r.mp[id] = &tsCopy
 
-    return nil
+    return id, nil
 }

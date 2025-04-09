@@ -1,4 +1,4 @@
-package mocks
+package stubs
 
 import (
 	"coinflow/coinflow-server/restful-api/internal/models"
