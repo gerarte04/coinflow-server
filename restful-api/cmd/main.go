@@ -11,7 +11,6 @@ import (
 	_ "coinflow/coinflow-server/restful-api/docs"
 
 	"github.com/gin-gonic/gin"
-	httpSwagger "github.com/swaggo/http-swagger"
 )
 
 // @title Coinflow API
@@ -32,8 +31,8 @@ func main() {
     engine := gin.Default()
     cfServer.RouteHandlers(engine,
         cfServer.WithStandardUserHandlers(),
+        cfServer.WithSwagger(),
     )
-    engine.GET("/swagger/*path", gin.WrapF(httpSwagger.WrapHandler))
 
     addr := fmt.Sprintf("%s:%s", cfg.HttpCfg.Host, cfg.HttpCfg.Port)
     

@@ -15,16 +15,20 @@ func NewUsersRepoMock() *UsersRepoMock {
 }
 
 func (r *UsersRepoMock) GetUser(usrId string) (*models.User, error) {
+    const method = "UsersRepoMock.GetUser"
+
     usr, ok := r.mp[usrId]
 
     if !ok {
-        return nil, fmt.Errorf("repo: getting user: %w", repository.ErrorUserKeyNotFound)
+        return nil, fmt.Errorf("%s: %w", method, repository.ErrorUserKeyNotFound)
     }
 
     return &usr, nil
 }
 
 func (r *UsersRepoMock) GetUserByCred(login string, password string) (*models.User, error) {
+    const method = "UsersRepoMock.GetUserByCred"
+
     for _, v := range r.mp {
         if v.Login == login && v.Password == password {
             usr := v
@@ -32,12 +36,14 @@ func (r *UsersRepoMock) GetUserByCred(login string, password string) (*models.Us
         }
     }
 
-    return nil, fmt.Errorf("repo: getting user by cred: %w", repository.ErrorNoSuchCredExists)
+    return nil, fmt.Errorf("%s: %w", method, repository.ErrorNoSuchCredExists)
 }
 
 func (r *UsersRepoMock) PostUser(usr *models.User) error {
+    const method = "UsersRepoMock.PostUser"
+
     if _, ok := r.mp[usr.Id]; ok {
-        return fmt.Errorf("repo: posting user: %w", repository.ErrorUserKeyExists)
+        return fmt.Errorf("%s: %w", method, repository.ErrorUserKeyExists)
     }
 
     r.mp[usr.Id] = *usr

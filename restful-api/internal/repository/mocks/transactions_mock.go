@@ -58,7 +58,7 @@ func (mr *MockTransactionsRepoMockRecorder) GetTransaction(tsId any) *gomock.Cal
 }
 
 // GetUserTransactionsAfterTimestamp mocks base method.
-func (m *MockTransactionsRepo) GetUserTransactionsAfterTimestamp(usrId string, tm time.Time) ([]*models.Transaction, error) {
+func (m *MockTransactionsRepo) GetUserTransactionsAfterTimestamp(usrId uuid.UUID, tm time.Time) ([]*models.Transaction, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetUserTransactionsAfterTimestamp", usrId, tm)
 	ret0, _ := ret[0].([]*models.Transaction)

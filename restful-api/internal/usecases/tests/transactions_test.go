@@ -21,7 +21,7 @@ func TestTransactions_CommitAndGet(t *testing.T) {
     tsService := service.NewTransactionsService(tsRepo)
 
     ts := models.Transaction{
-        UserId: "xxx",
+        UserId: uuid.New(),
         Type: "buy",
         Target: "Starbucks",
         Description: "Purchased latte",

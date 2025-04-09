@@ -8,7 +8,7 @@ import (
 
 type Transaction struct {
     Id uuid.UUID            `json:"id" swaggerignore:"true"`
-    UserId string           `json:"user_id"`
+    UserId uuid.UUID        `json:"user_id"`
     Type string             `json:"type"`
 
     Target string           `json:"target"`

@@ -18,16 +18,18 @@ func NewTransactionsRepoMock() *TransactionsRepoMock {
 }
 
 func (r *TransactionsRepoMock) GetTransaction(tsId uuid.UUID) (*models.Transaction, error) {
+    const method = "TransactionsRepoMock.GetTransaction"
+
     ts, ok := r.mp[tsId]
 
     if !ok {
-        return nil, fmt.Errorf("repo: getting transaction: %w", repository.ErrorTransactionKeyNotFound)
+        return nil, fmt.Errorf("%s: %w", method, repository.ErrorTransactionKeyNotFound)
     }
 
     return ts, nil
 }
 
-func (r *TransactionsRepoMock) GetUserTransactionsAfterTimestamp(usrId string, tm time.Time) ([]*models.Transaction, error) {
+func (r *TransactionsRepoMock) GetUserTransactionsAfterTimestamp(usrId uuid.UUID, tm time.Time) ([]*models.Transaction, error) {
     tss := make([]*models.Transaction, 0)
 
     for _, v := range r.mp {
@@ -41,10 +43,12 @@ func (r *TransactionsRepoMock) GetUserTransactionsAfterTimestamp(usrId string, t
 }
 
 func (r *TransactionsRepoMock) PostTransaction(ts *models.Transaction) (uuid.UUID, error) {
+    const method = "TransactionsRepoMock.PostTransaction"
+
     id := uuid.New()
 
     if _, ok := r.mp[id]; ok {
-        return uuid.Nil, fmt.Errorf("repo: posting transaction: %w", repository.ErrorTransactionKeyExists)
+        return uuid.Nil, fmt.Errorf("%s: %w", method, repository.ErrorTransactionKeyExists)
     }
 
     tsCopy := *ts
