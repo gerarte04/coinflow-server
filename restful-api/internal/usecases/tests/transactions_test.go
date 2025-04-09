@@ -12,7 +12,7 @@ import (
 	"go.uber.org/mock/gomock"
 )
 
-func TestTransactions_CommitAndGet(t *testing.T) {
+func TestTransactionsService_CommitAndGet(t *testing.T) {
     t.Parallel()
 
     ctrl := gomock.NewController(t)
