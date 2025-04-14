@@ -20,23 +20,23 @@ import (
 // @host localhost:8080
 // @BasePath /
 func main() {
-    var cfg config.Config
-    flg := config.ParseFlags()
-    config.MustLoadConfig(flg.ConfigPath, &cfg)
+	var cfg config.Config
+	flg := config.ParseFlags()
+	config.MustLoadConfig(flg.ConfigPath, &cfg)
 
-    tsRepo := tsRepo.NewTransactionsRepoMock()
-    tsSvc := tsService.NewTransactionsService(tsRepo)
-    cfServer := api.NewCoinflowServer(tsSvc)
-    
-    engine := gin.Default()
-    cfServer.RouteHandlers(engine,
-        cfServer.WithStandardUserHandlers(),
-        cfServer.WithSwagger(),
-    )
+	tsRepo := tsRepo.NewTransactionsRepoMock()
+	tsSvc := tsService.NewTransactionsService(tsRepo)
+	cfServer := api.NewCoinflowServer(tsSvc)
+	
+	engine := gin.Default()
+	cfServer.RouteHandlers(engine,
+		cfServer.WithStandardUserHandlers(),
+		cfServer.WithSwagger(),
+	)
 
-    addr := fmt.Sprintf("%s:%s", cfg.HttpCfg.Host, cfg.HttpCfg.Port)
-    
-    if err := engine.Run(addr); err != nil {
-        log.Fatalf("failed to serve: %s", err.Error())
-    }
+	addr := fmt.Sprintf("%s:%s", cfg.HttpCfg.Host, cfg.HttpCfg.Port)
+	
+	if err := engine.Run(addr); err != nil {
+		log.Fatalf("failed to serve: %s", err.Error())
+	}
 }

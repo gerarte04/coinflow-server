@@ -7,11 +7,11 @@ import (
 )
 
 func ParseStringToTransactionId(s string) (uuid.UUID, error) {
-    id, err := uuid.Parse(s)
+	id, err := uuid.Parse(s)
 
-    if err != nil {
-        return uuid.Nil, fmt.Errorf("%w: %s", ErrorInvalidId, err.Error())
-    }
+	if err != nil {
+		return uuid.Nil, fmt.Errorf("%w: %s", ErrorInvalidId, err.Error())
+	}
 
-    return id, nil
+	return id, nil
 }

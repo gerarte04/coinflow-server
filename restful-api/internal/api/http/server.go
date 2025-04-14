@@ -9,11 +9,11 @@ import (
 )
 
 type CoinflowServer struct {
-    tsService usecases.TransactionsService
+	tsService usecases.TransactionsService
 }
 
 func NewCoinflowServer(tsService usecases.TransactionsService) *CoinflowServer {
-    return &CoinflowServer{tsService: tsService}
+	return &CoinflowServer{tsService: tsService}
 }
 
 // @Summary GetTransaction
@@ -28,19 +28,19 @@ func NewCoinflowServer(tsService usecases.TransactionsService) *CoinflowServer {
 // @Failure 500 {object} string "Internal error"
 // @Router /transaction/{ts_id} [get]
 func (s *CoinflowServer) GetTransactionHandler(c *gin.Context) {
-    reqObj, err := types.CreateGetTransactionRequestObject(c)
-    if err != nil {
-        WriteError(c, err)
-        return
-    }
+	reqObj, err := types.CreateGetTransactionRequestObject(c)
+	if err != nil {
+		WriteError(c, err)
+		return
+	}
 
-    res, err := s.tsService.GetTransaction(reqObj.TsId)
-    if err != nil {
-        WriteError(c, err)
-        return
-    }
+	res, err := s.tsService.GetTransaction(reqObj.TsId)
+	if err != nil {
+		WriteError(c, err)
+		return
+	}
 
-    c.JSON(http.StatusOK, res)
+	c.JSON(http.StatusOK, res)
 }
 
 // @Summary PostTransaction
@@ -54,19 +54,19 @@ func (s *CoinflowServer) GetTransactionHandler(c *gin.Context) {
 // @Failure 500 {object} string "Internal error"
 // @Router /commit [post]
 func (s *CoinflowServer) PostTransactionHandler(c *gin.Context) {
-    reqObj, err := types.CreatePostTransactionRequestObject(c)
-    if err != nil {
-        WriteError(c, err)
-        return
-    }
+	reqObj, err := types.CreatePostTransactionRequestObject(c)
+	if err != nil {
+		WriteError(c, err)
+		return
+	}
 
-    res, err := s.tsService.PostTransaction(reqObj.Ts)
-    if err != nil {
-        WriteError(c, err)
-        return
-    }
+	res, err := s.tsService.PostTransaction(reqObj.Ts)
+	if err != nil {
+		WriteError(c, err)
+		return
+	}
 
-    c.JSON(http.StatusCreated, gin.H{
-        "ts_id": res,
-    })
+	c.JSON(http.StatusCreated, gin.H{
+		"ts_id": res,
+	})
 }

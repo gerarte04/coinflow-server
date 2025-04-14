@@ -9,33 +9,33 @@ import (
 )
 
 type GetTransactionRequestObject struct {
-    TsId uuid.UUID
+	TsId uuid.UUID
 }
 
 func CreateGetTransactionRequestObject(c *gin.Context) (*GetTransactionRequestObject, error) {
-    const fc = "CreateGetTransactionRequestObject"
+	const fc = "CreateGetTransactionRequestObject"
 
-    tsId, err := ParseStringToTransactionId(c.Param("ts_id"))
+	tsId, err := ParseStringToTransactionId(c.Param("ts_id"))
 
-    if err != nil {
-        return nil, fmt.Errorf("%s: %w", fc, err)
-    }
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", fc, err)
+	}
 
-    return &GetTransactionRequestObject{TsId: tsId}, nil
+	return &GetTransactionRequestObject{TsId: tsId}, nil
 }
 
 type PostTransactionRequestObject struct {
-    Ts *models.Transaction
+	Ts *models.Transaction
 }
 
 func CreatePostTransactionRequestObject(c *gin.Context) (*PostTransactionRequestObject, error) {
-    const fc = "CreateGetTransactionRequestObject"
+	const fc = "CreateGetTransactionRequestObject"
 
-    var ts models.Transaction
+	var ts models.Transaction
 
-    if err := c.ShouldBindJSON(&ts); err != nil {
-        return nil, fmt.Errorf("%s: %w", fc, err)
-    }
+	if err := c.ShouldBindJSON(&ts); err != nil {
+		return nil, fmt.Errorf("%s: %w", fc, err)
+	}
 
-    return &PostTransactionRequestObject{Ts: &ts}, nil
+	return &PostTransactionRequestObject{Ts: &ts}, nil
 }

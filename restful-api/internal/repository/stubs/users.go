@@ -7,46 +7,46 @@ import (
 )
 
 type UsersRepoMock struct {
-    mp map[string]models.User
+	mp map[string]models.User
 }
 
 func NewUsersRepoMock() *UsersRepoMock {
-    return &UsersRepoMock{mp: make(map[string]models.User)}
+	return &UsersRepoMock{mp: make(map[string]models.User)}
 }
 
 func (r *UsersRepoMock) GetUser(usrId string) (*models.User, error) {
-    const method = "UsersRepoMock.GetUser"
+	const method = "UsersRepoMock.GetUser"
 
-    usr, ok := r.mp[usrId]
+	usr, ok := r.mp[usrId]
 
-    if !ok {
-        return nil, fmt.Errorf("%s: %w", method, repository.ErrorUserKeyNotFound)
-    }
+	if !ok {
+		return nil, fmt.Errorf("%s: %w", method, repository.ErrorUserKeyNotFound)
+	}
 
-    return &usr, nil
+	return &usr, nil
 }
 
 func (r *UsersRepoMock) GetUserByCred(login string, password string) (*models.User, error) {
-    const method = "UsersRepoMock.GetUserByCred"
+	const method = "UsersRepoMock.GetUserByCred"
 
-    for _, v := range r.mp {
-        if v.Login == login && v.Password == password {
-            usr := v
-            return &usr, nil
-        }
-    }
+	for _, v := range r.mp {
+		if v.Login == login && v.Password == password {
+			usr := v
+			return &usr, nil
+		}
+	}
 
-    return nil, fmt.Errorf("%s: %w", method, repository.ErrorNoSuchCredExists)
+	return nil, fmt.Errorf("%s: %w", method, repository.ErrorNoSuchCredExists)
 }
 
 func (r *UsersRepoMock) PostUser(usr *models.User) error {
-    const method = "UsersRepoMock.PostUser"
+	const method = "UsersRepoMock.PostUser"
 
-    if _, ok := r.mp[usr.Id]; ok {
-        return fmt.Errorf("%s: %w", method, repository.ErrorUserKeyExists)
-    }
+	if _, ok := r.mp[usr.Id]; ok {
+		return fmt.Errorf("%s: %w", method, repository.ErrorUserKeyExists)
+	}
 
-    r.mp[usr.Id] = *usr
+	r.mp[usr.Id] = *usr
 
-    return nil
+	return nil
 }

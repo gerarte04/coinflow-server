@@ -7,6 +7,6 @@ import (
 )
 
 type TransactionsService interface {
-    GetTransaction(tsId uuid.UUID) (*models.Transaction, error)
-    PostTransaction(ts *models.Transaction) (uuid.UUID, error)
+	GetTransaction(tsId uuid.UUID) (*models.Transaction, error)
+	PostTransaction(ts *models.Transaction) (uuid.UUID, error)
 }

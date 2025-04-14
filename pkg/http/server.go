@@ -5,10 +5,10 @@ import (
 )
 
 func CreateServer(addr string, handler http.Handler) error {
-    s := &http.Server{
-        Addr: addr,
-        Handler: handler,
-    }
+	s := &http.Server{
+		Addr: addr,
+		Handler: handler,
+	}
 
-    return s.ListenAndServe()
+	return s.ListenAndServe()
 }

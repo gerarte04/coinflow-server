@@ -7,14 +7,14 @@ import (
 )
 
 type Transaction struct {
-    Id uuid.UUID            `json:"id" swaggerignore:"true"`
-    UserId uuid.UUID        `json:"user_id"`
-    Type string             `json:"type"`
+	Id uuid.UUID            `json:"id" swaggerignore:"true"`
+	UserId uuid.UUID        `json:"user_id"`
+	Type string             `json:"type"`
 
-    Target string           `json:"target"`
-    Description string      `json:"description"`
-    Category string         `json:"category"`
-    Cost float64            `json:"cost"`
+	Target string           `json:"target"`
+	Description string      `json:"description"`
+	Category string         `json:"category"`
+	Cost float64            `json:"cost"`
 
-    Timestamp time.Time     `json:"timestamp" swaggerignore:"true"`
+	Timestamp time.Time     `json:"timestamp" swaggerignore:"true"`
 }
