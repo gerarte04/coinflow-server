@@ -1,0 +1,15 @@
+services:
+  restful-api:
+    build:
+      dockerfile: restful-api/Dockerfile
+    env_file: .env
+    ports:
+      - 8080:8080
+    depends_on:
+      collect-service:
+        condition: service_started
+
+  collect-service:
+    build:
+      dockerfile: collect-service/Dockerfile
+    env_file: .env
