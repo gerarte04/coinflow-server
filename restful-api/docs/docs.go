@@ -116,9 +116,6 @@ const docTemplate = `{
         "models.Transaction": {
             "type": "object",
             "properties": {
-                "category": {
-                    "type": "string"
-                },
                 "cost": {
                     "type": "number"
                 },

@@ -25,7 +25,12 @@ func main() {
 	config.MustLoadConfig(flg.ConfigPath, &cfg)
 
 	tsRepo := tsRepo.NewTransactionsRepoMock()
-	tsSvc := tsService.NewTransactionsService(tsRepo)
+	tsSvc, err := tsService.NewTransactionsService(tsRepo, cfg.GrpcCfg)
+
+	if err != nil {
+		log.Fatalf("%s", err.Error())
+	}
+
 	cfServer := api.NewCoinflowServer(tsSvc)
 	
 	engine := gin.Default()

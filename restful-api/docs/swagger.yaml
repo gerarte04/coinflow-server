@@ -2,8 +2,6 @@ basePath: /
 definitions:
   models.Transaction:
     properties:
-      category:
-        type: string
       cost:
         type: number
       description:
