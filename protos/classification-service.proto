@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package classification_service;
+
+message GetTextCategoryRequest {
+	string text = 1;
+	repeated string labels = 2;
+}
+
+message GetTextCategoryResponse {
+	string category = 1;
+}
+
+service Classification {
+	rpc GetTextCategory(GetTextCategoryRequest) returns (GetTextCategoryResponse);
+}

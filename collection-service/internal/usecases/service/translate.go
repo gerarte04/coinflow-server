@@ -1,7 +1,7 @@
 package service
 
 import (
-	"coinflow/coinflow-server/collect-service/config"
+	"coinflow/coinflow-server/collection-service/config"
 	pkgHttp "coinflow/coinflow-server/pkg/http"
 	"context"
 	"encoding/json"

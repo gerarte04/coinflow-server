@@ -1,8 +1,8 @@
 syntax = "proto3";
 
-package collect_service;
+package collection_service;
 
-option go_package = "gen/collect_service/";
+option go_package = "gen/collection_service/";
 
 message Transaction {
 	string id = 1;
@@ -27,6 +27,6 @@ message GetTransactionCategoryResponse {
 
 // Service -----------------------------------
 
-service Collect {
+service Collection {
 	rpc GetTransactionCategory(GetTransactionCategoryRequest) returns (GetTransactionCategoryResponse);
 }

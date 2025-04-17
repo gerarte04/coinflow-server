@@ -1,7 +1,7 @@
 package service
 
 import (
-	pb "coinflow/coinflow-server/gen/collect_service"
+	pb "coinflow/coinflow-server/gen/collection_service"
 	"coinflow/coinflow-server/restful-api/internal/models"
 
 	"github.com/jinzhu/copier"

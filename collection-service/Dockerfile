@@ -6,13 +6,13 @@ COPY go.sum go.mod ./
 RUN go mod download
 
 COPY . .
-RUN go build -o service collect-service/cmd/main.go
+RUN go build -o service collection-service/cmd/main.go
 
 FROM alpine:3.21.3 AS runner
 
 WORKDIR /app
 
 COPY --from=builder /build/service ./service
-COPY --from=builder /build/collect-service/config/config.yaml ./config.yaml
+COPY --from=builder /build/collection-service/config/config.yaml ./config.yaml
 
 CMD ["/app/service", "--config=/app/config.yaml"]

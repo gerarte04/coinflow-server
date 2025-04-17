@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"log"
 
-	pb "coinflow/coinflow-server/gen/collect_service"
+	pb "coinflow/coinflow-server/gen/collection_service"
 
 	"github.com/google/uuid"
 	"google.golang.org/grpc"
@@ -17,7 +17,7 @@ import (
 
 type TransactionsService struct {
 	tsRepo repository.TransactionsRepo
-	collectClient pb.CollectClient
+	collectClient pb.CollectionClient
 	grpcConfig config.GrpcConfig
 }
 
@@ -34,7 +34,7 @@ func NewTransactionsService(
 
 	return &TransactionsService{
 		tsRepo: tsRepo,
-		collectClient: pb.NewCollectClient(conn),
+		collectClient: pb.NewCollectionClient(conn),
 		grpcConfig: grpcConfig,
 	}, nil
 }
@@ -45,7 +45,6 @@ func (s *TransactionsService) GetTransaction(tsId uuid.UUID) (*models.Transactio
 
 func (s *TransactionsService) PostTransaction(ts *models.Transaction) (uuid.UUID, error) {
 	const method = "TransactionsService.PostTransaction"
-
 	
 	pbTs, err := ConvertModelTransactionToProtobuf(ts)
 	

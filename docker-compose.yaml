@@ -6,10 +6,10 @@ services:
     ports:
       - 8080:8080
     depends_on:
-      collect-service:
+      collection-service:
         condition: service_started
 
-  collect-service:
+  collection-service:
     build:
-      dockerfile: collect-service/Dockerfile
+      dockerfile: collection-service/Dockerfile
     env_file: .env

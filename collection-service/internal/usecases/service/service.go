@@ -1,25 +1,25 @@
 package service
 
 import (
-	"coinflow/coinflow-server/collect-service/config"
-	"coinflow/coinflow-server/collect-service/internal/models"
+	"coinflow/coinflow-server/collection-service/config"
+	"coinflow/coinflow-server/collection-service/internal/models"
 	"log"
 	"net/http"
 )
 
-type CollectService struct {
+type CollectionService struct {
 	cli *http.Client
 	svcCfg config.ServicesConfig
 }
 
-func NewCollectService(svcCfg config.ServicesConfig) *CollectService {
-	return &CollectService{
+func NewCollectionService(svcCfg config.ServicesConfig) *CollectionService {
+	return &CollectionService{
 		cli: &http.Client{},
 		svcCfg: svcCfg,
 	}
 }
 
-func (s *CollectService) CollectCategory(ts *models.Transaction) error {
+func (s *CollectionService) CollectCategory(ts *models.Transaction) error {
 	text, err := TranslateToLanguage(s.cli, ts.Description, LanguageEnglish, s.svcCfg)
 
 	if err != nil {

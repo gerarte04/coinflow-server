@@ -1,8 +1,8 @@
 package types
 
 import (
-	"coinflow/coinflow-server/collect-service/internal/models"
-	pb "coinflow/coinflow-server/gen/collect_service"
+	"coinflow/coinflow-server/collection-service/internal/models"
+	pb "coinflow/coinflow-server/gen/collection_service"
 
 	"github.com/jinzhu/copier"
 )

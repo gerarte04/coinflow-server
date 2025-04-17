@@ -14,8 +14,8 @@ type HttpConfig struct {
 }
 
 type GrpcConfig struct {
-	Host string `yaml:"host" env:"GRPC_HOST"`
-	Port string `yaml:"port" env:"GRPC_PORT"`
+	Host string `yaml:"host" env:"GRPC_COLLECTION_SERVICE_HOST"`
+	Port string `yaml:"port" env:"GRPC_COLLECTION_SERVICE_PORT"`
 	RequestExpireTimeout time.Duration `yaml:"req_expire_timeout" env-default:"300ms"`
 }
 
