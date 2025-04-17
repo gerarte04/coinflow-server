@@ -6,6 +6,7 @@ import (
 	"coinflow/coinflow-server/restful-api/internal/repository"
 	"context"
 	"fmt"
+	"log"
 
 	pb "coinflow/coinflow-server/gen/collect_service"
 
@@ -52,17 +53,18 @@ func (s *TransactionsService) PostTransaction(ts *models.Transaction) (uuid.UUID
 		return uuid.Nil, fmt.Errorf("%s: %w", method, err)
 	}
 
-	//ctx, cancel := context.WithTimeout(context.Background(), s.grpcConfig.RequestExpireTimeout)
-	ctx := context.Background()
-	//defer cancel()
+	go func() {
+		//ctx, cancel := context.WithTimeout(context.Background(), s.grpcConfig.RequestExpireTimeout)
+		ctx := context.Background()
+		//defer cancel()
+	
+		_, err := s.collectClient.GetTransactionCategory(ctx, &pb.GetTransactionCategoryRequest{Ts: pbTs})
+	
+		if err != nil {
+			log.Printf("received error from collector: %s", err.Error())
+		}
+	}()
 
-	resp, err := s.collectClient.GetTransactionCategory(ctx, &pb.GetTransactionCategoryRequest{Ts: pbTs})
-
-	if err != nil {
-		return uuid.Nil, fmt.Errorf("%s: %w", method, err)
-	}
-
-	ts.Category = resp.Category
 	id, err := s.tsRepo.PostTransaction(ts)
 
 	if err != nil {

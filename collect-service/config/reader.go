@@ -12,8 +12,14 @@ type GrpcConfig struct {
 	Port string `yaml:"port" env:"GRPC_PORT"`
 }
 
+type ServicesConfig struct {
+	TranslateApiAddress string `yaml:"translate_api_address" env:"TRANSLATE_API_ADDRESS"`
+	TranslateApiKey string `yaml:"translate_api_key" env:"TRANSLATE_API_KEY"`
+}
+
 type Config struct {
 	GrpcCfg GrpcConfig `yaml:"grpc"`
+	SvcCfg ServicesConfig `yaml:"services"`
 }
 
 func MustLoadConfig(path string, cfg any) {

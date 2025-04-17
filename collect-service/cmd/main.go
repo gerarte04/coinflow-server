@@ -3,6 +3,7 @@ package main
 import (
 	"coinflow/coinflow-server/collect-service/config"
 	apiGrpc "coinflow/coinflow-server/collect-service/internal/api/grpc"
+	"coinflow/coinflow-server/collect-service/internal/usecases/service"
 	pb "coinflow/coinflow-server/gen/collect_service"
 	"log"
 	"net"
@@ -20,7 +21,8 @@ func main() {
         log.Fatalf("failed to listen address: %s", err.Error())
     }
 
-    cfServer := apiGrpc.NewCoinflowServer()
+	collectSvc := service.NewCollectService(cfg.SvcCfg)
+    cfServer := apiGrpc.NewCoinflowServer(collectSvc)
 
     svr := grpc.NewServer()
     pb.RegisterCollectServer(svr, cfServer)
