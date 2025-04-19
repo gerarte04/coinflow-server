@@ -15,7 +15,7 @@ def main():
 	port = os.getenv("GRPC_CLASSIFICATION_SERVICE_PORT")
 
 	server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
-	cat_service = service.CategoryService()
+	cat_service = service.CategoryService(os.getenv("CLASSIFICATION_MODEL_NAME"))
 	svcr = servicer.ClassificationServicer(cat_service)
 	classification_service_pb2_grpc.add_ClassificationServicer_to_server(svcr, server)
 
