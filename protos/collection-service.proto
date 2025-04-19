@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package collection_service;
 
-option go_package = "gen/collection_service/";
+option go_package = "gen/collection_service/golang";
 
 message Transaction {
 	string id = 1;

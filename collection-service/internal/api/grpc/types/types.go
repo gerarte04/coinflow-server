@@ -2,7 +2,7 @@ package types
 
 import (
 	"coinflow/coinflow-server/collection-service/internal/models"
-	pb "coinflow/coinflow-server/gen/collection_service"
+	pb "coinflow/coinflow-server/gen/collection_service/golang"
 
 	"github.com/jinzhu/copier"
 )

@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package classification_service;
 
+option go_package = "gen/classification_service/golang";
+
 message GetTextCategoryRequest {
 	string text = 1;
 	repeated string labels = 2;

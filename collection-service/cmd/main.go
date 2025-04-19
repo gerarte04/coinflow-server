@@ -4,7 +4,7 @@ import (
 	"coinflow/coinflow-server/collection-service/config"
 	apiGrpc "coinflow/coinflow-server/collection-service/internal/api/grpc"
 	"coinflow/coinflow-server/collection-service/internal/usecases/service"
-	pb "coinflow/coinflow-server/gen/collection_service"
+	pb "coinflow/coinflow-server/gen/collection_service/golang"
 	"log"
 	"net"
 
@@ -17,11 +17,17 @@ func main() {
 	config.MustLoadConfig(flg.ConfigPath, &cfg)
 
 	lis, err := net.Listen("tcp", cfg.GrpcCfg.Host + ":" + cfg.GrpcCfg.Port)
+
 	if err != nil {
 		log.Fatalf("failed to listen address: %s", err.Error())
 	}
 
-	collectSvc := service.NewCollectionService(cfg.SvcCfg)
+	collectSvc, err := service.NewCollectionService(cfg.SvcCfg, cfg.GrpcCfg)
+
+	if err != nil {
+		log.Fatalf("%s", err.Error())
+	}
+
 	cfServer := apiGrpc.NewCollectionServer(collectSvc)
 
 	svr := grpc.NewServer()

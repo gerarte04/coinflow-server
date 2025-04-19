@@ -10,6 +10,8 @@ import (
 type GrpcConfig struct {
 	Host string `yaml:"host" env:"GRPC_COLLECTION_SERVICE_HOST"`
 	Port string `yaml:"port" env:"GRPC_COLLECTION_SERVICE_PORT"`
+	ClassificationServiceHost string `yaml:"classification_service_host" env:"GRPC_CLASSIFICATION_SERVICE_HOST"`
+	ClassificationServicePort string `yaml:"classification_service_port" env:"GRPC_CLASSIFICATION_SERVICE_PORT"`
 }
 
 type ServicesConfig struct {

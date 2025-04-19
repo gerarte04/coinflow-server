@@ -13,3 +13,11 @@ services:
     build:
       dockerfile: collection-service/Dockerfile
     env_file: .env
+    depends_on:
+      classification-service:
+        condition: service_started
+
+  classification-service:
+    build:
+      dockerfile: classification-service/Dockerfile
+    env_file: .env

@@ -1,8 +1,8 @@
 import sys
 sys.path.append("./classification-service/internal")
 
-from gen.classification_service import classification_service_pb2_grpc
-from gen.classification_service.classification_service_pb2 import GetTextCategoryRequest, GetTextCategoryResponse
+from gen.classification_service.python import classification_service_pb2_grpc
+from gen.classification_service.python.classification_service_pb2 import GetTextCategoryRequest, GetTextCategoryResponse
 import grpc
 from usecases.object import CategoryServiceInterface
 
@@ -14,14 +14,14 @@ class ClassificationServicer(classification_service_pb2_grpc.ClassificationServi
 	def GetTextCategory(self, request, context):
 		try:
 			category = self.service.DetectCategory(
-				request.GetTextCategoryRequest.text,
-				request.GetTextCategoryRequest.labels
+				request.text,
+				request.labels
 			)
 
 			return GetTextCategoryResponse(
 				category = category
 			)
-		except:
+		except Exception as e:
 			_, value, _ = sys.exc_info()
 			context.set_code(grpc.StatusCode.INTERNAL)
-			context.set_details(value.strerror)
+			context.set_details(repr(e))

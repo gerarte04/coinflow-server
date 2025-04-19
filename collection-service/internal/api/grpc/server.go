@@ -3,7 +3,7 @@ package grpc
 import (
 	"coinflow/coinflow-server/collection-service/internal/api/grpc/types"
 	"coinflow/coinflow-server/collection-service/internal/usecases"
-	pb "coinflow/coinflow-server/gen/collection_service"
+	pb "coinflow/coinflow-server/gen/collection_service/golang"
 	"context"
 )
 

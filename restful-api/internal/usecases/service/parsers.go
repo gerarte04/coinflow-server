@@ -1,7 +1,7 @@
 package service
 
 import (
-	pb "coinflow/coinflow-server/gen/collection_service"
+	pb "coinflow/coinflow-server/gen/collection_service/golang"
 	"coinflow/coinflow-server/restful-api/internal/models"
 
 	"github.com/jinzhu/copier"
