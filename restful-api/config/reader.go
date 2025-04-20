@@ -1,6 +1,7 @@
 package config
 
 import (
+	"coinflow/coinflow-server/pkg/database/postgres"
 	"log"
 	"os"
 	"time"
@@ -22,6 +23,7 @@ type GrpcConfig struct {
 type Config struct {
 	HttpCfg HttpConfig `yaml:"http"`
 	GrpcCfg GrpcConfig `yaml:"grpc"`
+	PostgresCfg postgres.PostgresConfig `yaml:"postgres"`
 }
 
 func MustLoadConfig(path string, cfg any) {

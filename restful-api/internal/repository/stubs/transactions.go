@@ -9,16 +9,16 @@ import (
 	"github.com/google/uuid"
 )
 
-type TransactionsRepoMock struct {
+type TransactionsRepoStub struct {
 	mp map[uuid.UUID]*models.Transaction
 }
 
-func NewTransactionsRepoMock() *TransactionsRepoMock {
-	return &TransactionsRepoMock{mp: make(map[uuid.UUID]*models.Transaction)}
+func NewTransactionsRepoStub() *TransactionsRepoStub {
+	return &TransactionsRepoStub{mp: make(map[uuid.UUID]*models.Transaction)}
 }
 
-func (r *TransactionsRepoMock) GetTransaction(tsId uuid.UUID) (*models.Transaction, error) {
-	const method = "TransactionsRepoMock.GetTransaction"
+func (r *TransactionsRepoStub) GetTransaction(tsId uuid.UUID) (*models.Transaction, error) {
+	const method = "TransactionsRepoStub.GetTransaction"
 
 	ts, ok := r.mp[tsId]
 
@@ -29,7 +29,7 @@ func (r *TransactionsRepoMock) GetTransaction(tsId uuid.UUID) (*models.Transacti
 	return ts, nil
 }
 
-func (r *TransactionsRepoMock) GetUserTransactionsAfterTimestamp(usrId uuid.UUID, tm time.Time) ([]*models.Transaction, error) {
+func (r *TransactionsRepoStub) GetUserTransactionsAfterTimestamp(usrId uuid.UUID, tm time.Time) ([]*models.Transaction, error) {
 	tss := make([]*models.Transaction, 0)
 
 	for _, v := range r.mp {
@@ -42,8 +42,8 @@ func (r *TransactionsRepoMock) GetUserTransactionsAfterTimestamp(usrId uuid.UUID
 	return tss, nil
 }
 
-func (r *TransactionsRepoMock) PostTransaction(ts *models.Transaction) (uuid.UUID, error) {
-	const method = "TransactionsRepoMock.PostTransaction"
+func (r *TransactionsRepoStub) PostTransaction(ts *models.Transaction) (uuid.UUID, error) {
+	const method = "TransactionsRepoStub.PostTransaction"
 
 	id := uuid.New()
 

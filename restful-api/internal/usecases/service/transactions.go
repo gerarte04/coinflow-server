@@ -46,28 +46,32 @@ func (s *TransactionsService) GetTransaction(tsId uuid.UUID) (*models.Transactio
 func (s *TransactionsService) PostTransaction(ts *models.Transaction) (uuid.UUID, error) {
 	const method = "TransactionsService.PostTransaction"
 	
-	go func() {
-		pbTs, err := ConvertModelTransactionToProtobuf(ts)
-		
-		if err != nil {
-			log.Printf("%s: %s", method, err.Error())
-		}
-
-		//ctx, cancel := context.WithTimeout(context.Background(), s.grpcConfig.RequestExpireTimeout)
-		ctx := context.Background()
-		//defer cancel()
-	
-		_, err = s.collectClient.GetTransactionCategory(ctx, &pb.GetTransactionCategoryRequest{Ts: pbTs})
-	
-		if err != nil {
-			log.Printf("received error from collector: %s", err.Error())
-		}
-	}()
-
 	id, err := s.tsRepo.PostTransaction(ts)
-
+	
 	if err != nil {
 		return uuid.Nil, err
+	}
+
+	if ts.WithAutoCategory {
+		go func() {
+			pbTs, err := ConvertModelTransactionToProtobuf(ts)
+			
+			if err != nil {
+				log.Printf("%s: %s", method, err.Error())
+			}
+	
+			pbTs.Id = id.String()
+
+			//ctx, cancel := context.WithTimeout(context.Background(), s.grpcConfig.RequestExpireTimeout)
+			ctx := context.Background()
+			//defer cancel()
+		
+			_, err = s.collectClient.GetTransactionCategory(ctx, &pb.GetTransactionCategoryRequest{Ts: pbTs})
+		
+			if err != nil {
+				log.Printf("received error from collector: %s", err.Error())
+			}
+		}()
 	}
 
 	return id, nil

@@ -1,0 +1,11 @@
+food
+alcohol
+clothes
+sport
+health
+investment
+entertainment
+electronics
+finance
+travel
+job

@@ -1,9 +1,10 @@
 package main
 
 import (
+	"coinflow/coinflow-server/pkg/database/postgres"
 	"coinflow/coinflow-server/restful-api/config"
 	api "coinflow/coinflow-server/restful-api/internal/api/http"
-	tsRepo "coinflow/coinflow-server/restful-api/internal/repository/stubs"
+	tsRepo "coinflow/coinflow-server/restful-api/internal/repository/postgres"
 	tsService "coinflow/coinflow-server/restful-api/internal/usecases/service"
 	"fmt"
 	"log"
@@ -24,7 +25,13 @@ func main() {
 	flg := config.ParseFlags()
 	config.MustLoadConfig(flg.ConfigPath, &cfg)
 
-	tsRepo := tsRepo.NewTransactionsRepoMock()
+	dbConn, err := postgres.NewPostgresConn(cfg.PostgresCfg)
+
+	if err != nil {
+		log.Fatalf("%s", err.Error())
+	}
+
+	tsRepo := tsRepo.NewTransactionsRepo(dbConn)
 	tsSvc, err := tsService.NewTransactionsService(tsRepo, cfg.GrpcCfg)
 
 	if err != nil {

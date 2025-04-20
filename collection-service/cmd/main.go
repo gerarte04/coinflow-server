@@ -3,8 +3,10 @@ package main
 import (
 	"coinflow/coinflow-server/collection-service/config"
 	apiGrpc "coinflow/coinflow-server/collection-service/internal/api/grpc"
+	"coinflow/coinflow-server/collection-service/internal/repository/postgres"
 	"coinflow/coinflow-server/collection-service/internal/usecases/service"
 	pb "coinflow/coinflow-server/gen/collection_service/golang"
+	pkgPostgres "coinflow/coinflow-server/pkg/database/postgres"
 	"log"
 	"net"
 
@@ -22,7 +24,15 @@ func main() {
 		log.Fatalf("failed to listen address: %s", err.Error())
 	}
 
-	collectSvc, err := service.NewCollectionService(cfg.SvcCfg, cfg.GrpcCfg)
+	dbConn, err := pkgPostgres.NewPostgresConn(cfg.PostgresCfg)
+
+	if err != nil {
+		log.Fatalf("%s", err.Error())
+	}
+
+	tsRepo := postgres.NewTransactionsRepo(dbConn)
+	catsRepo := postgres.NewCategoriesRepo(dbConn)
+	collectSvc, err := service.NewCollectionService(cfg.SvcCfg, cfg.GrpcCfg, tsRepo, catsRepo)
 
 	if err != nil {
 		log.Fatalf("%s", err.Error())

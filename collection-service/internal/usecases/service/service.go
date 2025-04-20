@@ -3,9 +3,9 @@ package service
 import (
 	"coinflow/coinflow-server/collection-service/config"
 	"coinflow/coinflow-server/collection-service/internal/models"
+	"coinflow/coinflow-server/collection-service/internal/repository"
 	"context"
 	"fmt"
-	"log"
 	"net/http"
 
 	pb "coinflow/coinflow-server/gen/classification_service/golang"
@@ -14,26 +14,34 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-var (
-	labels = []string{"food", "sport", "health", "investment", "entertainment", "other"}
-)
-
 type CollectionService struct {
 	httpCli *http.Client
 	grpcCli pb.ClassificationClient
 	svcCfg config.ServicesConfig
 	grpcCfg config.GrpcConfig
+	tsRepo repository.TransactionsRepo
+	catsRepo repository.CategoriesRepo
+	categories []string
 }
 
 func NewCollectionService(
 	svcCfg config.ServicesConfig,
 	grpcCfg config.GrpcConfig,
+	tsRepo repository.TransactionsRepo,
+	catsRepo repository.CategoriesRepo,
 ) (*CollectionService, error) {
+	const method = "service.NewCollectionService"
 	addr := fmt.Sprintf("%s:%s", grpcCfg.ClassificationServiceHost, grpcCfg.ClassificationServicePort)
 	conn, err := grpc.NewClient(addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 
 	if err != nil {
-		return nil, fmt.Errorf("service.NewCollectionService: %w", err)
+		return nil, fmt.Errorf("%s: %w", method, err)
+	}
+
+	categories, err := catsRepo.GetCategories()
+
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", method, err)
 	}
 
 	return &CollectionService{
@@ -41,6 +49,9 @@ func NewCollectionService(
 		grpcCli: pb.NewClassificationClient(conn),
 		svcCfg: svcCfg,
 		grpcCfg: grpcCfg,
+		tsRepo: tsRepo,
+		catsRepo: catsRepo,
+		categories: categories,
 	}, nil
 }
 
@@ -55,14 +66,18 @@ func (s *CollectionService) CollectCategory(ts *models.Transaction) error {
 
 	resp, err := s.grpcCli.GetTextCategory(context.Background(), &pb.GetTextCategoryRequest{
 		Text: text,
-		Labels: labels,
+		Labels: s.categories,
 	})
 
 	if err != nil {
 		return fmt.Errorf("%s: %w", method, err)
 	}
 
-	log.Printf("successfully detected category: desc = \"%s\", cat = \"%s\"", ts.Description, resp.Category)
+	err = s.tsRepo.PutCategory(ts.Id, resp.Category)
+
+	if err != nil {
+		return err
+	}
 
 	return nil
 }

@@ -1,0 +1,4 @@
+purchase
+transfer_from
+transfer_to
+salary

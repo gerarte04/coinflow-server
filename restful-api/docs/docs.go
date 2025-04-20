@@ -130,6 +130,9 @@ const docTemplate = `{
                 },
                 "user_id": {
                     "type": "string"
+                },
+                "with_auto_category": {
+                    "type": "boolean"
                 }
             }
         }
