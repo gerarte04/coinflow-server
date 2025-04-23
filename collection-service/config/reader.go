@@ -9,21 +9,20 @@ import (
 )
 
 type GrpcConfig struct {
-	Host string `yaml:"host" env:"GRPC_COLLECTION_SERVICE_HOST"`
-	Port string `yaml:"port" env:"GRPC_COLLECTION_SERVICE_PORT"`
-	ClassificationServiceHost string `yaml:"classification_service_host" env:"GRPC_CLASSIFICATION_SERVICE_HOST"`
-	ClassificationServicePort string `yaml:"classification_service_port" env:"GRPC_CLASSIFICATION_SERVICE_PORT"`
+	Host 					string 						`yaml:"host" env-required:"true"`
+	Port 					string 						`yaml:"port" env-required:"true"`
 }
 
 type ServicesConfig struct {
-	TranslateApiAddress string `yaml:"translate_api_address" env:"TRANSLATE_API_ADDRESS"`
-	TranslateApiKey string `yaml:"translate_api_key" env:"TRANSLATE_API_KEY"`
+	TranslateApiAddress 	string 						`yaml:"translate_api_address" env:"TRANSLATE_API_ADDRESS"`
+	TranslateApiKey 		string 						`yaml:"translate_api_key" env:"TRANSLATE_API_KEY"`
 }
 
 type Config struct {
-	GrpcCfg GrpcConfig `yaml:"grpc"`
-	SvcCfg ServicesConfig `yaml:"services"`
-	PostgresCfg postgres.PostgresConfig `yaml:"postgres"`
+	ClassificationSvcCfg 	GrpcConfig 					`yaml:"classification_service" env-required:"true"`
+	CollectionSvcCfg 		GrpcConfig 					`yaml:"collection_service" env-required:"true"`
+	SvcCfg 					ServicesConfig 				`yaml:"services"`
+	PostgresCfg 			postgres.PostgresConfig 	`yaml:"postgres" env-required:"true"`
 }
 
 func MustLoadConfig(path string, cfg any) {

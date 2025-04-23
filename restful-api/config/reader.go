@@ -10,20 +10,20 @@ import (
 )
 
 type HttpConfig struct {
-	Host string `yaml:"host" env:"HTTP_HOST"`
-	Port string `yaml:"port" env:"HTTP_PORT"`
+	Host				string 						`yaml:"host" env:"HTTP_HOST" env-required:"true"`
+	Port 				string 						`yaml:"port" env:"HTTP_PORT" env-required:"true"`
 }
 
 type GrpcConfig struct {
-	Host string `yaml:"host" env:"GRPC_COLLECTION_SERVICE_HOST"`
-	Port string `yaml:"port" env:"GRPC_COLLECTION_SERVICE_PORT"`
-	RequestExpireTimeout time.Duration `yaml:"req_expire_timeout" env-default:"300ms"`
+	Host 				string 						`yaml:"host" env-required:"true"`
+	Port 				string 						`yaml:"port" env-required:"true"`
+	RequestTimeout 		time.Duration 				`yaml:"req_timeout" env-default:"300ms"`
 }
 
 type Config struct {
-	HttpCfg HttpConfig `yaml:"http"`
-	GrpcCfg GrpcConfig `yaml:"grpc"`
-	PostgresCfg postgres.PostgresConfig `yaml:"postgres"`
+	HttpCfg 			HttpConfig 					`yaml:"http" env-required:"true"`
+	CollectionSvcCfg 	GrpcConfig 					`yaml:"collection_service" env-required:"true"`
+	PostgresCfg 		postgres.PostgresConfig 	`yaml:"postgres" env-required:"true"`
 }
 
 func MustLoadConfig(path string, cfg any) {

@@ -8,11 +8,11 @@ import (
 )
 
 type PostgresConfig struct {
-	Host string `yaml:"host" env:"POSTGRES_HOST"`
-	Port string `yaml:"port" env:"POSTGRES_PORT"`
-	DbName string `yaml:"db" env:"POSTGRES_DB"`
-	User string `yaml:"user" env:"POSTGRES_USER"`
-	Password string `yaml:"password" env:"POSTGRES_PASSWORD"`
+	Host 		string	`yaml:"host" env:"POSTGRES_HOST" env-required:"true"`
+	Port 		string	`yaml:"port" env:"POSTGRES_PORT" env-required:"true"`
+	DbName 		string	`yaml:"db" env:"POSTGRES_DB" env-required:"true"`
+	User 		string	`yaml:"user" env:"POSTGRES_USER" env-required:"true"`
+	Password 	string	`yaml:"password" env:"POSTGRES_PASSWORD" env-required:"true"`
 }
 
 func NewPostgresConn(cfg PostgresConfig) (*pgx.Conn, error) {

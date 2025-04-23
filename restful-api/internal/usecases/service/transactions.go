@@ -18,14 +18,14 @@ import (
 type TransactionsService struct {
 	tsRepo repository.TransactionsRepo
 	collectClient pb.CollectionClient
-	grpcConfig config.GrpcConfig
+	collSvcConfig config.GrpcConfig
 }
 
 func NewTransactionsService(
 	tsRepo repository.TransactionsRepo,
-	grpcConfig config.GrpcConfig,
+	collSvcConfig config.GrpcConfig,
 ) (*TransactionsService, error) {
-	addr := fmt.Sprintf("%s:%s", grpcConfig.Host, grpcConfig.Port)
+	addr := fmt.Sprintf("%s:%s", collSvcConfig.Host, collSvcConfig.Port)
 	conn, err := grpc.NewClient(addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 
 	if err != nil {
@@ -35,7 +35,7 @@ func NewTransactionsService(
 	return &TransactionsService{
 		tsRepo: tsRepo,
 		collectClient: pb.NewCollectionClient(conn),
-		grpcConfig: grpcConfig,
+		collSvcConfig: collSvcConfig,
 	}, nil
 }
 

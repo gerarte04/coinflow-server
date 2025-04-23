@@ -1,6 +1,14 @@
-grpc:
-  host: localhost
-  port: 50051
 http:
-  host: localhost
+  host: restful-api
   port: 8080
+
+collection_service:
+  host: collection-service
+  port: 50051
+
+postgres:
+  host: postgres
+  port: 5432
+  db: coinflow_pg_db
+  user: admin
+  password: adminpass

@@ -18,7 +18,7 @@ type CollectionService struct {
 	httpCli *http.Client
 	grpcCli pb.ClassificationClient
 	svcCfg config.ServicesConfig
-	grpcCfg config.GrpcConfig
+	clfSvcCfg config.GrpcConfig
 	tsRepo repository.TransactionsRepo
 	catsRepo repository.CategoriesRepo
 	categories []string
@@ -26,12 +26,13 @@ type CollectionService struct {
 
 func NewCollectionService(
 	svcCfg config.ServicesConfig,
-	grpcCfg config.GrpcConfig,
+	clfSvcCfg config.GrpcConfig,
 	tsRepo repository.TransactionsRepo,
 	catsRepo repository.CategoriesRepo,
 ) (*CollectionService, error) {
 	const method = "service.NewCollectionService"
-	addr := fmt.Sprintf("%s:%s", grpcCfg.ClassificationServiceHost, grpcCfg.ClassificationServicePort)
+
+	addr := fmt.Sprintf("%s:%s", clfSvcCfg.Host, clfSvcCfg.Port)
 	conn, err := grpc.NewClient(addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 
 	if err != nil {
@@ -48,7 +49,7 @@ func NewCollectionService(
 		httpCli: &http.Client{},
 		grpcCli: pb.NewClassificationClient(conn),
 		svcCfg: svcCfg,
-		grpcCfg: grpcCfg,
+		clfSvcCfg: clfSvcCfg,
 		tsRepo: tsRepo,
 		catsRepo: catsRepo,
 		categories: categories,

@@ -32,7 +32,7 @@ func main() {
 	}
 
 	tsRepo := tsRepo.NewTransactionsRepo(dbConn)
-	tsSvc, err := tsService.NewTransactionsService(tsRepo, cfg.GrpcCfg)
+	tsSvc, err := tsService.NewTransactionsService(tsRepo, cfg.CollectionSvcCfg)
 
 	if err != nil {
 		log.Fatalf("%s", err.Error())

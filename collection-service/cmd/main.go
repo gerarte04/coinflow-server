@@ -18,7 +18,7 @@ func main() {
 	flg := config.ParseFlags()
 	config.MustLoadConfig(flg.ConfigPath, &cfg)
 
-	lis, err := net.Listen("tcp", cfg.GrpcCfg.Host + ":" + cfg.GrpcCfg.Port)
+	lis, err := net.Listen("tcp", cfg.CollectionSvcCfg.Host + ":" + cfg.CollectionSvcCfg.Port)
 
 	if err != nil {
 		log.Fatalf("failed to listen address: %s", err.Error())
@@ -32,7 +32,7 @@ func main() {
 
 	tsRepo := postgres.NewTransactionsRepo(dbConn)
 	catsRepo := postgres.NewCategoriesRepo(dbConn)
-	collectSvc, err := service.NewCollectionService(cfg.SvcCfg, cfg.GrpcCfg, tsRepo, catsRepo)
+	collectSvc, err := service.NewCollectionService(cfg.SvcCfg, cfg.ClassificationSvcCfg, tsRepo, catsRepo)
 
 	if err != nil {
 		log.Fatalf("%s", err.Error())

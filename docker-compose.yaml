@@ -2,7 +2,6 @@ services:
   restful-api:
     build:
       dockerfile: restful-api/Dockerfile
-    env_file: .env
     ports:
       - 8080:8080
     depends_on:
@@ -14,7 +13,9 @@ services:
   collection-service:
     build:
       dockerfile: collection-service/Dockerfile
-    env_file: .env
+    environment:
+      - TRANSLATE_API_ADDRESS=${TRANSLATE_API_ADDRESS}
+      - TRANSLATE_API_KEY=${TRANSLATE_API_KEY}
     depends_on:
       classification-service:
         condition: service_started
@@ -24,7 +25,10 @@ services:
   classification-service:
     build:
       dockerfile: classification-service/Dockerfile
-    env_file: .env
+    environment:
+      - CLASSIFICATION_MODEL_NAME=${CLASSIFICATION_MODEL_NAME}
+      - GRPC_CLASSIFICATION_SERVICE_HOST=${GRPC_CLASSIFICATION_SERVICE_HOST}
+      - GRPC_CLASSIFICATION_SERVICE_PORT=${GRPC_CLASSIFICATION_SERVICE_PORT}
 
   postgres:
     image: postgres:latest
