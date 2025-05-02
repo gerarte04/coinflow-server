@@ -11,6 +11,10 @@ on:
 jobs:
   build-test:
     runs-on: ubuntu-latest
+    environment: private-env
+    env:
+      TRANSLATE_API_ADDRESS: ${{ secrets.TRANSLATE_API_ADDRESS }}
+      TRANSLATE_API_KEY: ${{ secrets.TRANSLATE_API_KEY }}
 
     steps:
     - name: Checkout Code
@@ -28,7 +32,11 @@ jobs:
       run: sudo apt install make
 
     - name: Build and Test
-      run: make launch_services_with_tests
+      run: |
+        mv public.env .env
+        echo $TRANSLATE_API_ADDRESS >> .env
+        echo $TRANSLATE_API_KEY >> .env
+        make launch_services_with_tests
 
     - name: Shut Down Docker Compose
       if: always()
