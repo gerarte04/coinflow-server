@@ -8,6 +8,7 @@ import (
 
 //go:generate mockgen -source transactions.go -destination mocks/transactions_mock.go -package mocks
 type TransactionsRepo interface {
-	GetTransaction(tsId uuid.UUID) (*models.Transaction, error)
-	PostTransaction(ts *models.Transaction) (uuid.UUID, error)
+	GetTransaction(txId uuid.UUID) (*models.Transaction, error)
+	PostTransaction(tx *models.Transaction) (uuid.UUID, error)
+	PostTransactionWithoutCategory(tx *models.Transaction) (uuid.UUID, error)
 }

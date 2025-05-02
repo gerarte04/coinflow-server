@@ -16,12 +16,11 @@ func NewCategoriesRepo(conn *pgx.Conn) *CategoriesRepo {
 }
 
 func (r *CategoriesRepo) GetCategories() ([]string, error) {
-	const method = "CategoriesRepo.GetCategories"
+	const op = "CategoriesRepo.GetCategories"
 
 	rows, err := r.conn.Query(context.Background(), "SELECT * FROM categories")
-
 	if err != nil {
-		return nil, fmt.Errorf("%s: %w", method, err)
+		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
 	defer rows.Close()
@@ -32,7 +31,7 @@ func (r *CategoriesRepo) GetCategories() ([]string, error) {
 		var cat string
 
 		if err := rows.Scan(&cat); err != nil {
-			return nil, fmt.Errorf("%s: %w", method, err)
+			return nil, fmt.Errorf("%s: %w", op, err)
 		}
 
 		cats = append(cats, cat)

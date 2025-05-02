@@ -16,63 +16,70 @@ import (
 )
 
 type TransactionsService struct {
-	tsRepo repository.TransactionsRepo
+	txRepo repository.TransactionsRepo
 	collectClient pb.CollectionClient
 	collSvcConfig config.GrpcConfig
 }
 
 func NewTransactionsService(
-	tsRepo repository.TransactionsRepo,
+	txRepo repository.TransactionsRepo,
 	collSvcConfig config.GrpcConfig,
 ) (*TransactionsService, error) {
+	const op = "NewTransactionsService"
+
 	addr := fmt.Sprintf("%s:%s", collSvcConfig.Host, collSvcConfig.Port)
 	conn, err := grpc.NewClient(addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 
 	if err != nil {
-		return nil, fmt.Errorf("service.NewTransactionsService: %w", err)
+		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
 	return &TransactionsService{
-		tsRepo: tsRepo,
+		txRepo: txRepo,
 		collectClient: pb.NewCollectionClient(conn),
 		collSvcConfig: collSvcConfig,
 	}, nil
 }
 
-func (s *TransactionsService) GetTransaction(tsId uuid.UUID) (*models.Transaction, error) {
-	return s.tsRepo.GetTransaction(tsId)
+func (s *TransactionsService) GetTransaction(txId uuid.UUID) (*models.Transaction, error) {
+	return s.txRepo.GetTransaction(txId)
 }
 
-func (s *TransactionsService) PostTransaction(ts *models.Transaction) (uuid.UUID, error) {
-	const method = "TransactionsService.PostTransaction"
-	
-	id, err := s.tsRepo.PostTransaction(ts)
-	
-	if err != nil {
-		return uuid.Nil, err
-	}
+func (s *TransactionsService) PostTransaction(tx *models.Transaction) (uuid.UUID, error) {
+	const op = "TransactionsService.PostTransaction"
 
-	if ts.WithAutoCategory {
+	var txId uuid.UUID
+	var err error
+	
+	if tx.WithAutoCategory {
+		txId, err = s.txRepo.PostTransactionWithoutCategory(tx)
+		if err != nil {
+			return uuid.Nil, err
+		}
+
 		go func() {
-			pbTs, err := ConvertModelTransactionToProtobuf(ts)
-			
+			pbTx, err := ConvertModelTransactionToProtobuf(tx)
 			if err != nil {
-				log.Printf("%s: %s", method, err.Error())
+				log.Printf("%s: %s", op, err.Error())
 			}
 	
-			pbTs.Id = id.String()
+			pbTx.Id = txId.String()
 
 			//ctx, cancel := context.WithTimeout(context.Background(), s.grpcConfig.RequestExpireTimeout)
 			ctx := context.Background()
 			//defer cancel()
 		
-			_, err = s.collectClient.GetTransactionCategory(ctx, &pb.GetTransactionCategoryRequest{Ts: pbTs})
-		
+			_, err = s.collectClient.GetTransactionCategory(ctx, &pb.GetTransactionCategoryRequest{Tx: pbTx})
 			if err != nil {
 				log.Printf("received error from collector: %s", err.Error())
 			}
 		}()
+	} else {
+		txId, err = s.txRepo.PostTransaction(tx)
+		if err != nil {
+			return uuid.Nil, err
+		}
 	}
 
-	return id, nil
+	return txId, nil
 }

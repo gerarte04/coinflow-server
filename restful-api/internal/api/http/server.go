@@ -9,11 +9,11 @@ import (
 )
 
 type CoinflowServer struct {
-	tsService usecases.TransactionsService
+	txService usecases.TransactionsService
 }
 
-func NewCoinflowServer(tsService usecases.TransactionsService) *CoinflowServer {
-	return &CoinflowServer{tsService: tsService}
+func NewCoinflowServer(txService usecases.TransactionsService) *CoinflowServer {
+	return &CoinflowServer{txService: txService}
 }
 
 // @Summary GetTransaction
@@ -34,7 +34,7 @@ func (s *CoinflowServer) GetTransactionHandler(c *gin.Context) {
 		return
 	}
 
-	res, err := s.tsService.GetTransaction(reqObj.TsId)
+	res, err := s.txService.GetTransaction(reqObj.TxId)
 	if err != nil {
 		WriteError(c, err)
 		return
@@ -60,7 +60,7 @@ func (s *CoinflowServer) PostTransactionHandler(c *gin.Context) {
 		return
 	}
 
-	res, err := s.tsService.PostTransaction(reqObj.Ts)
+	res, err := s.txService.PostTransaction(reqObj.Tx)
 	if err != nil {
 		WriteError(c, err)
 		return

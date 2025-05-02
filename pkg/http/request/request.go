@@ -61,12 +61,12 @@ func (r *BasicRequest) WithBody(body any) *BasicRequest {
 	return r
 }
 
-func (r *BasicRequest) WithApiKeyAuthorization(key string) *BasicRequest {
+func (r *BasicRequest) WithAuthorization(method string, key string) *BasicRequest {
 	if r.err != nil {
 		return r
 	}
 
-	r.httpRequest.Header.Set("Authorization", fmt.Sprintf("Api-key %s", key))
+	r.httpRequest.Header.Set("Authorization", fmt.Sprintf("%s %s", method, key))
 
 	return r
 }

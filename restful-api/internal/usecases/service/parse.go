@@ -7,12 +7,12 @@ import (
 	"github.com/jinzhu/copier"
 )
 
-func ConvertModelTransactionToProtobuf(ts *models.Transaction) (*pb.Transaction, error) {
-	var pbTs pb.Transaction
+func ConvertModelTransactionToProtobuf(tx *models.Transaction) (*pb.Transaction, error) {
+	var pbTx pb.Transaction
 
-	if err := copier.Copy(&pbTs, ts); err != nil {
+	if err := copier.Copy(&pbTx, tx); err != nil {
 		return nil, err
 	}
 
-	return &pbTs, nil
+	return &pbTx, nil
 }

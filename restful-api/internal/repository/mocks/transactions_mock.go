@@ -12,7 +12,6 @@ package mocks
 import (
 	models "coinflow/coinflow-server/restful-api/internal/models"
 	reflect "reflect"
-	time "time"
 
 	uuid "github.com/google/uuid"
 	gomock "go.uber.org/mock/gomock"
@@ -43,46 +42,46 @@ func (m *MockTransactionsRepo) EXPECT() *MockTransactionsRepoMockRecorder {
 }
 
 // GetTransaction mocks base method.
-func (m *MockTransactionsRepo) GetTransaction(tsId uuid.UUID) (*models.Transaction, error) {
+func (m *MockTransactionsRepo) GetTransaction(txId uuid.UUID) (*models.Transaction, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetTransaction", tsId)
+	ret := m.ctrl.Call(m, "GetTransaction", txId)
 	ret0, _ := ret[0].(*models.Transaction)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetTransaction indicates an expected call of GetTransaction.
-func (mr *MockTransactionsRepoMockRecorder) GetTransaction(tsId any) *gomock.Call {
+func (mr *MockTransactionsRepoMockRecorder) GetTransaction(txId any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTransaction", reflect.TypeOf((*MockTransactionsRepo)(nil).GetTransaction), tsId)
-}
-
-// GetUserTransactionsAfterTimestamp mocks base method.
-func (m *MockTransactionsRepo) GetUserTransactionsAfterTimestamp(usrId uuid.UUID, tm time.Time) ([]*models.Transaction, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetUserTransactionsAfterTimestamp", usrId, tm)
-	ret0, _ := ret[0].([]*models.Transaction)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetUserTransactionsAfterTimestamp indicates an expected call of GetUserTransactionsAfterTimestamp.
-func (mr *MockTransactionsRepoMockRecorder) GetUserTransactionsAfterTimestamp(usrId, tm any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserTransactionsAfterTimestamp", reflect.TypeOf((*MockTransactionsRepo)(nil).GetUserTransactionsAfterTimestamp), usrId, tm)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTransaction", reflect.TypeOf((*MockTransactionsRepo)(nil).GetTransaction), txId)
 }
 
 // PostTransaction mocks base method.
-func (m *MockTransactionsRepo) PostTransaction(ts *models.Transaction) (uuid.UUID, error) {
+func (m *MockTransactionsRepo) PostTransaction(tx *models.Transaction) (uuid.UUID, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "PostTransaction", ts)
+	ret := m.ctrl.Call(m, "PostTransaction", tx)
 	ret0, _ := ret[0].(uuid.UUID)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // PostTransaction indicates an expected call of PostTransaction.
-func (mr *MockTransactionsRepoMockRecorder) PostTransaction(ts any) *gomock.Call {
+func (mr *MockTransactionsRepoMockRecorder) PostTransaction(tx any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PostTransaction", reflect.TypeOf((*MockTransactionsRepo)(nil).PostTransaction), ts)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PostTransaction", reflect.TypeOf((*MockTransactionsRepo)(nil).PostTransaction), tx)
+}
+
+// PostTransactionWithoutCategory mocks base method.
+func (m *MockTransactionsRepo) PostTransactionWithoutCategory(tx *models.Transaction) (uuid.UUID, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "PostTransactionWithoutCategory", tx)
+	ret0, _ := ret[0].(uuid.UUID)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// PostTransactionWithoutCategory indicates an expected call of PostTransactionWithoutCategory.
+func (mr *MockTransactionsRepoMockRecorder) PostTransactionWithoutCategory(tx any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PostTransactionWithoutCategory", reflect.TypeOf((*MockTransactionsRepo)(nil).PostTransactionWithoutCategory), tx)
 }

@@ -1,6 +1,7 @@
 package types
 
 import (
+	"coinflow/coinflow-server/pkg/utils"
 	"coinflow/coinflow-server/restful-api/internal/models"
 	"fmt"
 
@@ -9,33 +10,33 @@ import (
 )
 
 type GetTransactionRequestObject struct {
-	TsId uuid.UUID
+	TxId uuid.UUID
 }
 
 func CreateGetTransactionRequestObject(c *gin.Context) (*GetTransactionRequestObject, error) {
 	const fc = "CreateGetTransactionRequestObject"
 
-	tsId, err := ParseStringToTransactionId(c.Param("ts_id"))
+	txId, err := utils.ParseStringToTransactionId(c.Param("ts_id"))
 
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", fc, err)
 	}
 
-	return &GetTransactionRequestObject{TsId: tsId}, nil
+	return &GetTransactionRequestObject{TxId: txId}, nil
 }
 
 type PostTransactionRequestObject struct {
-	Ts *models.Transaction
+	Tx *models.Transaction
 }
 
 func CreatePostTransactionRequestObject(c *gin.Context) (*PostTransactionRequestObject, error) {
 	const fc = "CreateGetTransactionRequestObject"
 
-	var ts models.Transaction
+	var tx models.Transaction
 
-	if err := c.ShouldBindJSON(&ts); err != nil {
+	if err := c.ShouldBindJSON(&tx); err != nil {
 		return nil, fmt.Errorf("%s: %w", fc, err)
 	}
 
-	return &PostTransactionRequestObject{Ts: &ts}, nil
+	return &PostTransactionRequestObject{Tx: &tx}, nil
 }

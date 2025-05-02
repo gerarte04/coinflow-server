@@ -5,5 +5,5 @@ import (
 )
 
 type TransactionsRepo interface {
-	PutCategory(tsId uuid.UUID, category string) error
+	PutCategory(txId uuid.UUID, category string) error
 }

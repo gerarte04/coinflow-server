@@ -20,55 +20,68 @@ func NewTransactionsRepo(conn *pgx.Conn) *TransactionsRepo {
 	return &TransactionsRepo{conn: conn}
 }
 
-func (r *TransactionsRepo) GetTransaction(tsId uuid.UUID) (*models.Transaction, error) {
-	const method = "TransactionsRepo.GetTransaction"
+func (r *TransactionsRepo) GetTransaction(txId uuid.UUID) (*models.Transaction, error) {
+	const op = "TransactionsRepo.GetTransaction"
 
 	row := r.conn.QueryRow(
 		context.Background(),
-		"SELECT * FROM transactions WHERE id = $1", tsId,
+		"SELECT * FROM transactions WHERE id = $1", txId,
 	)
 
-	var ts models.Transaction
-	err := row.Scan(&ts.Id, &ts.UserId, &ts.Type, &ts.Target, &ts.Description, &ts.Category, &ts.Cost, &ts.Timestamp)
+	var tx models.Transaction
+	err := row.Scan(&tx.Id, &tx.UserId, &tx.Type, &tx.Target, &tx.Description, &tx.Category, &tx.Cost, &tx.Timestamp)
 
 	if err == pgx.ErrNoRows {
-		return nil, fmt.Errorf("%s: %w", method, repository.ErrorTransactionKeyNotFound)
+		return nil, fmt.Errorf("%s: %w", op, repository.ErrorTransactionKeyNotFound)
 	} else if err != nil {
-		return nil, fmt.Errorf("%s: %w", method, err)
+		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	return &ts, nil
+	return &tx, nil
 }
 
-func (r *TransactionsRepo) PostTransaction(ts *models.Transaction) (uuid.UUID, error) {
-	const method = "TransactionsRepo.PostTransaction"
+func (r *TransactionsRepo) PostTransaction(tx *models.Transaction) (uuid.UUID, error) {
+	const op = "TransactionsRepo.PostTransaction"
 
-	tsId := uuid.New()
-	var err error
+	row := r.conn.QueryRow(
+		context.Background(),
+		`INSERT INTO transactions (
+			user_id, type, target, description, category, cost
+		) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id`,
+		tx.UserId, tx.Type, tx.Target, tx.Description, tx.Category, tx.Cost,
+	)
 
-	if ts.WithAutoCategory {
-		_, err = r.conn.Exec(
-			context.Background(),
-			`INSERT INTO transactions (
-				id, user_id, type, target, description, cost
-			) VALUES ($1, $2, $3, $4, $5, $6)`,
-			tsId, ts.UserId, ts.Type, ts.Target, ts.Description, ts.Cost,
-		)
-	} else {
-		_, err = r.conn.Exec(
-			context.Background(),
-			`INSERT INTO transactions (
-				id, user_id, type, target, description, category, cost
-			) VALUES ($1, $2, $3, $4, $5, $6, $7)`,
-			tsId, ts.UserId, ts.Type, ts.Target, ts.Description, ts.Category, ts.Cost,
-		)
-	}
+	var txId uuid.UUID
+	err := row.Scan(&txId)
 
 	if dbErr := postgres.DetectError(err); dbErr == database.ErrorUniqueViolation {
-		return uuid.Nil, fmt.Errorf("%s: %w", method, repository.ErrorTransactionKeyExists)
+		return uuid.Nil, fmt.Errorf("%s: %w", op, repository.ErrorTransactionKeyExists)
 	} else if err != nil {
-		return uuid.Nil, fmt.Errorf("%s: %w", method, err)
+		return uuid.Nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	return tsId, nil
+	return txId, nil
+}
+
+func (r *TransactionsRepo) PostTransactionWithoutCategory(tx *models.Transaction) (uuid.UUID, error) {
+	const op = "TransactionsRepo.PostTransaction"
+
+	row := r.conn.QueryRow(
+		context.Background(),
+		`INSERT INTO transactions (
+			user_id, type, target, description, cost
+		) VALUES ($1, $2, $3, $4, $5) RETURNING id`,
+		tx.UserId, tx.Type, tx.Target, tx.Description, tx.Cost,
+	)
+
+	var txId uuid.UUID
+	err := row.Scan(&txId)
+
+	if dbErr := postgres.DetectError(err); dbErr == database.ErrorUniqueViolation {
+		return uuid.Nil, fmt.Errorf("%s: %w", op, repository.ErrorTransactionKeyExists)
+	} else if err != nil {
+		return uuid.Nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return txId, nil
 }

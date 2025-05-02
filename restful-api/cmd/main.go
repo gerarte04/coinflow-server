@@ -2,10 +2,11 @@ package main
 
 import (
 	"coinflow/coinflow-server/pkg/database/postgres"
+	pkgHandlers "coinflow/coinflow-server/pkg/http/handlers"
 	"coinflow/coinflow-server/restful-api/config"
 	api "coinflow/coinflow-server/restful-api/internal/api/http"
-	tsRepo "coinflow/coinflow-server/restful-api/internal/repository/postgres"
-	tsService "coinflow/coinflow-server/restful-api/internal/usecases/service"
+	txRepo "coinflow/coinflow-server/restful-api/internal/repository/postgres"
+	txService "coinflow/coinflow-server/restful-api/internal/usecases/service"
 	"fmt"
 	"log"
 
@@ -31,19 +32,21 @@ func main() {
 		log.Fatalf("%s", err.Error())
 	}
 
-	tsRepo := tsRepo.NewTransactionsRepo(dbConn)
-	tsSvc, err := tsService.NewTransactionsService(tsRepo, cfg.CollectionSvcCfg)
+	txRepo := txRepo.NewTransactionsRepo(dbConn)
+	txSvc, err := txService.NewTransactionsService(txRepo, cfg.CollectionSvcCfg)
 
 	if err != nil {
 		log.Fatalf("%s", err.Error())
 	}
 
-	cfServer := api.NewCoinflowServer(tsSvc)
+	cfServer := api.NewCoinflowServer(txSvc)
 	
-	engine := gin.Default()
+	engine := gin.New()
 	cfServer.RouteHandlers(engine,
+		pkgHandlers.WithLogger(),
+		pkgHandlers.WithRecovery(),
+		pkgHandlers.WithSwagger(),
 		cfServer.WithStandardUserHandlers(),
-		cfServer.WithSwagger(),
 	)
 
 	addr := fmt.Sprintf("%s:%s", cfg.HttpCfg.Host, cfg.HttpCfg.Port)

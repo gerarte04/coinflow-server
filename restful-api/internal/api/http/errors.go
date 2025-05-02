@@ -1,6 +1,7 @@
 package http
 
 import (
+	"coinflow/coinflow-server/pkg/utils"
 	"coinflow/coinflow-server/restful-api/internal/api/http/types"
 	"coinflow/coinflow-server/restful-api/internal/repository"
 	"errors"
@@ -13,7 +14,7 @@ import (
 
 var (
 	errorCodes = map[error]int{
-		types.ErrorInvalidId: http.StatusBadRequest,
+		utils.ErrorInvalidId: http.StatusBadRequest,
 		types.ErrorParseTransaction: http.StatusBadRequest,
 
 		repository.ErrorTransactionKeyNotFound: http.StatusNotFound,

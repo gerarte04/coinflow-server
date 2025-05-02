@@ -107,7 +107,7 @@ func (x *Transaction) GetCost() float64 {
 
 type GetTransactionCategoryRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Ts            *Transaction           `protobuf:"bytes,1,opt,name=ts,proto3" json:"ts,omitempty"`
+	Tx            *Transaction           `protobuf:"bytes,1,opt,name=tx,proto3" json:"tx,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -142,9 +142,9 @@ func (*GetTransactionCategoryRequest) Descriptor() ([]byte, []int) {
 	return file_protos_collection_service_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *GetTransactionCategoryRequest) GetTs() *Transaction {
+func (x *GetTransactionCategoryRequest) GetTx() *Transaction {
 	if x != nil {
-		return x.Ts
+		return x.Tx
 	}
 	return nil
 }
@@ -206,7 +206,7 @@ const file_protos_collection_service_proto_rawDesc = "" +
 	"\bcategory\x18\x05 \x01(\tR\bcategory\x12\x12\n" +
 	"\x04cost\x18\x06 \x01(\x01R\x04cost\"P\n" +
 	"\x1dGetTransactionCategoryRequest\x12/\n" +
-	"\x02ts\x18\x01 \x01(\v2\x1f.collection_service.TransactionR\x02ts\"<\n" +
+	"\x02tx\x18\x01 \x01(\v2\x1f.collection_service.TransactionR\x02tx\"<\n" +
 	"\x1eGetTransactionCategoryResponse\x12\x1a\n" +
 	"\bcategory\x18\x01 \x01(\tR\bcategory2\x8d\x01\n" +
 	"\n" +
@@ -232,7 +232,7 @@ var file_protos_collection_service_proto_goTypes = []any{
 	(*GetTransactionCategoryResponse)(nil), // 2: collection_service.GetTransactionCategoryResponse
 }
 var file_protos_collection_service_proto_depIdxs = []int32{
-	0, // 0: collection_service.GetTransactionCategoryRequest.ts:type_name -> collection_service.Transaction
+	0, // 0: collection_service.GetTransactionCategoryRequest.tx:type_name -> collection_service.Transaction
 	1, // 1: collection_service.Collection.GetTransactionCategory:input_type -> collection_service.GetTransactionCategoryRequest
 	2, // 2: collection_service.Collection.GetTransactionCategory:output_type -> collection_service.GetTransactionCategoryResponse
 	2, // [2:3] is the sub-list for method output_type

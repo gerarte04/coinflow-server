@@ -22,6 +22,5 @@ class ClassificationServicer(classification_service_pb2_grpc.ClassificationServi
 				category = category
 			)
 		except Exception as e:
-			_, value, _ = sys.exc_info()
 			context.set_code(grpc.StatusCode.INTERNAL)
 			context.set_details(repr(e))

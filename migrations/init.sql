@@ -1,3 +1,5 @@
+CREATE EXTENSION pgcrypto;
+
 CREATE TABLE categories (
 	name 			varchar(50) PRIMARY KEY
 );
@@ -7,7 +9,7 @@ CREATE TABLE types (
 );
 
 CREATE TABLE transactions (
-	id 				uuid PRIMARY KEY,
+	id 				uuid PRIMARY KEY DEFAULT gen_random_uuid(),
 	user_id 		uuid NOT NULL,
 
 	type 			varchar(50) NOT NULL,

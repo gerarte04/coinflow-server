@@ -16,7 +16,7 @@ message Transaction {
 // Requests ----------------------------------
 
 message GetTransactionCategoryRequest {
-	Transaction ts = 1;
+	Transaction tx = 1;
 }
 
 // Responses ---------------------------------

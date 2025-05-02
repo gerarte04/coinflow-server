@@ -19,7 +19,7 @@ type CollectionService struct {
 	grpcCli pb.ClassificationClient
 	svcCfg config.ServicesConfig
 	clfSvcCfg config.GrpcConfig
-	tsRepo repository.TransactionsRepo
+	txRepo repository.TransactionsRepo
 	catsRepo repository.CategoriesRepo
 	categories []string
 }
@@ -27,7 +27,7 @@ type CollectionService struct {
 func NewCollectionService(
 	svcCfg config.ServicesConfig,
 	clfSvcCfg config.GrpcConfig,
-	tsRepo repository.TransactionsRepo,
+	txRepo repository.TransactionsRepo,
 	catsRepo repository.CategoriesRepo,
 ) (*CollectionService, error) {
 	const method = "service.NewCollectionService"
@@ -50,17 +50,16 @@ func NewCollectionService(
 		grpcCli: pb.NewClassificationClient(conn),
 		svcCfg: svcCfg,
 		clfSvcCfg: clfSvcCfg,
-		tsRepo: tsRepo,
+		txRepo: txRepo,
 		catsRepo: catsRepo,
 		categories: categories,
 	}, nil
 }
 
-func (s *CollectionService) CollectCategory(ts *models.Transaction) error {
-	const method = "CollectionService.CollectCategory"
+func (s *CollectionService) CollectCategory(tx *models.Transaction) error {
+	const op = "CollectionService.CollectCategory"
 
-	text, err := TranslateToLanguage(s.httpCli, ts.Description, LanguageEnglish, s.svcCfg)
-
+	text, err := TranslateToLanguage(s.httpCli, tx.Description, LanguageEnglish, s.svcCfg)
 	if err != nil {
 		return err
 	}
@@ -71,11 +70,10 @@ func (s *CollectionService) CollectCategory(ts *models.Transaction) error {
 	})
 
 	if err != nil {
-		return fmt.Errorf("%s: %w", method, err)
+		return fmt.Errorf("%s: %w", op, err)
 	}
 
-	err = s.tsRepo.PutCategory(ts.Id, resp.Category)
-
+	err = s.txRepo.PutCategory(tx.Id, resp.Category)
 	if err != nil {
 		return err
 	}

@@ -10,17 +10,17 @@ import (
 // Requests -------------------------------------------
 
 type GetTransactionCategoryRequestObject struct {
-	Ts *models.Transaction
+	Tx *models.Transaction
 }
 
 func CreateGetTransactionCategoryRequestObject(r *pb.GetTransactionCategoryRequest) (*GetTransactionCategoryRequestObject, error) {
-	var ts models.Transaction
+	var tx models.Transaction
 	
-	if err := copier.Copy(&ts, r.Ts); err != nil {
+	if err := copier.Copy(&tx, r.Tx); err != nil {
 		return nil, err
 	}
 
-	return &GetTransactionCategoryRequestObject{Ts: &ts}, nil
+	return &GetTransactionCategoryRequestObject{Tx: &tx}, nil
 }
 
 // Responses -------------------------------------------

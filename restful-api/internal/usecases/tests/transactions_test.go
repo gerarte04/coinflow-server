@@ -18,11 +18,12 @@ func TestTransactionsService_CommitAndGet(t *testing.T) {
 
 	ctrl := gomock.NewController(t)
 
-	tsRepo := mocks.NewMockTransactionsRepo(ctrl)
-	tsService, err := service.NewTransactionsService(tsRepo, config.GrpcConfig{})
+	txRepo := mocks.NewMockTransactionsRepo(ctrl)
+	txService, err := service.NewTransactionsService(txRepo, config.GrpcConfig{})
 	require.NoError(t, err)
 
-	ts := models.Transaction{
+	id := uuid.New()
+	tx := models.Transaction{
 		UserId: uuid.New(),
 		Type: "buy",
 		Target: "Starbucks",
@@ -30,23 +31,22 @@ func TestTransactionsService_CommitAndGet(t *testing.T) {
 		Category: "Restaurants",
 		Cost: 400,
 	}
-	id := uuid.New()
 
-	tsRepo.EXPECT().PostTransaction(&ts).Return(id, nil)
-	tsRepo.EXPECT().GetTransaction(id).
+	txRepo.EXPECT().PostTransaction(&tx).Return(id, nil)
+	txRepo.EXPECT().GetTransaction(id).
 		DoAndReturn(func(idArg uuid.UUID) (*models.Transaction, error) {
-			newTs := ts
-			newTs.Id = id
-			newTs.Timestamp = time.Now()
-			return &newTs, nil
+			newTx := tx
+			newTx.Id = id
+			newTx.Timestamp = time.Now()
+			return &newTx, nil
 		})
 
-	id, err = tsService.PostTransaction(&ts)
+	id, err = txService.PostTransaction(&tx)
 	require.NoError(t, err)
 
-	ret, err := tsService.GetTransaction(id)
+	ret, err := txService.GetTransaction(id)
 	require.NoError(t, err)
 	require.Equal(t, id, ret.Id)
-	require.Equal(t, ts.Description, ret.Description)
+	require.Equal(t, tx.Description, ret.Description)
 	require.NotNil(t, ret.Timestamp)
 }
