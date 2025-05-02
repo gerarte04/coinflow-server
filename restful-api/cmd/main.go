@@ -40,17 +40,18 @@ func main() {
 	}
 
 	cfServer := api.NewCoinflowServer(txSvc)
-	
+
 	engine := gin.New()
 	cfServer.RouteHandlers(engine,
 		pkgHandlers.WithLogger(),
 		pkgHandlers.WithRecovery(),
+		pkgHandlers.WithHealthCheck(),
 		pkgHandlers.WithSwagger(),
 		cfServer.WithStandardUserHandlers(),
 	)
 
 	addr := fmt.Sprintf("%s:%s", cfg.HttpCfg.Host, cfg.HttpCfg.Port)
-	
+
 	if err := engine.Run(addr); err != nil {
 		log.Fatalf("failed to serve: %s", err.Error())
 	}

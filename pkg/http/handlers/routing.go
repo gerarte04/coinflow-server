@@ -7,19 +7,26 @@ import (
 
 const (
 	SwaggerPath = "/swagger/*path"
+	HealthCheckPath = "/health"
 )
 
 type RouterOption func(engine *gin.Engine)
 
 func WithLogger() RouterOption {
 	return func(engine *gin.Engine) {
-		engine.Use(gin.Logger())
+		engine.Use(gin.LoggerWithWriter(gin.DefaultWriter, HealthCheckPath))
 	}
 }
 
 func WithRecovery() RouterOption {
 	return func(engine *gin.Engine) {
 		engine.Use(gin.Recovery())
+	}
+}
+
+func WithHealthCheck() RouterOption {
+	return func(engine *gin.Engine) {
+		engine.GET(HealthCheckPath, healthCheckHandler)
 	}
 }
 

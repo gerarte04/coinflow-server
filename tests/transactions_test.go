@@ -6,8 +6,10 @@ import (
 	"net/http"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/google/uuid"
+	"github.com/jinzhu/copier"
 	"github.com/stretchr/testify/require"
 )
 
@@ -19,16 +21,18 @@ const (
 var (
 	addr = fmt.Sprintf("http://%s:%s", os.Getenv("HTTP_HOST"), os.Getenv("HTTP_PORT"))
 
-	exampleTsPayload = map[string]any{
+	exampleTxPayload = map[string]any{
 		"user_id": uuid.New().String(),
-		"type": "buy",
-		"target": "Starbucks",
-		"description": "Purchased latte",
-		"category": "Restaurants",
+		"type": "purchase",
+		"target": "Coffee Point",
+		"description": "Purchased latte and croissant",
+		"category": "food",
 		"cost": float64(400),
 	}
 
 	exampleInvalidId = "abcdefgh123"
+
+	clfTimeout = time.Second * 5
 )
 
 func commitPayload(t *testing.T, payload any) (*http.Response, uuid.UUID) {
@@ -38,16 +42,16 @@ func commitPayload(t *testing.T, payload any) (*http.Response, uuid.UUID) {
 	require.Equal(t, resp.StatusCode, http.StatusCreated)
 
 	decoded := testutils.DecodeResponse(t, resp)
-	require.Contains(t, decoded, "ts_id")
+	require.Contains(t, decoded, "tx_id")
 
-	tsId, err := uuid.Parse(decoded["ts_id"].(string))
+	txId, err := uuid.Parse(decoded["tx_id"].(string))
 	require.NoError(t, err)
 
-	return resp, tsId
+	return resp, txId
 }
 
-func getById(t *testing.T, tsId string) (*http.Response, map[string]any) {
-	url := fmt.Sprintf("%s%s/%s", addr, TransactionPath, tsId)
+func getById(t *testing.T, txId string) (*http.Response, map[string]any) {
+	url := fmt.Sprintf("%s%s/%s", addr, TransactionPath, txId)
 	resp, err := testutils.SendRequest(t, http.MethodGet, url, nil)
 	require.NoError(t, err)
 
@@ -58,31 +62,72 @@ func getById(t *testing.T, tsId string) (*http.Response, map[string]any) {
 	return resp, testutils.DecodeResponse(t, resp)
 }
 
-func TestTransactions_CommitAndGet(t *testing.T) {
-	_, tsId := commitPayload(t, exampleTsPayload)
+type ValidateOpt struct {
+	Key string
+	CheckValue bool
+	Value any
+}
 
-	resp, decoded := getById(t, tsId.String())
-	require.Equal(t, resp.StatusCode, http.StatusOK)
-
-	for k, v := range exampleTsPayload {
-		require.Contains(t, decoded, k)
-		require.Equal(t, v, decoded[k])
+func validateResult(t *testing.T, res map[string]any, payload map[string]any, opts ...ValidateOpt) {
+	for k, v := range payload {
+		require.Contains(t, res, k)
+		require.Equal(t, v, res[k])
 	}
 
-	require.Contains(t, decoded, "timestamp")
-	require.Contains(t, decoded, "id")
-	require.Equal(t, tsId.String(), decoded["id"])
+	for _, opt := range opts {
+		require.Contains(t, res, opt.Key)
+
+		if opt.CheckValue {
+			require.Equal(t, opt.Value, res[opt.Key])
+		}
+	}
+}
+
+func TestTransactions_CommitWithoutAutoCategory(t *testing.T) {
+	var payload map[string]any
+	require.NoError(t, copier.CopyWithOption(&payload, &exampleTxPayload, copier.Option{DeepCopy: true}))
+	payload["with_auto_category"] = false
+
+	_, txId := commitPayload(t, payload)
+
+	resp, decoded := getById(t, txId.String())
+	require.Equal(t, resp.StatusCode, http.StatusOK)
+
+	validateResult(t, decoded, exampleTxPayload,
+		ValidateOpt{Key: "timestamp", CheckValue: false},
+		ValidateOpt{Key: "id", CheckValue: true, Value: txId.String()},
+	)
+}
+
+func TestTransactions_CommitWithAutoCategory(t *testing.T) {
+	var payload map[string]any
+	require.NoError(t, copier.CopyWithOption(&payload, &exampleTxPayload, copier.Option{DeepCopy: true}))
+	payload["with_auto_category"] = true
+	delete(payload, "category")
+
+	_, txId := commitPayload(t, payload)
+
+	time.Sleep(clfTimeout)
+
+	resp, decoded := getById(t, txId.String())
+	require.Equal(t, resp.StatusCode, http.StatusOK)
+
+	validateResult(t, decoded, exampleTxPayload,
+		ValidateOpt{Key: "timestamp", CheckValue: false},
+		ValidateOpt{Key: "id", CheckValue: true, Value: txId.String()},
+		ValidateOpt{Key: "category", CheckValue: true, Value: exampleTxPayload["category"]},
+	)
 }
 
 func TestTransactions_WrongId(t *testing.T) {
-	commitPayload(t, exampleTsPayload)
+	commitPayload(t, exampleTxPayload)
 
 	resp, _ := getById(t, uuid.New().String())
 	require.Equal(t, resp.StatusCode, http.StatusNotFound)
 }
 
 func TestTransactions_InvalidId(t *testing.T) {
-	commitPayload(t, exampleTsPayload)
+	commitPayload(t, exampleTxPayload)
 
 	resp, _ := getById(t, exampleInvalidId)
 	require.Equal(t, resp.StatusCode, http.StatusBadRequest)

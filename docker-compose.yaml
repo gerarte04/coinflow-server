@@ -1,6 +1,7 @@
 services:
   restful-api:
     build:
+      context: .
       dockerfile: restful-api/Dockerfile
     ports:
       - 8080:8080
@@ -9,9 +10,15 @@ services:
         condition: service_started
       postgres:
         condition: service_healthy
+    healthcheck:
+      test: curl --fail -X GET http://restful-api:8080/health || exit 1
+      interval: 10s
+      timeout: 1s
+      retries: 1
 
   collection-service:
     build:
+      context: .
       dockerfile: collection-service/Dockerfile
     environment:
       - TRANSLATE_API_ADDRESS=${TRANSLATE_API_ADDRESS}
@@ -24,6 +31,7 @@ services:
 
   classification-service:
     build:
+      context: .
       dockerfile: classification-service/Dockerfile
     environment:
       - CLASSIFICATION_MODEL_NAME=${CLASSIFICATION_MODEL_NAME}
@@ -49,3 +57,16 @@ services:
     restart: unless-stopped
     tty: true
     stdin_open: true
+
+  tester:
+    build:
+      context: .
+      dockerfile: tests/Dockerfile
+    environment:
+      - HTTP_HOST=${HTTP_HOST}
+      - HTTP_PORT=${HTTP_PORT}
+    profiles:
+      - test
+    depends_on:
+      restful-api:
+        condition: service_healthy

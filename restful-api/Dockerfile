@@ -12,6 +12,8 @@ FROM alpine:3.21.3 AS runner
 
 WORKDIR /app
 
+RUN apk add --no-cache curl
+
 COPY --from=builder /build/api ./api
 COPY --from=builder /build/restful-api/config/config.yaml ./config.yaml
 

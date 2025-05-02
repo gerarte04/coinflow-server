@@ -67,6 +67,6 @@ func (s *CoinflowServer) PostTransactionHandler(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, gin.H{
-		"ts_id": res,
+		"tx_id": res,
 	})
 }
