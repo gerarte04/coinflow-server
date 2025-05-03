@@ -6,6 +6,7 @@ import (
 	"coinflow/coinflow-server/collection-service/internal/repository/postgres"
 	"coinflow/coinflow-server/collection-service/internal/usecases/service"
 	pb "coinflow/coinflow-server/gen/collection_service/golang"
+	pkgConfig "coinflow/coinflow-server/pkg/config"
 	pkgPostgres "coinflow/coinflow-server/pkg/database/postgres"
 	"log"
 	"net"
@@ -15,8 +16,8 @@ import (
 
 func main() {
 	var cfg config.Config
-	flg := config.ParseFlags()
-	config.MustLoadConfig(flg.ConfigPath, &cfg)
+	flg := pkgConfig.ParseFlags()
+	pkgConfig.MustLoadConfig(flg.ConfigPath, &cfg)
 
 	lis, err := net.Listen("tcp", cfg.CollectionSvcCfg.Host + ":" + cfg.CollectionSvcCfg.Port)
 

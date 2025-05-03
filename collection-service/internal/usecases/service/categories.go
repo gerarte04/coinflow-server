@@ -1,15 +1,14 @@
 package service
 
 import (
-	"coinflow/coinflow-server/collection-service/config"
 	"coinflow/coinflow-server/collection-service/internal/models"
 	"coinflow/coinflow-server/collection-service/internal/repository"
+	pb "coinflow/coinflow-server/gen/classification_service/golang"
+	pkgConfig "coinflow/coinflow-server/pkg/config"
 	"coinflow/coinflow-server/pkg/utils"
 	"context"
 	"fmt"
 	"net/http"
-
-	pb "coinflow/coinflow-server/gen/classification_service/golang"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -19,14 +18,14 @@ type CollectionService struct {
 	httpCli *http.Client
 	grpcCli pb.ClassificationClient
 	tlsCfg utils.TranslateConfig
-	clfSvcCfg config.GrpcConfig
+	clfSvcCfg pkgConfig.GrpcConfig
 	catsRepo repository.CategoriesRepo
 	categories []string
 }
 
 func NewCollectionService(
 	tlsCfg utils.TranslateConfig,
-	clfSvcCfg config.GrpcConfig,
+	clfSvcCfg pkgConfig.GrpcConfig,
 	catsRepo repository.CategoriesRepo,
 ) (*CollectionService, error) {
 	const method = "service.NewCollectionService"

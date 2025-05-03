@@ -1,6 +1,7 @@
 package main
 
 import (
+	pkgConfig "coinflow/coinflow-server/pkg/config"
 	"coinflow/coinflow-server/pkg/database/postgres"
 	pkgHandlers "coinflow/coinflow-server/pkg/http/handlers"
 	"coinflow/coinflow-server/restful-api/config"
@@ -23,8 +24,8 @@ import (
 // @BasePath /
 func main() {
 	var cfg config.Config
-	flg := config.ParseFlags()
-	config.MustLoadConfig(flg.ConfigPath, &cfg)
+	flg := pkgConfig.ParseFlags()
+	pkgConfig.MustLoadConfig(flg.ConfigPath, &cfg)
 
 	dbConn, err := postgres.NewPostgresConn(cfg.PostgresCfg)
 

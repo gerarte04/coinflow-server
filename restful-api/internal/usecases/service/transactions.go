@@ -1,7 +1,7 @@
 package service
 
 import (
-	"coinflow/coinflow-server/restful-api/config"
+	pkgConfig "coinflow/coinflow-server/pkg/config"
 	"coinflow/coinflow-server/restful-api/internal/models"
 	"coinflow/coinflow-server/restful-api/internal/repository"
 	"context"
@@ -18,12 +18,12 @@ import (
 type TransactionsService struct {
 	txRepo repository.TransactionsRepo
 	collectClient pb.CollectionClient
-	collSvcConfig config.GrpcConfig
+	collSvcConfig pkgConfig.GrpcConfig
 }
 
 func NewTransactionsService(
 	txRepo repository.TransactionsRepo,
-	collSvcConfig config.GrpcConfig,
+	collSvcConfig pkgConfig.GrpcConfig,
 ) (*TransactionsService, error) {
 	const op = "NewTransactionsService"
 

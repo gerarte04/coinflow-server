@@ -1,7 +1,7 @@
 package tests
 
 import (
-	"coinflow/coinflow-server/restful-api/config"
+	pkgConfig "coinflow/coinflow-server/pkg/config"
 	"coinflow/coinflow-server/restful-api/internal/models"
 	"coinflow/coinflow-server/restful-api/internal/repository/mocks"
 	"coinflow/coinflow-server/restful-api/internal/usecases/service"
@@ -19,7 +19,7 @@ func TestTransactionsService_CommitAndGet(t *testing.T) {
 	ctrl := gomock.NewController(t)
 
 	txRepo := mocks.NewMockTransactionsRepo(ctrl)
-	txService, err := service.NewTransactionsService(txRepo, config.GrpcConfig{})
+	txService, err := service.NewTransactionsService(txRepo, pkgConfig.GrpcConfig{})
 	require.NoError(t, err)
 
 	id := uuid.New()
