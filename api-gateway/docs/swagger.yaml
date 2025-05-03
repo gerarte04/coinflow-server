@@ -1,0 +1,98 @@
+basePath: /
+definitions:
+  models.Transaction:
+    properties:
+      cost:
+        type: number
+      description:
+        type: string
+      target:
+        type: string
+      type:
+        type: string
+      user_id:
+        type: string
+      with_auto_category:
+        type: boolean
+    type: object
+  types.GetTransactionsInPeriodRequestObject:
+    properties:
+      begin:
+        type: string
+      end:
+        type: string
+      with_summary:
+        type: boolean
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: API Gateway for Coinflow service
+  title: Coinflow API
+  version: "1.0"
+paths:
+  /commit:
+    post:
+      consumes:
+      - application/json
+      description: commit transaction
+      parameters:
+      - description: Transaction
+        in: body
+        name: tx
+        required: true
+        schema:
+          $ref: '#/definitions/models.Transaction'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            type: string
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "500":
+          description: Internal error
+          schema:
+            type: string
+      summary: PostTransaction
+      tags:
+      - transactions
+  /transaction/period:
+    post:
+      consumes:
+      - application/json
+      description: get transactions in period between begin and end
+      parameters:
+      - description: Request object
+        in: body
+        name: reqObj
+        required: true
+        schema:
+          $ref: '#/definitions/types.GetTransactionsInPeriodRequestObject'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "404":
+          description: Not found
+          schema:
+            type: string
+        "500":
+          description: Internal error
+          schema:
+            type: string
+      summary: GetTransactionsInPeriod
+      tags:
+      - transactions
+swagger: "2.0"

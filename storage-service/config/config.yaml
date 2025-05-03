@@ -1,0 +1,14 @@
+storage_service:
+  host: storage-service
+  port: 5051
+
+collection_service:
+  host: collection-service
+  port: 50051
+
+postgres:
+  host: postgres
+  port: 5432
+  db: coinflow_pg_db
+  user: admin
+  password: adminpass

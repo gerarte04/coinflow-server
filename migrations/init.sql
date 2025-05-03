@@ -24,6 +24,8 @@ CREATE TABLE transactions (
 	FOREIGN KEY (category) REFERENCES categories (name) ON DELETE SET DEFAULT ON UPDATE RESTRICT
 );
 
+CREATE INDEX ON transactions (timestamp);
+
 INSERT INTO categories (name) VALUES ('other');
 CREATE RULE non_upd_other AS ON UPDATE TO categories WHERE old.name = 'other' DO INSTEAD NOTHING;
 CREATE RULE non_del_other AS ON DELETE TO categories WHERE old.name = 'other' DO INSTEAD NOTHING;

@@ -1,20 +1,30 @@
 services:
-  restful-api:
+  api-gateway:
     build:
       context: .
-      dockerfile: restful-api/Dockerfile
+      dockerfile: api-gateway/Dockerfile
     ports:
       - 8080:8080
     depends_on:
       collection-service:
         condition: service_started
-      postgres:
-        condition: service_healthy
+      storage-service:
+        condition: service_started
     healthcheck:
-      test: curl --fail -X GET http://restful-api:8080/health || exit 1
+      test: curl --fail -X GET http://api-gateway:8080/health || exit 1
       interval: 10s
       timeout: 1s
       retries: 1
+
+  storage-service:
+    build:
+      context: .
+      dockerfile: storage-service/Dockerfile
+    depends_on:
+      collection-service:
+        condition: service_started
+      postgres:
+        condition: service_healthy
 
   collection-service:
     build:
@@ -68,5 +78,5 @@ services:
     profiles:
       - test
     depends_on:
-      restful-api:
+      api-gateway:
         condition: service_healthy

@@ -1,0 +1,7 @@
+http:
+  host: api-gateway
+  port: 8080
+
+storage_service:
+  host: storage-service
+  port: 5051

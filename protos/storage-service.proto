@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+package storage_service;
+
+option go_package = "gen/storage_service/golang";
+
+message Transaction {
+	string id = 1;
+	string userId = 2;
+	string target = 3;
+	string description = 4;
+	string type = 5;
+	string category = 6;
+	double cost = 7;
+	string timestamp = 8;
+	bool withAutoCategory = 9;
+}
+
+// Requests ----------------------------------
+
+message PostTransactionRequest {
+	Transaction tx = 1;
+}
+
+message GetTransactionsInPeriodRequest {
+    string begin = 1;
+    string end = 2;
+}
+
+// Responses ---------------------------------
+
+message PostTransactionResponse {
+	string txId = 1;
+}
+
+message GetTransactionsInPeriodResponse {
+    repeated Transaction txs = 1;
+}
+
+// Service -----------------------------------
+
+service Storage {
+	rpc GetTransactionsInPeriod(GetTransactionsInPeriodRequest) returns (GetTransactionsInPeriodResponse);
+    rpc PostTransaction(PostTransactionRequest) returns (PostTransactionResponse);
+}

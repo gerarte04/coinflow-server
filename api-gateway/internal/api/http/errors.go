@@ -1,0 +1,59 @@
+package http
+
+import (
+	"fmt"
+	"log"
+	"net/http"
+
+	"github.com/gin-gonic/gin"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
+)
+
+var (
+	statusCodes = map[codes.Code]int{
+		codes.InvalidArgument: http.StatusBadRequest,
+		codes.NotFound: http.StatusNotFound,
+		codes.PermissionDenied: http.StatusForbidden,
+		codes.Internal: http.StatusInternalServerError,
+	}
+
+	codeMessages = map[int]string{
+		http.StatusBadRequest: "bad request",
+		http.StatusInternalServerError: "internal error",
+		http.StatusForbidden: "forbidden",
+		http.StatusNotFound: "not found",
+	}
+)
+
+func WriteGrpcError(c *gin.Context, err error) {
+	st, ok := status.FromError(err)
+	grpcCode := codes.Internal
+
+	if ok {
+		grpcCode = st.Code()
+	}
+
+	httpCode, ok := statusCodes[grpcCode]
+	if !ok {
+		httpCode = http.StatusInternalServerError
+	}
+
+	message, ok := codeMessages[httpCode]
+	
+	if !ok {
+		message = "\\undocumented status\\"
+	}
+
+	c.JSON(httpCode, gin.H{
+		"error": fmt.Sprintf("%s: %s", message, err.Error()),
+	})
+}
+
+func WriteParseError(c *gin.Context, err error) {
+	log.Printf("%s", err.Error())
+
+	c.JSON(http.StatusBadRequest, gin.H{
+		"error": fmt.Sprintf("internal error: %s", err.Error()),
+	})
+}
