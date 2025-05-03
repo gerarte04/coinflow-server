@@ -85,3 +85,17 @@ func (mr *MockTransactionsRepoMockRecorder) PostTransactionWithoutCategory(tx an
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PostTransactionWithoutCategory", reflect.TypeOf((*MockTransactionsRepo)(nil).PostTransactionWithoutCategory), tx)
 }
+
+// PutCategory mocks base method.
+func (m *MockTransactionsRepo) PutCategory(txId uuid.UUID, category string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "PutCategory", txId, category)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// PutCategory indicates an expected call of PutCategory.
+func (mr *MockTransactionsRepoMockRecorder) PutCategory(txId, category any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PutCategory", reflect.TypeOf((*MockTransactionsRepo)(nil).PutCategory), txId, category)
+}

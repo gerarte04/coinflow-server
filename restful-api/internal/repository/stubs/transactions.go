@@ -23,7 +23,7 @@ func (r *TransactionsRepoStub) GetTransaction(tsId uuid.UUID) (*models.Transacti
 	ts, ok := r.mp[tsId]
 
 	if !ok {
-		return nil, fmt.Errorf("%s: %w", method, repository.ErrorTransactionKeyNotFound)
+		return nil, fmt.Errorf("%s: %w", method, repository.ErrorTxIdNotFound)
 	}
 
 	return ts, nil
@@ -48,7 +48,7 @@ func (r *TransactionsRepoStub) PostTransaction(ts *models.Transaction) (uuid.UUI
 	id := uuid.New()
 
 	if _, ok := r.mp[id]; ok {
-		return uuid.Nil, fmt.Errorf("%s: %w", method, repository.ErrorTransactionKeyExists)
+		return uuid.Nil, fmt.Errorf("%s: %w", method, repository.ErrorTxIdAlreadyExists)
 	}
 
 	tsCopy := *ts

@@ -4,6 +4,7 @@ import (
 	"coinflow/coinflow-server/collection-service/config"
 	"coinflow/coinflow-server/collection-service/internal/models"
 	"coinflow/coinflow-server/collection-service/internal/repository"
+	"coinflow/coinflow-server/pkg/utils"
 	"context"
 	"fmt"
 	"net/http"
@@ -17,17 +18,15 @@ import (
 type CollectionService struct {
 	httpCli *http.Client
 	grpcCli pb.ClassificationClient
-	svcCfg config.ServicesConfig
+	tlsCfg utils.TranslateConfig
 	clfSvcCfg config.GrpcConfig
-	txRepo repository.TransactionsRepo
 	catsRepo repository.CategoriesRepo
 	categories []string
 }
 
 func NewCollectionService(
-	svcCfg config.ServicesConfig,
+	tlsCfg utils.TranslateConfig,
 	clfSvcCfg config.GrpcConfig,
-	txRepo repository.TransactionsRepo,
 	catsRepo repository.CategoriesRepo,
 ) (*CollectionService, error) {
 	const method = "service.NewCollectionService"
@@ -48,35 +47,29 @@ func NewCollectionService(
 	return &CollectionService{
 		httpCli: &http.Client{},
 		grpcCli: pb.NewClassificationClient(conn),
-		svcCfg: svcCfg,
+		tlsCfg: tlsCfg,
 		clfSvcCfg: clfSvcCfg,
-		txRepo: txRepo,
 		catsRepo: catsRepo,
 		categories: categories,
 	}, nil
 }
 
-func (s *CollectionService) CollectCategory(tx *models.Transaction) error {
+func (s *CollectionService) CollectCategory(ctx context.Context, tx *models.Transaction) (string, error) {
 	const op = "CollectionService.CollectCategory"
 
-	text, err := TranslateToLanguage(s.httpCli, tx.Description, LanguageEnglish, s.svcCfg)
+	text, err := utils.TranslateToLanguage(s.httpCli, tx.Description, utils.LanguageEnglish, s.tlsCfg)
 	if err != nil {
-		return err
+		return "", err
 	}
 
-	resp, err := s.grpcCli.GetTextCategory(context.Background(), &pb.GetTextCategoryRequest{
+	resp, err := s.grpcCli.GetTextCategory(ctx, &pb.GetTextCategoryRequest{
 		Text: text,
 		Labels: s.categories,
 	})
 
 	if err != nil {
-		return fmt.Errorf("%s: %w", op, err)
+		return "", fmt.Errorf("%s: %w", op, err)
 	}
 
-	err = s.txRepo.PutCategory(tx.Id, resp.Category)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return resp.Category, nil
 }

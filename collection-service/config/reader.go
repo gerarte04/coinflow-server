@@ -2,6 +2,7 @@ package config
 
 import (
 	"coinflow/coinflow-server/pkg/database/postgres"
+	"coinflow/coinflow-server/pkg/utils"
 	"log"
 	"os"
 
@@ -13,15 +14,10 @@ type GrpcConfig struct {
 	Port 					string 						`yaml:"port" env-required:"true"`
 }
 
-type ServicesConfig struct {
-	TranslateApiAddress 	string 						`yaml:"translate_api_address" env:"TRANSLATE_API_ADDRESS"`
-	TranslateApiKey 		string 						`yaml:"translate_api_key" env:"TRANSLATE_API_KEY"`
-}
-
 type Config struct {
 	ClassificationSvcCfg 	GrpcConfig 					`yaml:"classification_service" env-required:"true"`
 	CollectionSvcCfg 		GrpcConfig 					`yaml:"collection_service" env-required:"true"`
-	SvcCfg 					ServicesConfig 				`yaml:"services"`
+	SvcCfg 					utils.TranslateConfig		`yaml:"translate"`
 	PostgresCfg 			postgres.PostgresConfig 	`yaml:"postgres" env-required:"true"`
 }
 

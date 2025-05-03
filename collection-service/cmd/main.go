@@ -30,9 +30,8 @@ func main() {
 		log.Fatalf("%s", err.Error())
 	}
 
-	txRepo := postgres.NewTransactionsRepo(dbConn)
 	catsRepo := postgres.NewCategoriesRepo(dbConn)
-	collectSvc, err := service.NewCollectionService(cfg.SvcCfg, cfg.ClassificationSvcCfg, txRepo, catsRepo)
+	collectSvc, err := service.NewCollectionService(cfg.SvcCfg, cfg.ClassificationSvcCfg, catsRepo)
 
 	if err != nil {
 		log.Fatalf("%s", err.Error())

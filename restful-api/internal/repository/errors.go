@@ -3,10 +3,10 @@ package repository
 import "errors"
 
 var (
-	ErrorTransactionKeyExists = errors.New("Transaction with such key already exists")
-	ErrorTransactionKeyNotFound = errors.New("No transaction with such key exists")
+	ErrorTxIdAlreadyExists = errors.New("Transaction with such ID already exists")
+	ErrorTxIdNotFound = errors.New("No transaction with such ID exists")
 
-	ErrorUserKeyExists = errors.New("User with such key already exists")
-	ErrorUserKeyNotFound = errors.New("No user with such key exists")
+	ErrorUserIdAlreadyExists = errors.New("User with such ID already exists")
+	ErrorUserIdNotFound = errors.New("No user with such ID exists")
 	ErrorNoSuchCredExists = errors.New("No user with such credentials exists")
 )

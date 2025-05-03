@@ -32,7 +32,7 @@ func (r *TransactionsRepo) GetTransaction(txId uuid.UUID) (*models.Transaction, 
 	err := row.Scan(&tx.Id, &tx.UserId, &tx.Type, &tx.Target, &tx.Description, &tx.Category, &tx.Cost, &tx.Timestamp)
 
 	if err == pgx.ErrNoRows {
-		return nil, fmt.Errorf("%s: %w", op, repository.ErrorTransactionKeyNotFound)
+		return nil, fmt.Errorf("%s: %w", op, repository.ErrorTxIdNotFound)
 	} else if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
@@ -55,7 +55,7 @@ func (r *TransactionsRepo) PostTransaction(tx *models.Transaction) (uuid.UUID, e
 	err := row.Scan(&txId)
 
 	if dbErr := postgres.DetectError(err); dbErr == database.ErrorUniqueViolation {
-		return uuid.Nil, fmt.Errorf("%s: %w", op, repository.ErrorTransactionKeyExists)
+		return uuid.Nil, fmt.Errorf("%s: %w", op, repository.ErrorTxIdAlreadyExists)
 	} else if err != nil {
 		return uuid.Nil, fmt.Errorf("%s: %w", op, err)
 	}
@@ -78,10 +78,27 @@ func (r *TransactionsRepo) PostTransactionWithoutCategory(tx *models.Transaction
 	err := row.Scan(&txId)
 
 	if dbErr := postgres.DetectError(err); dbErr == database.ErrorUniqueViolation {
-		return uuid.Nil, fmt.Errorf("%s: %w", op, repository.ErrorTransactionKeyExists)
+		return uuid.Nil, fmt.Errorf("%s: %w", op, repository.ErrorTxIdAlreadyExists)
 	} else if err != nil {
 		return uuid.Nil, fmt.Errorf("%s: %w", op, err)
 	}
 
 	return txId, nil
+}
+
+func (r *TransactionsRepo) PutCategory(tsId uuid.UUID, category string) error {
+	const op = "TransactionsRepo.PutCategory"
+
+	tag, err := r.conn.Exec(context.Background(),
+		"UPDATE transactions SET category = $1 WHERE id = $2",
+		category, tsId,
+	)
+
+	if err != nil {
+		return fmt.Errorf("%s: %w", op, err)
+	} else if tag.RowsAffected() != 1 {
+		return fmt.Errorf("%s: %w", op, repository.ErrorTxIdNotFound)
+	}
+
+	return nil
 }

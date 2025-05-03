@@ -17,8 +17,8 @@ var (
 		utils.ErrorInvalidId: http.StatusBadRequest,
 		types.ErrorParseTransaction: http.StatusBadRequest,
 
-		repository.ErrorTransactionKeyNotFound: http.StatusNotFound,
-		repository.ErrorUserKeyNotFound: http.StatusNotFound,
+		repository.ErrorTxIdNotFound: http.StatusNotFound,
+		repository.ErrorUserIdNotFound: http.StatusNotFound,
 		repository.ErrorNoSuchCredExists: http.StatusForbidden,
 	}
 

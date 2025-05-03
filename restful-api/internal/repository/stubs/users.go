@@ -20,7 +20,7 @@ func (r *UsersRepoStub) GetUser(usrId string) (*models.User, error) {
 	usr, ok := r.mp[usrId]
 
 	if !ok {
-		return nil, fmt.Errorf("%s: %w", method, repository.ErrorUserKeyNotFound)
+		return nil, fmt.Errorf("%s: %w", method, repository.ErrorUserIdNotFound)
 	}
 
 	return &usr, nil
@@ -43,7 +43,7 @@ func (r *UsersRepoStub) PostUser(usr *models.User) error {
 	const method = "UsersRepoStub.PostUser"
 
 	if _, ok := r.mp[usr.Id]; ok {
-		return fmt.Errorf("%s: %w", method, repository.ErrorUserKeyExists)
+		return fmt.Errorf("%s: %w", method, repository.ErrorUserIdAlreadyExists)
 	}
 
 	r.mp[usr.Id] = *usr

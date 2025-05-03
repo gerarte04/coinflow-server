@@ -24,12 +24,12 @@ func (s *CollectionServer) GetTransactionCategory(ctx context.Context, r *pb.Get
 		return nil, CreateRequestObjectStatusError(err)
 	}
 
-	err = s.collectSvc.CollectCategory(reqObj.Tx)
+	cat, err := s.collectSvc.CollectCategory(ctx, reqObj.Tx)
 	if err != nil {
 	    return nil, CreateResultStatusError(err)
 	}
 
-	resp, err := types.CreateGetTransactionCategoryResponse("category")
+	resp, err := types.CreateGetTransactionCategoryResponse(cat)
 	if err != nil {
 		return nil, CreateResponseStatusError(err)
 	}

@@ -45,6 +45,29 @@ func (s *TransactionsService) GetTransaction(txId uuid.UUID) (*models.Transactio
 	return s.txRepo.GetTransaction(txId)
 }
 
+func (s *TransactionsService) GetAndPutCategory(tx *models.Transaction) error {
+	const op = "TransactionsService.GetAndPutCategory"
+
+	pbTx, err := ConvertModelTransactionToProtobuf(tx)
+	if err != nil {
+		return fmt.Errorf("%s: %w", op, err)
+	}
+
+	ctx := context.Background()
+
+	resp, err := s.collectClient.GetTransactionCategory(ctx, &pb.GetTransactionCategoryRequest{Tx: pbTx})
+	if err != nil {
+		return fmt.Errorf("%s: received error from collector: %w", op, err)
+	}
+
+	err = s.txRepo.PutCategory(tx.Id, resp.Category)
+	if err != nil {
+		return fmt.Errorf("%s: %w", op, err)
+	}
+
+	return nil
+}
+
 func (s *TransactionsService) PostTransaction(tx *models.Transaction) (uuid.UUID, error) {
 	const op = "TransactionsService.PostTransaction"
 
@@ -57,21 +80,15 @@ func (s *TransactionsService) PostTransaction(tx *models.Transaction) (uuid.UUID
 			return uuid.Nil, err
 		}
 
-		go func() {
-			pbTx, err := ConvertModelTransactionToProtobuf(tx)
-			if err != nil {
-				log.Printf("%s: %s", op, err.Error())
-			}
-	
-			pbTx.Id = txId.String()
+		tx.Id = txId
 
-			//ctx, cancel := context.WithTimeout(context.Background(), s.grpcConfig.RequestExpireTimeout)
-			ctx := context.Background()
-			//defer cancel()
-		
-			_, err = s.collectClient.GetTransactionCategory(ctx, &pb.GetTransactionCategoryRequest{Tx: pbTx})
+		go func() { 
+			err := s.GetAndPutCategory(tx)
+
 			if err != nil {
-				log.Printf("received error from collector: %s", err.Error())
+				log.Printf("[WARN] failed to put category: %s", err.Error())
+			} else {
+				log.Printf("[INFO] successfully got and put category")
 			}
 		}()
 	} else {

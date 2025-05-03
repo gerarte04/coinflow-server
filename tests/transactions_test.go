@@ -32,7 +32,8 @@ var (
 
 	exampleInvalidId = "abcdefgh123"
 
-	clfTimeout = time.Second * 5
+	clfTimeout = time.Second * 15
+	clfPeriod = time.Millisecond * 2500
 )
 
 func commitPayload(t *testing.T, payload any) (*http.Response, uuid.UUID) {
@@ -107,10 +108,21 @@ func TestTransactions_CommitWithAutoCategory(t *testing.T) {
 
 	_, txId := commitPayload(t, payload)
 
-	time.Sleep(clfTimeout)
+	var resp *http.Response
+	var decoded map[string]any
+	endTime := time.Now().Add(clfTimeout)
+	
+	for time.Now().Before(endTime) {
+		resp, decoded = getById(t, txId.String())
+		require.Equal(t, resp.StatusCode, http.StatusOK)
+		require.Contains(t, decoded, "category")
+		
+		if decoded["category"] != "other" {
+			break
+		}
 
-	resp, decoded := getById(t, txId.String())
-	require.Equal(t, resp.StatusCode, http.StatusOK)
+		time.Sleep(clfPeriod)
+	}
 
 	validateResult(t, decoded, exampleTxPayload,
 		ValidateOpt{Key: "timestamp", CheckValue: false},
