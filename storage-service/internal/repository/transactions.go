@@ -9,6 +9,7 @@ import (
 
 //go:generate mockgen -source transactions.go -destination mocks/transactions_mock.go -package mocks
 type TransactionsRepo interface {
+	GetTransaction(txId uuid.UUID) (*models.Transaction, error)
 	GetTransactionsInPeriod(begin time.Time, end time.Time) ([]*models.Transaction, error)
 	PostTransaction(tx *models.Transaction) (uuid.UUID, error)
 	PostTransactionWithoutCategory(tx *models.Transaction) (uuid.UUID, error)

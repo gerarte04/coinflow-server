@@ -42,6 +42,10 @@ func NewTransactionsService(
 	}, nil
 }
 
+func (s *TransactionsService) GetTransaction(txId uuid.UUID) (*models.Transaction, error) {
+	return s.txRepo.GetTransaction(txId)
+}
+
 func (s *TransactionsService) GetTransactionsInPeriod(begin time.Time, end time.Time) ([]*models.Transaction, error) {
 	return s.txRepo.GetTransactionsInPeriod(begin, end)
 }

@@ -129,27 +129,27 @@ func (x *Transaction) GetWithAutoCategory() bool {
 	return false
 }
 
-type PostTransactionRequest struct {
+type GetTransactionRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Tx            *Transaction           `protobuf:"bytes,1,opt,name=tx,proto3" json:"tx,omitempty"`
+	TxId          string                 `protobuf:"bytes,1,opt,name=txId,proto3" json:"txId,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *PostTransactionRequest) Reset() {
-	*x = PostTransactionRequest{}
+func (x *GetTransactionRequest) Reset() {
+	*x = GetTransactionRequest{}
 	mi := &file_protos_storage_service_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *PostTransactionRequest) String() string {
+func (x *GetTransactionRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*PostTransactionRequest) ProtoMessage() {}
+func (*GetTransactionRequest) ProtoMessage() {}
 
-func (x *PostTransactionRequest) ProtoReflect() protoreflect.Message {
+func (x *GetTransactionRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_protos_storage_service_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -161,16 +161,16 @@ func (x *PostTransactionRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use PostTransactionRequest.ProtoReflect.Descriptor instead.
-func (*PostTransactionRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use GetTransactionRequest.ProtoReflect.Descriptor instead.
+func (*GetTransactionRequest) Descriptor() ([]byte, []int) {
 	return file_protos_storage_service_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *PostTransactionRequest) GetTx() *Transaction {
+func (x *GetTransactionRequest) GetTxId() string {
 	if x != nil {
-		return x.Tx
+		return x.TxId
 	}
-	return nil
+	return ""
 }
 
 type GetTransactionsInPeriodRequest struct {
@@ -225,27 +225,27 @@ func (x *GetTransactionsInPeriodRequest) GetEnd() string {
 	return ""
 }
 
-type PostTransactionResponse struct {
+type PostTransactionRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	TxId          string                 `protobuf:"bytes,1,opt,name=txId,proto3" json:"txId,omitempty"`
+	Tx            *Transaction           `protobuf:"bytes,1,opt,name=tx,proto3" json:"tx,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *PostTransactionResponse) Reset() {
-	*x = PostTransactionResponse{}
+func (x *PostTransactionRequest) Reset() {
+	*x = PostTransactionRequest{}
 	mi := &file_protos_storage_service_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *PostTransactionResponse) String() string {
+func (x *PostTransactionRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*PostTransactionResponse) ProtoMessage() {}
+func (*PostTransactionRequest) ProtoMessage() {}
 
-func (x *PostTransactionResponse) ProtoReflect() protoreflect.Message {
+func (x *PostTransactionRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_protos_storage_service_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -257,16 +257,60 @@ func (x *PostTransactionResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use PostTransactionResponse.ProtoReflect.Descriptor instead.
-func (*PostTransactionResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use PostTransactionRequest.ProtoReflect.Descriptor instead.
+func (*PostTransactionRequest) Descriptor() ([]byte, []int) {
 	return file_protos_storage_service_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *PostTransactionResponse) GetTxId() string {
+func (x *PostTransactionRequest) GetTx() *Transaction {
 	if x != nil {
-		return x.TxId
+		return x.Tx
 	}
-	return ""
+	return nil
+}
+
+type GetTransactionResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Tx            *Transaction           `protobuf:"bytes,1,opt,name=tx,proto3" json:"tx,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetTransactionResponse) Reset() {
+	*x = GetTransactionResponse{}
+	mi := &file_protos_storage_service_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetTransactionResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetTransactionResponse) ProtoMessage() {}
+
+func (x *GetTransactionResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_protos_storage_service_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetTransactionResponse.ProtoReflect.Descriptor instead.
+func (*GetTransactionResponse) Descriptor() ([]byte, []int) {
+	return file_protos_storage_service_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *GetTransactionResponse) GetTx() *Transaction {
+	if x != nil {
+		return x.Tx
+	}
+	return nil
 }
 
 type GetTransactionsInPeriodResponse struct {
@@ -278,7 +322,7 @@ type GetTransactionsInPeriodResponse struct {
 
 func (x *GetTransactionsInPeriodResponse) Reset() {
 	*x = GetTransactionsInPeriodResponse{}
-	mi := &file_protos_storage_service_proto_msgTypes[4]
+	mi := &file_protos_storage_service_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -290,7 +334,7 @@ func (x *GetTransactionsInPeriodResponse) String() string {
 func (*GetTransactionsInPeriodResponse) ProtoMessage() {}
 
 func (x *GetTransactionsInPeriodResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_protos_storage_service_proto_msgTypes[4]
+	mi := &file_protos_storage_service_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -303,7 +347,7 @@ func (x *GetTransactionsInPeriodResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetTransactionsInPeriodResponse.ProtoReflect.Descriptor instead.
 func (*GetTransactionsInPeriodResponse) Descriptor() ([]byte, []int) {
-	return file_protos_storage_service_proto_rawDescGZIP(), []int{4}
+	return file_protos_storage_service_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *GetTransactionsInPeriodResponse) GetTxs() []*Transaction {
@@ -311,6 +355,50 @@ func (x *GetTransactionsInPeriodResponse) GetTxs() []*Transaction {
 		return x.Txs
 	}
 	return nil
+}
+
+type PostTransactionResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	TxId          string                 `protobuf:"bytes,1,opt,name=txId,proto3" json:"txId,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PostTransactionResponse) Reset() {
+	*x = PostTransactionResponse{}
+	mi := &file_protos_storage_service_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PostTransactionResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PostTransactionResponse) ProtoMessage() {}
+
+func (x *PostTransactionResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_protos_storage_service_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PostTransactionResponse.ProtoReflect.Descriptor instead.
+func (*PostTransactionResponse) Descriptor() ([]byte, []int) {
+	return file_protos_storage_service_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *PostTransactionResponse) GetTxId() string {
+	if x != nil {
+		return x.TxId
+	}
+	return ""
 }
 
 var File_protos_storage_service_proto protoreflect.FileDescriptor
@@ -327,17 +415,22 @@ const file_protos_storage_service_proto_rawDesc = "" +
 	"\bcategory\x18\x06 \x01(\tR\bcategory\x12\x12\n" +
 	"\x04cost\x18\a \x01(\x01R\x04cost\x12\x1c\n" +
 	"\ttimestamp\x18\b \x01(\tR\ttimestamp\x12*\n" +
-	"\x10withAutoCategory\x18\t \x01(\bR\x10withAutoCategory\"F\n" +
-	"\x16PostTransactionRequest\x12,\n" +
-	"\x02tx\x18\x01 \x01(\v2\x1c.storage_service.TransactionR\x02tx\"H\n" +
+	"\x10withAutoCategory\x18\t \x01(\bR\x10withAutoCategory\"+\n" +
+	"\x15GetTransactionRequest\x12\x12\n" +
+	"\x04txId\x18\x01 \x01(\tR\x04txId\"H\n" +
 	"\x1eGetTransactionsInPeriodRequest\x12\x14\n" +
 	"\x05begin\x18\x01 \x01(\tR\x05begin\x12\x10\n" +
-	"\x03end\x18\x02 \x01(\tR\x03end\"-\n" +
-	"\x17PostTransactionResponse\x12\x12\n" +
-	"\x04txId\x18\x01 \x01(\tR\x04txId\"Q\n" +
+	"\x03end\x18\x02 \x01(\tR\x03end\"F\n" +
+	"\x16PostTransactionRequest\x12,\n" +
+	"\x02tx\x18\x01 \x01(\v2\x1c.storage_service.TransactionR\x02tx\"F\n" +
+	"\x16GetTransactionResponse\x12,\n" +
+	"\x02tx\x18\x01 \x01(\v2\x1c.storage_service.TransactionR\x02tx\"Q\n" +
 	"\x1fGetTransactionsInPeriodResponse\x12.\n" +
-	"\x03txs\x18\x01 \x03(\v2\x1c.storage_service.TransactionR\x03txs2\xed\x01\n" +
-	"\aStorage\x12|\n" +
+	"\x03txs\x18\x01 \x03(\v2\x1c.storage_service.TransactionR\x03txs\"-\n" +
+	"\x17PostTransactionResponse\x12\x12\n" +
+	"\x04txId\x18\x01 \x01(\tR\x04txId2\xd0\x02\n" +
+	"\aStorage\x12a\n" +
+	"\x0eGetTransaction\x12&.storage_service.GetTransactionRequest\x1a'.storage_service.GetTransactionResponse\x12|\n" +
 	"\x17GetTransactionsInPeriod\x12/.storage_service.GetTransactionsInPeriodRequest\x1a0.storage_service.GetTransactionsInPeriodResponse\x12d\n" +
 	"\x0fPostTransaction\x12'.storage_service.PostTransactionRequest\x1a(.storage_service.PostTransactionResponseB\x1cZ\x1agen/storage_service/golangb\x06proto3"
 
@@ -353,26 +446,31 @@ func file_protos_storage_service_proto_rawDescGZIP() []byte {
 	return file_protos_storage_service_proto_rawDescData
 }
 
-var file_protos_storage_service_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
+var file_protos_storage_service_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
 var file_protos_storage_service_proto_goTypes = []any{
 	(*Transaction)(nil),                     // 0: storage_service.Transaction
-	(*PostTransactionRequest)(nil),          // 1: storage_service.PostTransactionRequest
+	(*GetTransactionRequest)(nil),           // 1: storage_service.GetTransactionRequest
 	(*GetTransactionsInPeriodRequest)(nil),  // 2: storage_service.GetTransactionsInPeriodRequest
-	(*PostTransactionResponse)(nil),         // 3: storage_service.PostTransactionResponse
-	(*GetTransactionsInPeriodResponse)(nil), // 4: storage_service.GetTransactionsInPeriodResponse
+	(*PostTransactionRequest)(nil),          // 3: storage_service.PostTransactionRequest
+	(*GetTransactionResponse)(nil),          // 4: storage_service.GetTransactionResponse
+	(*GetTransactionsInPeriodResponse)(nil), // 5: storage_service.GetTransactionsInPeriodResponse
+	(*PostTransactionResponse)(nil),         // 6: storage_service.PostTransactionResponse
 }
 var file_protos_storage_service_proto_depIdxs = []int32{
 	0, // 0: storage_service.PostTransactionRequest.tx:type_name -> storage_service.Transaction
-	0, // 1: storage_service.GetTransactionsInPeriodResponse.txs:type_name -> storage_service.Transaction
-	2, // 2: storage_service.Storage.GetTransactionsInPeriod:input_type -> storage_service.GetTransactionsInPeriodRequest
-	1, // 3: storage_service.Storage.PostTransaction:input_type -> storage_service.PostTransactionRequest
-	4, // 4: storage_service.Storage.GetTransactionsInPeriod:output_type -> storage_service.GetTransactionsInPeriodResponse
-	3, // 5: storage_service.Storage.PostTransaction:output_type -> storage_service.PostTransactionResponse
-	4, // [4:6] is the sub-list for method output_type
-	2, // [2:4] is the sub-list for method input_type
-	2, // [2:2] is the sub-list for extension type_name
-	2, // [2:2] is the sub-list for extension extendee
-	0, // [0:2] is the sub-list for field type_name
+	0, // 1: storage_service.GetTransactionResponse.tx:type_name -> storage_service.Transaction
+	0, // 2: storage_service.GetTransactionsInPeriodResponse.txs:type_name -> storage_service.Transaction
+	1, // 3: storage_service.Storage.GetTransaction:input_type -> storage_service.GetTransactionRequest
+	2, // 4: storage_service.Storage.GetTransactionsInPeriod:input_type -> storage_service.GetTransactionsInPeriodRequest
+	3, // 5: storage_service.Storage.PostTransaction:input_type -> storage_service.PostTransactionRequest
+	4, // 6: storage_service.Storage.GetTransaction:output_type -> storage_service.GetTransactionResponse
+	5, // 7: storage_service.Storage.GetTransactionsInPeriod:output_type -> storage_service.GetTransactionsInPeriodResponse
+	6, // 8: storage_service.Storage.PostTransaction:output_type -> storage_service.PostTransactionResponse
+	6, // [6:9] is the sub-list for method output_type
+	3, // [3:6] is the sub-list for method input_type
+	3, // [3:3] is the sub-list for extension type_name
+	3, // [3:3] is the sub-list for extension extendee
+	0, // [0:3] is the sub-list for field type_name
 }
 
 func init() { file_protos_storage_service_proto_init() }
@@ -386,7 +484,7 @@ func file_protos_storage_service_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_protos_storage_service_proto_rawDesc), len(file_protos_storage_service_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   5,
+			NumMessages:   7,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

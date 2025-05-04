@@ -7,6 +7,7 @@ import (
 )
 
 const (
+	GetTransactionPath = "/transaction/id/:tx_id"
 	GetTransactionsInPeriodPath = "/transaction/period"
 	PostTransactionPath = "/commit"
 )
@@ -19,6 +20,7 @@ func (s *CoinflowServer) RouteHandlers(engine *gin.Engine, opts ...pkgHandlers.R
 
 func (s *CoinflowServer) WithStandardUserHandlers() pkgHandlers.RouterOption {
 	return func(engine *gin.Engine) {
+		engine.GET(GetTransactionPath, s.GetTransactionHandler)
 		engine.POST(GetTransactionsInPeriodPath, s.GetTransactionsInPeriodHandler)
 		engine.POST(PostTransactionPath, s.PostTransactionHandler)
 	}

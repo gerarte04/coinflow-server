@@ -27,14 +27,9 @@ var (
 )
 
 func WriteGrpcError(c *gin.Context, err error) {
-	st, ok := status.FromError(err)
-	grpcCode := codes.Internal
-
-	if ok {
-		grpcCode = st.Code()
-	}
-
+	grpcCode := status.Code(err)
 	httpCode, ok := statusCodes[grpcCode]
+
 	if !ok {
 		httpCode = http.StatusInternalServerError
 	}

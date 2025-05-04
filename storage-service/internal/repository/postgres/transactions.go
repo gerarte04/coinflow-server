@@ -21,6 +21,26 @@ func NewTransactionsRepo(conn *pgx.Conn) *TransactionsRepo {
 	return &TransactionsRepo{conn: conn}
 }
 
+func (r *TransactionsRepo) GetTransaction(txId uuid.UUID) (*models.Transaction, error) {
+	const op = "TransactionsRepo.GetTransaction"
+
+	row := r.conn.QueryRow(
+		context.Background(),
+		"SELECT * FROM transactions WHERE id = $1", txId,
+	)
+
+	var tx models.Transaction
+	err := row.Scan(&tx.Id, &tx.UserId, &tx.Type, &tx.Target, &tx.Description, &tx.Category, &tx.Cost, &tx.Timestamp)
+
+	if err == pgx.ErrNoRows {
+		return nil, fmt.Errorf("%s: %w", op, repository.ErrorTxIdNotFound)
+	} else if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return &tx, nil
+}
+
 func (r *TransactionsRepo) GetTransactionsInPeriod(begin time.Time, end time.Time) ([]*models.Transaction, error) {
 	const op = "TransactionsRepo.GetTransactionsInPeriod"
 

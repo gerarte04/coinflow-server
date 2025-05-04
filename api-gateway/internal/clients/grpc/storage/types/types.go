@@ -16,13 +16,25 @@ func CreatePostTransactionRequest(tx *models.Transaction) (*pb.PostTransactionRe
 	var pbTx pb.Transaction
 
 	if err := copier.Copy(&pbTx, tx); err != nil {
-		return nil, fmt.Errorf("%s:%w", op, err)
+		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
 	return &pb.PostTransactionRequest{Tx: &pbTx}, nil
 }
 
 // Responses -----------------------------------------------
+
+func CreateGetTransactionResponse(resp *pb.GetTransactionResponse) (*models.Transaction, error) {
+	const op = "CreateGetTransactionResponse"
+
+	var tx models.Transaction
+
+	if err := copier.Copy(&tx, resp.Tx); err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return &tx, nil
+}
 
 func CreateGetTransactionsInPeriodResponse(resp *pb.GetTransactionsInPeriodResponse) ([]*models.Transaction, error) {
 	const op = "CreateGetTransactionsInPeriodResponse"
@@ -32,8 +44,8 @@ func CreateGetTransactionsInPeriodResponse(resp *pb.GetTransactionsInPeriodRespo
 	for i, pbTx := range resp.Txs {
 		var tx models.Transaction
 
-		if err := copier.Copy(&tx, &pbTx); err != nil {
-			return nil, fmt.Errorf("%s:%w", op, err)
+		if err := copier.Copy(&tx, pbTx); err != nil {
+			return nil, fmt.Errorf("%s: %w", op, err)
 		}
 
 		txs[i] = &tx

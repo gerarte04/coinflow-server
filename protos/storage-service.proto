@@ -18,28 +18,39 @@ message Transaction {
 
 // Requests ----------------------------------
 
+message GetTransactionRequest {
+	string txId = 1;
+}
+
+message GetTransactionsInPeriodRequest {
+	string begin = 1;
+	string end = 2;
+}
+
 message PostTransactionRequest {
 	Transaction tx = 1;
 }
 
-message GetTransactionsInPeriodRequest {
-    string begin = 1;
-    string end = 2;
-}
 
 // Responses ---------------------------------
+
+message GetTransactionResponse {
+	Transaction tx = 1;
+}
+
+message GetTransactionsInPeriodResponse {
+	repeated Transaction txs = 1;
+}
 
 message PostTransactionResponse {
 	string txId = 1;
 }
 
-message GetTransactionsInPeriodResponse {
-    repeated Transaction txs = 1;
-}
 
 // Service -----------------------------------
 
 service Storage {
+	rpc GetTransaction(GetTransactionRequest) returns (GetTransactionResponse);
 	rpc GetTransactionsInPeriod(GetTransactionsInPeriodRequest) returns (GetTransactionsInPeriodResponse);
     rpc PostTransaction(PostTransactionRequest) returns (PostTransactionResponse);
 }

@@ -18,6 +18,25 @@ func NewStorageServer(txService usecases.TransactionsService) *StorageServer {
 	}
 }
 
+func (s *StorageServer) GetTransaction(ctx context.Context, r *pb.GetTransactionRequest) (*pb.GetTransactionResponse, error) {
+	reqObj, err := types.CreateGetTransactionRequestObject(r)
+	if err != nil {
+		return nil, CreateRequestObjectStatusError(err)
+	}
+
+	tx, err := s.txService.GetTransaction(reqObj.TxId)
+	if err != nil {
+	    return nil, CreateResultStatusError(err)
+	}
+
+	resp, err := types.CreateGetTransactionResponse(tx)
+	if err != nil {
+		return nil, CreateResponseStatusError(err)
+	}
+
+	return resp, nil
+}
+
 func (s *StorageServer) GetTransactionsInPeriod(ctx context.Context, r *pb.GetTransactionsInPeriodRequest) (*pb.GetTransactionsInPeriodResponse, error) {
 	reqObj, err := types.CreateGetTransactionsInPeriodRequestObject(r)
 	if err != nil {

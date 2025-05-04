@@ -20,6 +20,33 @@ func NewCoinflowServer(storageCli grpc.StorageClient, collectCli grpc.Collection
 	}
 }
 
+// @Summary GetTransaction
+// @Description get transaction by id
+// @Tags transactions
+// @Accept json
+// @Produce json
+// @Param tx_id path string true "Transaction ID"
+// @Success 200 {object} string "OK"
+// @Failure 400 {object} string "Bad request"
+// @Failure 404 {object} string "Not found"
+// @Failure 500 {object} string "Internal error"
+// @Router /transaction/id/{tx_id} [get]
+func (s *CoinflowServer) GetTransactionHandler(c *gin.Context) {
+	reqObj, err := types.CreateGetTransactionRequestObject(c)
+	if err != nil {
+		WriteParseError(c, err)
+		return
+	}
+
+	res, err := s.storageCli.GetTransaction(reqObj.TxId)
+	if err != nil {
+		WriteGrpcError(c, err)
+		return
+	}
+
+	c.JSON(http.StatusOK, res)
+}
+
 // @Summary GetTransactionsInPeriod
 // @Description get transactions in period between begin and end
 // @Tags transactions
@@ -60,7 +87,7 @@ func (s *CoinflowServer) GetTransactionsInPeriodHandler(c *gin.Context) {
 // @Tags transactions
 // @Accept json
 // @Produce json
-// @Param tx body models.Transaction true "Transaction"
+// @Param tx body models.Transaction true "transaction"
 // @Success 201 {object} string "Created"
 // @Failure 400 {object} string "Bad request"
 // @Failure 500 {object} string "Internal error"

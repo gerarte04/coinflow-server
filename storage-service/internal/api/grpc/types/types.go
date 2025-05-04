@@ -2,6 +2,7 @@ package types
 
 import (
 	pb "coinflow/coinflow-server/gen/storage_service/golang"
+	"coinflow/coinflow-server/pkg/utils"
 	"coinflow/coinflow-server/storage-service/internal/models"
 	"fmt"
 	"time"
@@ -10,11 +11,26 @@ import (
 	"github.com/jinzhu/copier"
 )
 
-// Requests -------------------------------------------
-
 const (
 	TimeLayout = "02/01/2006 15:04:05 -0700"
 )
+
+// Requests -------------------------------------------
+
+type GetTransactionRequestObject struct {
+	TxId uuid.UUID
+}
+
+func CreateGetTransactionRequestObject(r *pb.GetTransactionRequest) (*GetTransactionRequestObject, error) {
+	const op = "CreateGetTransactionsInPeriodRequestObject"
+
+	txId, err := utils.ParseStringToTransactionId(r.TxId)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return &GetTransactionRequestObject{TxId: txId}, nil
+}
 
 type GetTransactionsInPeriodRequestObject struct {
 	Begin time.Time
@@ -54,6 +70,18 @@ func CreatePostTransactionRequestObject(r *pb.PostTransactionRequest) (*PostTran
 }
 
 // Responses -------------------------------------------
+
+func CreateGetTransactionResponse(tx *models.Transaction) (*pb.GetTransactionResponse, error) {
+	const op = "CreateGetTransactionResponse"
+
+	var pbTx pb.Transaction
+
+	if err := copier.Copy(&pbTx, tx); err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return &pb.GetTransactionResponse{Tx: &pbTx}, nil
+}
 
 func CreateGetTransactionsInPeriodResponse(txs []*models.Transaction) (*pb.GetTransactionsInPeriodResponse, error) {
 	const op = "CreateGetTransactionsInPeriodResponse"

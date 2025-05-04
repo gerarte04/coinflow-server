@@ -15,7 +15,7 @@ import (
 
 const (
 	CommitPath = "/commit"
-	TransactionPath = "/transaction"
+	TransactionPath = "/transaction/id"
 )
 
 var (

@@ -8,6 +8,7 @@ import (
 )
 
 type TransactionsService interface {
+	GetTransaction(txId uuid.UUID) (*models.Transaction, error)
 	GetTransactionsInPeriod(begin time.Time, end time.Time) ([]*models.Transaction, error)
 	PostTransaction(tx *models.Transaction) (uuid.UUID, error)
 }

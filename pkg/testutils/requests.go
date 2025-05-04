@@ -1,23 +1,22 @@
 package testutils
 
 import (
-	"bytes"
 	"encoding/json"
 	"net/http"
 	"testing"
+
+	"coinflow/coinflow-server/pkg/http/request"
 
 	"github.com/stretchr/testify/require"
 )
 
 func SendRequest(t *testing.T, method string, url string, payload any) (*http.Response, error) {
-	body, err := json.Marshal(payload)
-	require.NoError(t, err)
-
-	req, err := http.NewRequest(method, url, bytes.NewReader(body))
-	require.NoError(t, err)
+	req := request.NewRequest(method, url).WithBody(payload)
+	require.NoError(t, req.Err())
 
 	cli := http.Client{}
-	return cli.Do(req)
+
+	return cli.Do(req.Http())
 }
 
 func DecodeResponse(t *testing.T, resp *http.Response) (map[string]any) {

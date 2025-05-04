@@ -2,10 +2,28 @@ package types
 
 import (
 	"coinflow/coinflow-server/api-gateway/internal/models"
+	"coinflow/coinflow-server/pkg/utils"
 	"fmt"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
+
+type GetTransactionRequestObject struct {
+	TxId 			uuid.UUID
+}
+
+func CreateGetTransactionRequestObject(c *gin.Context) (*GetTransactionRequestObject, error) {
+	const op = "CreateGetTransactionRequestObject"
+
+	txId, err := utils.ParseStringToTransactionId(c.Param("tx_id"))
+
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return &GetTransactionRequestObject{TxId: txId}, nil
+}
 
 type GetTransactionsInPeriodRequestObject struct {
 	Begin 			string		`json:"begin"`
@@ -14,7 +32,7 @@ type GetTransactionsInPeriodRequestObject struct {
 }
 
 func CreateGetTransactionsInPeriodRequestObject(c *gin.Context) (*GetTransactionsInPeriodRequestObject, error) {
-	const op = "CreateGetTransactionRequestObject"
+	const op = "CreateGetTransactionsInPeriodRequestObject"
 
 	var req GetTransactionsInPeriodRequestObject
 
@@ -26,7 +44,7 @@ func CreateGetTransactionsInPeriodRequestObject(c *gin.Context) (*GetTransaction
 }
 
 type PostTransactionRequestObject struct {
-	Tx *models.Transaction
+	Tx 	*models.Transaction
 }
 
 func CreatePostTransactionRequestObject(c *gin.Context) (*PostTransactionRequestObject, error) {

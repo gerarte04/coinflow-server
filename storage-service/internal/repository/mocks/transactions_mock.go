@@ -42,6 +42,21 @@ func (m *MockTransactionsRepo) EXPECT() *MockTransactionsRepoMockRecorder {
 	return m.recorder
 }
 
+// GetTransaction mocks base method.
+func (m *MockTransactionsRepo) GetTransaction(txId uuid.UUID) (*models.Transaction, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetTransaction", txId)
+	ret0, _ := ret[0].(*models.Transaction)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetTransaction indicates an expected call of GetTransaction.
+func (mr *MockTransactionsRepoMockRecorder) GetTransaction(txId any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTransaction", reflect.TypeOf((*MockTransactionsRepo)(nil).GetTransaction), txId)
+}
+
 // GetTransactionsInPeriod mocks base method.
 func (m *MockTransactionsRepo) GetTransactionsInPeriod(begin, end time.Time) ([]*models.Transaction, error) {
 	m.ctrl.T.Helper()
