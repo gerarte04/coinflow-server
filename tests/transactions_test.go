@@ -98,7 +98,7 @@ func getInPeriod(t *testing.T, begin time.Time, end time.Time) (*http.Response, 
 	return resp, txs
 }
 
-
+// Tests ---------------------------------------------------
 
 func TestTransactions_CommitWithoutAutoCategory(t *testing.T) {
 	payload := tu.GetPayloadCopy(t, exampleTx)

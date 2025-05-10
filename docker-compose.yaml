@@ -16,6 +16,21 @@ services:
       timeout: 1s
       retries: 1
 
+  auth-service:
+    build:
+      context: .
+      dockerfile: auth-service/Dockerfile
+    environment:
+      - JWT_PRIVATE_KEY=${JWT_PRIVATE_KEY}
+      - JWT_PUBLIC_KEY=${JWT_PUBLIC_KEY}
+    ports:
+      - 5053:5053
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
   storage-service:
     build:
       context: .
@@ -67,6 +82,26 @@ services:
     restart: unless-stopped
     tty: true
     stdin_open: true
+
+  redis:
+    image: redis:latest
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - REDIS_USER=${REDIS_USER}
+      - REDIS_USER_PASSWORD=${REDIS_USER_PASSWORD}
+    volumes:
+      - /home/${USER}/.redisdata:/data
+      - ./scripts/redis-init.sh:/etc/redis/init.sh
+    command: > 
+      sh -c "
+        chmod a+x /etc/redis/init.sh &&
+        /etc/redis/init.sh
+      "
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
+      interval: 12s
+      timeout: 10s
+      retries: 3
 
   tester:
     build:

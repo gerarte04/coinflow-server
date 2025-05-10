@@ -22,7 +22,7 @@ type GetTransactionRequestObject struct {
 }
 
 func CreateGetTransactionRequestObject(r *pb.GetTransactionRequest) (*GetTransactionRequestObject, error) {
-	const op = "CreateGetTransactionsInPeriodRequestObject"
+	const op = "CreateGetTransactionRequestObject"
 
 	txId, err := utils.ParseStringToTransactionId(r.TxId)
 	if err != nil {

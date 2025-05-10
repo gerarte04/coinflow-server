@@ -1,0 +1,21 @@
+auth_service:
+  host: auth-service
+  port: 5053
+
+postgres:
+  host: postgres
+  port: 5432
+  db: coinflow_pg_db
+  user: admin
+  password: adminpass
+
+redis:
+  host: redis
+  port: 6379
+  user: admin
+  user_password: adminpass
+  db_number: 0
+
+jwt:
+  access_expiration_time: 30s
+  refresh_expiration_time: 1m
