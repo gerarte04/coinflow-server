@@ -15,5 +15,5 @@ type User struct {
 	Email string
 	Phone string
 
-	RegisterTimestamp time.Time
+	RegistrationTimestamp time.Time
 }

@@ -18,11 +18,15 @@ var (
 	method = jwt.SigningMethodEdDSA
 )
 
-func ValidateJwtToken(tokenStr string, keys *JwtKeys) (uuid.UUID, error) {
+func ValidateJwtToken(tokenStr string, publicKey []byte) (uuid.UUID, error) {
 	const op = "ValidateJwtToken"
 
 	keyFunc := func(token *jwt.Token) (any, error) {
-		return ed25519.PublicKey(keys.PublicKey), nil
+		if token.Method != method {
+			return nil, ErrorUnexpectedSigningMethod
+		}
+
+		return ed25519.PublicKey(publicKey), nil
 	}
 
 	token, err := jwt.Parse(tokenStr, keyFunc,
@@ -51,7 +55,7 @@ func ValidateJwtToken(tokenStr string, keys *JwtKeys) (uuid.UUID, error) {
 	return usrId, nil
 }
 
-func GenerateJwtToken(usrId uuid.UUID, expiresAt time.Time, keys *JwtKeys) (string, error) {
+func GenerateJwtToken(usrId uuid.UUID, expiresAt time.Time, privateKey []byte) (string, error) {
 	const op = "GenerateJwtToken"
 
 	claims := jwt.RegisteredClaims{
@@ -60,7 +64,7 @@ func GenerateJwtToken(usrId uuid.UUID, expiresAt time.Time, keys *JwtKeys) (stri
 	}
 
 	token := jwt.NewWithClaims(method, claims)
-	tokenStr, err := token.SignedString(ed25519.PrivateKey(keys.PrivateKey))
+	tokenStr, err := token.SignedString(ed25519.PrivateKey(privateKey))
 
 	if err != nil {
 		return "", fmt.Errorf("%s: %w", op, err)

@@ -3,10 +3,12 @@ package main
 import (
 	"coinflow/coinflow-server/api-gateway/config"
 	api "coinflow/coinflow-server/api-gateway/internal/api/http"
+	"coinflow/coinflow-server/api-gateway/internal/clients/grpc/auth"
 	"coinflow/coinflow-server/api-gateway/internal/clients/grpc/collect"
 	"coinflow/coinflow-server/api-gateway/internal/clients/grpc/storage"
 	pkgConfig "coinflow/coinflow-server/pkg/config"
 	pkgHandlers "coinflow/coinflow-server/pkg/http/handlers"
+	"encoding/base64"
 	"fmt"
 	"log"
 
@@ -26,14 +28,24 @@ func main() {
 	flg := pkgConfig.ParseFlags()
 	pkgConfig.MustLoadConfig(flg.ConfigPath, &cfg)
 
-	collClient := collect.NewCollectionClient()
-	stClient, err := storage.NewStorageClient(cfg.StorageCfg)
-
+	publicKey, err := base64.StdEncoding.DecodeString(cfg.SecurityCfg.JwtPublicKeyBase64)
 	if err != nil {
 		log.Fatalf("%s", err.Error())
 	}
 
-	cfServer := api.NewCoinflowServer(stClient, collClient)
+	collClient := collect.NewCollectionClient()
+
+	stClient, err := storage.NewStorageClient(cfg.StorageCfg)
+	if err != nil {
+		log.Fatalf("%s", err.Error())
+	}
+
+	authClient, err := auth.NewAuthClient(cfg.AuthCfg)
+	if err != nil {
+		log.Fatalf("%s", err.Error())
+	}
+
+	cfServer := api.NewCoinflowServer(stClient, collClient, authClient, cfg.SecurityCfg)
 
 	engine := gin.New()
 	cfServer.RouteHandlers(engine,
@@ -41,7 +53,9 @@ func main() {
 		pkgHandlers.WithRecovery(),
 		pkgHandlers.WithHealthCheck(),
 		pkgHandlers.WithSwagger(),
-		cfServer.WithStandardUserHandlers(),
+
+		cfServer.WithAuthServiceHandlers(),
+		cfServer.WithSecuredUserHandlers(publicKey),
 	)
 
 	addr := fmt.Sprintf("%s:%s", cfg.HttpCfg.Host, cfg.HttpCfg.Port)

@@ -31,7 +31,7 @@ func (r *UsersRepo) GetUser(id uuid.UUID) (*models.User, error) {
 	)
 
 	var usr models.User
-	err := row.Scan(&usr.Id, &usr.Login, &usr.Name, &usr.Email, &usr.Phone, &usr.RegisterTimestamp)
+	err := row.Scan(&usr.Id, &usr.Login, &usr.Name, &usr.Email, &usr.Phone, &usr.RegistrationTimestamp)
 
 	if err == pgx.ErrNoRows {
 		return nil, fmt.Errorf("%s: %w", op, repository.ErrorUserIdNotFound)
@@ -54,7 +54,7 @@ func (r *UsersRepo) GetUserByCred(login, password string) (*models.User, error) 
 	var usr models.User
 	passwordHash := make([]byte, 0)
 
-	err := row.Scan(&usr.Id, &usr.Login, &passwordHash, &usr.Name, &usr.Email, &usr.Phone, &usr.RegisterTimestamp)
+	err := row.Scan(&usr.Id, &usr.Login, &passwordHash, &usr.Name, &usr.Email, &usr.Phone, &usr.RegistrationTimestamp)
 
 	if err == pgx.ErrNoRows {
 		return nil, fmt.Errorf("%s: %w", op, repository.ErrorUserLoginNotFound)

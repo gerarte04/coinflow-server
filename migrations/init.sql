@@ -10,7 +10,7 @@ CREATE TABLE users (
 	email			varchar(50) NOT NULL UNIQUE,
 	phone			varchar(50) DEFAULT '',
 
-	register_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+	registration_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE INDEX ON users (login);

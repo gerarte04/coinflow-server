@@ -5,3 +5,10 @@ http:
 storage_service:
   host: storage-service
   port: 5051
+
+auth_service:
+  host: auth-service
+  port: 5053
+
+security:
+  access_expiration_time: 15m

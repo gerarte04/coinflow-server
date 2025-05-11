@@ -20,7 +20,8 @@ type UserService struct {
 	usersRepo repository.UsersRepo
 	cache cache.Cache
 	jwtCfg config.JwtConfig
-	jwtKeys *pkgCrypto.JwtKeys
+	privateKey []byte
+	publicKey []byte
 }
 
 func NewUserService(
@@ -44,19 +45,20 @@ func NewUserService(
 		usersRepo: usersRepo,
 		cache: cache,
 		jwtCfg: jwtCfg,
-		jwtKeys: &pkgCrypto.JwtKeys{PrivateKey: privateKey, PublicKey: publicKey},
+		privateKey: privateKey,
+		publicKey: publicKey,
 	}, nil
 }
 
 func (s *UserService) GenerateNewTokenPair(usrId uuid.UUID) (*usecases.TokenPair, error) {
 	const op = "UserService.GenerateNewTokenPair"
 
-	access, err := pkgCrypto.GenerateJwtToken(usrId, time.Now().Add(s.jwtCfg.AccessExpirationTime), s.jwtKeys)
+	access, err := pkgCrypto.GenerateJwtToken(usrId, time.Now().Add(s.jwtCfg.AccessExpirationTime), s.privateKey)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	refresh, err := pkgCrypto.GenerateJwtToken(usrId, time.Now().Add(s.jwtCfg.RefreshExpirationTime), s.jwtKeys)
+	refresh, err := pkgCrypto.GenerateJwtToken(usrId, time.Now().Add(s.jwtCfg.RefreshExpirationTime), s.privateKey)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
@@ -91,7 +93,7 @@ func (s *UserService) Refresh(refreshToken string) (*usecases.TokenPair, error) 
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 	
-	usrId, err := pkgCrypto.ValidateJwtToken(refreshToken, s.jwtKeys)
+	usrId, err := pkgCrypto.ValidateJwtToken(refreshToken, s.publicKey)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}

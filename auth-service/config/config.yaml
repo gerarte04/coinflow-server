@@ -17,5 +17,5 @@ redis:
   db_number: 0
 
 jwt:
-  access_expiration_time: 30s
-  refresh_expiration_time: 1m
+  access_expiration_time: 15m
+  refresh_expiration_time: 7d

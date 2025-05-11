@@ -16,6 +16,7 @@ var (
 		codes.NotFound: http.StatusNotFound,
 		codes.PermissionDenied: http.StatusForbidden,
 		codes.Internal: http.StatusInternalServerError,
+		codes.Unauthenticated: http.StatusUnauthorized,
 	}
 
 	codeMessages = map[int]string{
@@ -23,6 +24,7 @@ var (
 		http.StatusInternalServerError: "internal error",
 		http.StatusForbidden: "forbidden",
 		http.StatusNotFound: "not found",
+		http.StatusUnauthorized: "unauthorized",
 	}
 )
 
@@ -40,7 +42,7 @@ func WriteGrpcError(c *gin.Context, err error) {
 		message = "\\undocumented status\\"
 	}
 
-	c.JSON(httpCode, gin.H{
+	c.AbortWithStatusJSON(httpCode, gin.H{
 		"error": fmt.Sprintf("%s: %s", message, err.Error()),
 	})
 }
@@ -48,7 +50,7 @@ func WriteGrpcError(c *gin.Context, err error) {
 func WriteParseError(c *gin.Context, err error) {
 	log.Printf("%s", err.Error())
 
-	c.JSON(http.StatusBadRequest, gin.H{
+	c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 		"error": fmt.Sprintf("internal error: %s", err.Error()),
 	})
 }

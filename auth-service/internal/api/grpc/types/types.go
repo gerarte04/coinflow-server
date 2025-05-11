@@ -39,7 +39,7 @@ type GetUserDataRequestObject struct {
 func CreateGetUserDataRequestObject(r *pb.GetUserDataRequest) (*GetUserDataRequestObject, error) {
 	const op = "CreateUserDataRequestObject"
 
-	usrId, err := utils.ParseStringToTransactionId(r.UserId)
+	usrId, err := utils.ParseStringToUuid(r.UserId)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
@@ -58,7 +58,7 @@ func CreateGetUserDataResponse(usr *models.User) (*pb.GetUserDataResponse, error
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	pbUsr.RegistrationTimestamp = usr.RegisterTimestamp.Format(TimeLayout)
+	pbUsr.RegistrationTimestamp = usr.RegistrationTimestamp.Format(TimeLayout)
 
 	return &pb.GetUserDataResponse{Usr: &pbUsr}, nil
 }

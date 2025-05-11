@@ -24,7 +24,7 @@ type GetTransactionRequestObject struct {
 func CreateGetTransactionRequestObject(r *pb.GetTransactionRequest) (*GetTransactionRequestObject, error) {
 	const op = "CreateGetTransactionRequestObject"
 
-	txId, err := utils.ParseStringToTransactionId(r.TxId)
+	txId, err := utils.ParseStringToUuid(r.TxId)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
