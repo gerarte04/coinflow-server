@@ -185,7 +185,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Transaction"
+                            "$ref": "#/definitions/types.PostTransactionRequestObject"
                         }
                     }
                 ],
@@ -254,6 +254,12 @@
                     },
                     "401": {
                         "description": "Unauthorized",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
                         "schema": {
                             "type": "string"
                         }
@@ -397,12 +403,6 @@
                 },
                 "type": {
                     "type": "string"
-                },
-                "user_id": {
-                    "type": "string"
-                },
-                "with_auto_category": {
-                    "type": "boolean"
                 }
             }
         },
@@ -448,6 +448,17 @@
                 },
                 "password": {
                     "type": "string"
+                }
+            }
+        },
+        "types.PostTransactionRequestObject": {
+            "type": "object",
+            "properties": {
+                "tx": {
+                    "$ref": "#/definitions/models.Transaction"
+                },
+                "with_auto_category": {
+                    "type": "boolean"
                 }
             }
         },

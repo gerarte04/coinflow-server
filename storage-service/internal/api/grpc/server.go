@@ -24,7 +24,7 @@ func (s *StorageServer) GetTransaction(ctx context.Context, r *pb.GetTransaction
 		return nil, CreateRequestObjectStatusError(err)
 	}
 
-	tx, err := s.txService.GetTransaction(reqObj.TxId)
+	tx, err := s.txService.GetTransaction(reqObj.UserId, reqObj.TxId)
 	if err != nil {
 	    return nil, CreateResultStatusError(err)
 	}
@@ -43,7 +43,7 @@ func (s *StorageServer) GetTransactionsInPeriod(ctx context.Context, r *pb.GetTr
 		return nil, CreateRequestObjectStatusError(err)
 	}
 
-	txs, err := s.txService.GetTransactionsInPeriod(reqObj.Begin, reqObj.End)
+	txs, err := s.txService.GetTransactionsInPeriod(reqObj.UserId, reqObj.Begin, reqObj.End)
 	if err != nil {
 	    return nil, CreateResultStatusError(err)
 	}
@@ -62,7 +62,7 @@ func (s *StorageServer) PostTransaction(ctx context.Context, r *pb.PostTransacti
 		return nil, CreateRequestObjectStatusError(err)
 	}
 
-	txId, err := s.txService.PostTransaction(reqObj.Tx)
+	txId, err := s.txService.PostTransaction(reqObj.Tx, reqObj.WithAutoCategory)
 	if err != nil {
 	    return nil, CreateResultStatusError(err)
 	}

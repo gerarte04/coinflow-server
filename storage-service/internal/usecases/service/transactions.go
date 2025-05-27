@@ -42,12 +42,12 @@ func NewTransactionsService(
 	}, nil
 }
 
-func (s *TransactionsService) GetTransaction(txId uuid.UUID) (*models.Transaction, error) {
-	return s.txRepo.GetTransaction(txId)
+func (s *TransactionsService) GetTransaction(userId uuid.UUID, txId uuid.UUID) (*models.Transaction, error) {
+	return s.txRepo.GetTransaction(userId, txId)
 }
 
-func (s *TransactionsService) GetTransactionsInPeriod(begin time.Time, end time.Time) ([]*models.Transaction, error) {
-	return s.txRepo.GetTransactionsInPeriod(begin, end)
+func (s *TransactionsService) GetTransactionsInPeriod(userId uuid.UUID, begin time.Time, end time.Time) ([]*models.Transaction, error) {
+	return s.txRepo.GetTransactionsInPeriod(userId, begin, end)
 }
 
 func (s *TransactionsService) GetAndPutCategory(tx *models.Transaction) error {
@@ -73,13 +73,13 @@ func (s *TransactionsService) GetAndPutCategory(tx *models.Transaction) error {
 	return nil
 }
 
-func (s *TransactionsService) PostTransaction(tx *models.Transaction) (uuid.UUID, error) {
+func (s *TransactionsService) PostTransaction(tx *models.Transaction, withAutoCategory bool) (uuid.UUID, error) {
 	const op = "TransactionsService.PostTransaction"
 
 	var txId uuid.UUID
 	var err error
 	
-	if tx.WithAutoCategory {
+	if withAutoCategory {
 		txId, err = s.txRepo.PostTransactionWithoutCategory(tx)
 		if err != nil {
 			return uuid.Nil, err

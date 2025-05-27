@@ -9,9 +9,16 @@ import (
 	"github.com/google/uuid"
 )
 
+func getUserId(c *gin.Context) uuid.UUID {
+	idStr, _ := c.Get("User-Id")
+	id, _ := uuid.Parse(idStr.(string))
+	return id
+}
+
 // Transactions ---------------------------------------------
 
 type GetTransactionRequestObject struct {
+	UserId			uuid.UUID
 	TxId 			uuid.UUID
 }
 
@@ -24,10 +31,14 @@ func CreateGetTransactionRequestObject(c *gin.Context) (*GetTransactionRequestOb
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	return &GetTransactionRequestObject{TxId: txId}, nil
+	return &GetTransactionRequestObject{
+		UserId: getUserId(c),
+		TxId: txId,
+	}, nil
 }
 
 type GetTransactionsInPeriodRequestObject struct {
+	UserId			uuid.UUID	`swaggerignore:"true"`
 	Begin 			string		`json:"begin"`
 	End 			string		`json:"end"`
 	WithSummary		bool		`json:"with_summary"`
@@ -42,23 +53,28 @@ func CreateGetTransactionsInPeriodRequestObject(c *gin.Context) (*GetTransaction
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
+	req.UserId = getUserId(c)
+
 	return &req, nil
 }
 
 type PostTransactionRequestObject struct {
-	Tx 	*models.Transaction
+	Tx					*models.Transaction		`json:"tx"`
+	WithAutoCategory	bool					`json:"with_auto_category"`
 }
 
 func CreatePostTransactionRequestObject(c *gin.Context) (*PostTransactionRequestObject, error) {
 	const op = "CreatePostTransactionRequestObject"
 
-	var tx models.Transaction
+	var req PostTransactionRequestObject
 
-	if err := c.ShouldBindJSON(&tx); err != nil {
+	if err := c.ShouldBindJSON(&req); err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	return &PostTransactionRequestObject{Tx: &tx}, nil
+	req.Tx.UserId = getUserId(c)
+
+	return &req, nil
 }
 
 // Users --------------------------------------------------

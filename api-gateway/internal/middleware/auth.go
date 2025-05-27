@@ -19,7 +19,7 @@ func validate(c *gin.Context, token string, publicKey []byte, place string) erro
 		return err
 	}
 
-	c.Header("Subject", usrId.String())
+	c.Set("User-Id", usrId.String())
 	c.Next()
 
 	return nil

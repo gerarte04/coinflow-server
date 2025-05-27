@@ -22,18 +22,17 @@ const (
 )
 
 type Transaction struct {
-	state            protoimpl.MessageState `protogen:"open.v1"`
-	Id               string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	UserId           string                 `protobuf:"bytes,2,opt,name=userId,proto3" json:"userId,omitempty"`
-	Target           string                 `protobuf:"bytes,3,opt,name=target,proto3" json:"target,omitempty"`
-	Description      string                 `protobuf:"bytes,4,opt,name=description,proto3" json:"description,omitempty"`
-	Type             string                 `protobuf:"bytes,5,opt,name=type,proto3" json:"type,omitempty"`
-	Category         string                 `protobuf:"bytes,6,opt,name=category,proto3" json:"category,omitempty"`
-	Cost             float64                `protobuf:"fixed64,7,opt,name=cost,proto3" json:"cost,omitempty"`
-	Timestamp        string                 `protobuf:"bytes,8,opt,name=timestamp,proto3" json:"timestamp,omitempty"`
-	WithAutoCategory bool                   `protobuf:"varint,9,opt,name=withAutoCategory,proto3" json:"withAutoCategory,omitempty"`
-	unknownFields    protoimpl.UnknownFields
-	sizeCache        protoimpl.SizeCache
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	UserId        string                 `protobuf:"bytes,2,opt,name=userId,proto3" json:"userId,omitempty"`
+	Target        string                 `protobuf:"bytes,3,opt,name=target,proto3" json:"target,omitempty"`
+	Description   string                 `protobuf:"bytes,4,opt,name=description,proto3" json:"description,omitempty"`
+	Type          string                 `protobuf:"bytes,5,opt,name=type,proto3" json:"type,omitempty"`
+	Category      string                 `protobuf:"bytes,6,opt,name=category,proto3" json:"category,omitempty"`
+	Cost          float64                `protobuf:"fixed64,7,opt,name=cost,proto3" json:"cost,omitempty"`
+	Timestamp     string                 `protobuf:"bytes,8,opt,name=timestamp,proto3" json:"timestamp,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *Transaction) Reset() {
@@ -122,16 +121,10 @@ func (x *Transaction) GetTimestamp() string {
 	return ""
 }
 
-func (x *Transaction) GetWithAutoCategory() bool {
-	if x != nil {
-		return x.WithAutoCategory
-	}
-	return false
-}
-
 type GetTransactionRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	TxId          string                 `protobuf:"bytes,1,opt,name=txId,proto3" json:"txId,omitempty"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=userId,proto3" json:"userId,omitempty"`
+	TxId          string                 `protobuf:"bytes,2,opt,name=txId,proto3" json:"txId,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -166,6 +159,13 @@ func (*GetTransactionRequest) Descriptor() ([]byte, []int) {
 	return file_protos_storage_service_proto_rawDescGZIP(), []int{1}
 }
 
+func (x *GetTransactionRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
 func (x *GetTransactionRequest) GetTxId() string {
 	if x != nil {
 		return x.TxId
@@ -175,8 +175,9 @@ func (x *GetTransactionRequest) GetTxId() string {
 
 type GetTransactionsInPeriodRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Begin         string                 `protobuf:"bytes,1,opt,name=begin,proto3" json:"begin,omitempty"`
-	End           string                 `protobuf:"bytes,2,opt,name=end,proto3" json:"end,omitempty"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=userId,proto3" json:"userId,omitempty"`
+	Begin         string                 `protobuf:"bytes,2,opt,name=begin,proto3" json:"begin,omitempty"`
+	End           string                 `protobuf:"bytes,3,opt,name=end,proto3" json:"end,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -211,6 +212,13 @@ func (*GetTransactionsInPeriodRequest) Descriptor() ([]byte, []int) {
 	return file_protos_storage_service_proto_rawDescGZIP(), []int{2}
 }
 
+func (x *GetTransactionsInPeriodRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
 func (x *GetTransactionsInPeriodRequest) GetBegin() string {
 	if x != nil {
 		return x.Begin
@@ -226,10 +234,11 @@ func (x *GetTransactionsInPeriodRequest) GetEnd() string {
 }
 
 type PostTransactionRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Tx            *Transaction           `protobuf:"bytes,1,opt,name=tx,proto3" json:"tx,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state            protoimpl.MessageState `protogen:"open.v1"`
+	Tx               *Transaction           `protobuf:"bytes,1,opt,name=tx,proto3" json:"tx,omitempty"`
+	WithAutoCategory bool                   `protobuf:"varint,2,opt,name=withAutoCategory,proto3" json:"withAutoCategory,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *PostTransactionRequest) Reset() {
@@ -267,6 +276,13 @@ func (x *PostTransactionRequest) GetTx() *Transaction {
 		return x.Tx
 	}
 	return nil
+}
+
+func (x *PostTransactionRequest) GetWithAutoCategory() bool {
+	if x != nil {
+		return x.WithAutoCategory
+	}
+	return false
 }
 
 type GetTransactionResponse struct {
@@ -405,7 +421,7 @@ var File_protos_storage_service_proto protoreflect.FileDescriptor
 
 const file_protos_storage_service_proto_rawDesc = "" +
 	"\n" +
-	"\x1cprotos/storage-service.proto\x12\x0fstorage_service\"\xfd\x01\n" +
+	"\x1cprotos/storage-service.proto\x12\x0fstorage_service\"\xd1\x01\n" +
 	"\vTransaction\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x16\n" +
 	"\x06userId\x18\x02 \x01(\tR\x06userId\x12\x16\n" +
@@ -414,15 +430,17 @@ const file_protos_storage_service_proto_rawDesc = "" +
 	"\x04type\x18\x05 \x01(\tR\x04type\x12\x1a\n" +
 	"\bcategory\x18\x06 \x01(\tR\bcategory\x12\x12\n" +
 	"\x04cost\x18\a \x01(\x01R\x04cost\x12\x1c\n" +
-	"\ttimestamp\x18\b \x01(\tR\ttimestamp\x12*\n" +
-	"\x10withAutoCategory\x18\t \x01(\bR\x10withAutoCategory\"+\n" +
-	"\x15GetTransactionRequest\x12\x12\n" +
-	"\x04txId\x18\x01 \x01(\tR\x04txId\"H\n" +
-	"\x1eGetTransactionsInPeriodRequest\x12\x14\n" +
-	"\x05begin\x18\x01 \x01(\tR\x05begin\x12\x10\n" +
-	"\x03end\x18\x02 \x01(\tR\x03end\"F\n" +
+	"\ttimestamp\x18\b \x01(\tR\ttimestamp\"C\n" +
+	"\x15GetTransactionRequest\x12\x16\n" +
+	"\x06userId\x18\x01 \x01(\tR\x06userId\x12\x12\n" +
+	"\x04txId\x18\x02 \x01(\tR\x04txId\"`\n" +
+	"\x1eGetTransactionsInPeriodRequest\x12\x16\n" +
+	"\x06userId\x18\x01 \x01(\tR\x06userId\x12\x14\n" +
+	"\x05begin\x18\x02 \x01(\tR\x05begin\x12\x10\n" +
+	"\x03end\x18\x03 \x01(\tR\x03end\"r\n" +
 	"\x16PostTransactionRequest\x12,\n" +
-	"\x02tx\x18\x01 \x01(\v2\x1c.storage_service.TransactionR\x02tx\"F\n" +
+	"\x02tx\x18\x01 \x01(\v2\x1c.storage_service.TransactionR\x02tx\x12*\n" +
+	"\x10withAutoCategory\x18\x02 \x01(\bR\x10withAutoCategory\"F\n" +
 	"\x16GetTransactionResponse\x12,\n" +
 	"\x02tx\x18\x01 \x01(\v2\x1c.storage_service.TransactionR\x02tx\"Q\n" +
 	"\x1fGetTransactionsInPeriodResponse\x12.\n" +

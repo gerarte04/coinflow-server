@@ -15,23 +15,30 @@ import (
 // Requests -------------------------------------------
 
 type GetTransactionRequestObject struct {
+	UserId uuid.UUID 
 	TxId uuid.UUID
 }
 
 func CreateGetTransactionRequestObject(r *pb.GetTransactionRequest) (*GetTransactionRequestObject, error) {
 	const op = "CreateGetTransactionRequestObject"
 
+	usrId, err := utils.ParseStringToUuid(r.UserId)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
 	txId, err := utils.ParseStringToUuid(r.TxId)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	return &GetTransactionRequestObject{TxId: txId}, nil
+	return &GetTransactionRequestObject{UserId: usrId, TxId: txId}, nil
 }
 
 type GetTransactionsInPeriodRequestObject struct {
 	Begin time.Time
 	End time.Time
+	UserId uuid.UUID
 }
 
 func CreateGetTransactionsInPeriodRequestObject(r *pb.GetTransactionsInPeriodRequest) (*GetTransactionsInPeriodRequestObject, error) {
@@ -47,11 +54,17 @@ func CreateGetTransactionsInPeriodRequestObject(r *pb.GetTransactionsInPeriodReq
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	return &GetTransactionsInPeriodRequestObject{Begin: begin, End: end}, nil
+	id, err := uuid.Parse(r.UserId)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return &GetTransactionsInPeriodRequestObject{Begin: begin, End: end, UserId: id}, nil
 }
 
 type PostTransactionRequestObject struct {
 	Tx *models.Transaction
+	WithAutoCategory bool
 }
 
 func CreatePostTransactionRequestObject(r *pb.PostTransactionRequest) (*PostTransactionRequestObject, error) {
@@ -63,7 +76,10 @@ func CreatePostTransactionRequestObject(r *pb.PostTransactionRequest) (*PostTran
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	return &PostTransactionRequestObject{Tx: &tx}, nil
+	return &PostTransactionRequestObject{
+		Tx: &tx,
+		WithAutoCategory: r.WithAutoCategory,
+	}, nil
 }
 
 // Responses -------------------------------------------
@@ -76,6 +92,8 @@ func CreateGetTransactionResponse(tx *models.Transaction) (*pb.GetTransactionRes
 	if err := copier.Copy(&pbTx, tx); err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
+
+	pbTx.Timestamp = tx.Timestamp.Format(vars.TimeLayout)
 
 	return &pb.GetTransactionResponse{Tx: &pbTx}, nil
 }
@@ -92,7 +110,7 @@ func CreateGetTransactionsInPeriodResponse(txs []*models.Transaction) (*pb.GetTr
 			return nil, fmt.Errorf("%s: %w", op, err)
 		}
 
-		pbTx.Timestamp = tx.Timestamp.String()
+		pbTx.Timestamp = tx.Timestamp.Format(vars.TimeLayout)
 
 		pbTxs = append(pbTxs, &pbTx)
 	}

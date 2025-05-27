@@ -7,7 +7,7 @@ import (
 )
 
 type StorageClient interface {
-	GetTransaction(txId uuid.UUID) (*models.Transaction, error)
-	GetTransactionsInPeriod(begin string, end string) ([]*models.Transaction, error)
-	PostTransaction(tx *models.Transaction) (string, error)
+	GetTransaction(userId uuid.UUID, txId uuid.UUID) (*models.Transaction, error)
+	GetTransactionsInPeriod(userId uuid.UUID, begin string, end string) ([]*models.Transaction, error)
+	PostTransaction(tx *models.Transaction, withAutoCategory bool) (string, error)
 }

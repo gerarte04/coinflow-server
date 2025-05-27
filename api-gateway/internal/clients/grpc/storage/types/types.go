@@ -10,7 +10,7 @@ import (
 
 // Requests ------------------------------------------------
 
-func CreatePostTransactionRequest(tx *models.Transaction) (*pb.PostTransactionRequest, error) {
+func CreatePostTransactionRequest(tx *models.Transaction, withAutoCategory bool) (*pb.PostTransactionRequest, error) {
 	const op = "CreatePostTransactionRequest"
 
 	var pbTx pb.Transaction
@@ -19,7 +19,10 @@ func CreatePostTransactionRequest(tx *models.Transaction) (*pb.PostTransactionRe
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	return &pb.PostTransactionRequest{Tx: &pbTx}, nil
+	return &pb.PostTransactionRequest{
+		Tx: &pbTx,
+		WithAutoCategory: withAutoCategory,
+	}, nil
 }
 
 // Responses -----------------------------------------------

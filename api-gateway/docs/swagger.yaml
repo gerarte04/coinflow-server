@@ -10,10 +10,6 @@ definitions:
         type: string
       type:
         type: string
-      user_id:
-        type: string
-      with_auto_category:
-        type: boolean
     type: object
   models.User:
     properties:
@@ -43,6 +39,13 @@ definitions:
         type: string
       password:
         type: string
+    type: object
+  types.PostTransactionRequestObject:
+    properties:
+      tx:
+        $ref: '#/definitions/models.Transaction'
+      with_auto_category:
+        type: boolean
     type: object
   types.RefreshRequestObject:
     properties:
@@ -174,7 +177,7 @@ paths:
         name: tx
         required: true
         schema:
-          $ref: '#/definitions/models.Transaction'
+          $ref: '#/definitions/types.PostTransactionRequestObject'
       produces:
       - application/json
       responses:
@@ -221,6 +224,10 @@ paths:
             type: string
         "401":
           description: Unauthorized
+          schema:
+            type: string
+        "403":
+          description: Forbidden
           schema:
             type: string
         "404":

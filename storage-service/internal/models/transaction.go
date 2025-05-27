@@ -17,6 +17,4 @@ type Transaction struct {
 	Cost float64            `json:"cost" db:"cost"`
 
 	Timestamp time.Time     `json:"timestamp" db:"timestamp" swaggerignore:"true"`
-
-	WithAutoCategory bool	`json:"with_auto_category"`
 }

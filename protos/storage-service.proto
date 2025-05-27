@@ -13,24 +13,25 @@ message Transaction {
 	string category = 6;
 	double cost = 7;
 	string timestamp = 8;
-	bool withAutoCategory = 9;
 }
 
 // Requests ----------------------------------
 
 message GetTransactionRequest {
-	string txId = 1;
+	string userId = 1;
+	string txId = 2;
 }
 
 message GetTransactionsInPeriodRequest {
-	string begin = 1;
-	string end = 2;
+	string userId = 1;
+	string begin = 2;
+	string end = 3;
 }
 
 message PostTransactionRequest {
 	Transaction tx = 1;
+	bool withAutoCategory = 2;
 }
-
 
 // Responses ---------------------------------
 
@@ -45,7 +46,6 @@ message GetTransactionsInPeriodResponse {
 message PostTransactionResponse {
 	string txId = 1;
 }
-
 
 // Service -----------------------------------
 

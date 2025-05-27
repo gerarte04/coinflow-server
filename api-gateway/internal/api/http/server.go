@@ -42,6 +42,7 @@ func NewCoinflowServer(
 // @Success 200 {object} string "OK"
 // @Failure 400 {object} string "Bad request"
 // @Failure 401 {object} string "Unauthorized"
+// @Failure 403 {object} string "Forbidden"
 // @Failure 404 {object} string "Not found"
 // @Failure 500 {object} string "Internal error"
 // @Router /transaction/id/{tx_id} [get]
@@ -52,7 +53,7 @@ func (s *CoinflowServer) GetTransactionHandler(c *gin.Context) {
 		return
 	}
 
-	res, err := s.storageCli.GetTransaction(reqObj.TxId)
+	res, err := s.storageCli.GetTransaction(reqObj.UserId, reqObj.TxId)
 	if err != nil {
 		WriteGrpcError(c, err)
 		return
@@ -80,7 +81,7 @@ func (s *CoinflowServer) GetTransactionsInPeriodHandler(c *gin.Context) {
 		return
 	}
 
-	res, err := s.storageCli.GetTransactionsInPeriod(reqObj.Begin, reqObj.End)
+	res, err := s.storageCli.GetTransactionsInPeriod(reqObj.UserId, reqObj.Begin, reqObj.End)
 	if err != nil {
 		WriteGrpcError(c, err)
 		return
@@ -102,7 +103,7 @@ func (s *CoinflowServer) GetTransactionsInPeriodHandler(c *gin.Context) {
 // @Tags transactions
 // @Accept json
 // @Produce json
-// @Param tx body models.Transaction true "transaction"
+// @Param tx body types.PostTransactionRequestObject true "transaction"
 // @Success 201 {object} string "Created"
 // @Failure 400 {object} string "Bad request"
 // @Failure 401 {object} string "Unauthorized"
@@ -115,7 +116,7 @@ func (s *CoinflowServer) PostTransactionHandler(c *gin.Context) {
 		return
 	}
 
-	res, err := s.storageCli.PostTransaction(reqObj.Tx)
+	res, err := s.storageCli.PostTransaction(reqObj.Tx, reqObj.WithAutoCategory)
 	if err != nil {
 		WriteGrpcError(c, err)
 		return

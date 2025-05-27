@@ -191,7 +191,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Transaction"
+                            "$ref": "#/definitions/types.PostTransactionRequestObject"
                         }
                     }
                 ],
@@ -260,6 +260,12 @@ const docTemplate = `{
                     },
                     "401": {
                         "description": "Unauthorized",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
                         "schema": {
                             "type": "string"
                         }
@@ -403,12 +409,6 @@ const docTemplate = `{
                 },
                 "type": {
                     "type": "string"
-                },
-                "user_id": {
-                    "type": "string"
-                },
-                "with_auto_category": {
-                    "type": "boolean"
                 }
             }
         },
@@ -454,6 +454,17 @@ const docTemplate = `{
                 },
                 "password": {
                     "type": "string"
+                }
+            }
+        },
+        "types.PostTransactionRequestObject": {
+            "type": "object",
+            "properties": {
+                "tx": {
+                    "$ref": "#/definitions/models.Transaction"
+                },
+                "with_auto_category": {
+                    "type": "boolean"
                 }
             }
         },

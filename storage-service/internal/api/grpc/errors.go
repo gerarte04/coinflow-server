@@ -16,8 +16,7 @@ var(
 		utils.ErrorInvalidId: codes.InvalidArgument,
 
 		repository.ErrorTxIdNotFound: codes.NotFound,
-		repository.ErrorUserIdNotFound: codes.NotFound,
-		repository.ErrorNoSuchCredExists: codes.PermissionDenied,
+		repository.ErrorPermissionDenied: codes.PermissionDenied,
 	}
 )
 

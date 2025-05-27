@@ -34,10 +34,10 @@ func NewStorageClient(grpcCfg pkgConfig.GrpcConfig) (*StorageClient, error) {
 	}, nil
 }
 
-func (c *StorageClient) GetTransaction(txId uuid.UUID) (*models.Transaction, error) {
+func (c *StorageClient) GetTransaction(userId uuid.UUID, txId uuid.UUID) (*models.Transaction, error) {
 	const op = "StorageClient.GetTransactionsInPeriod"
 
-	req := pb.GetTransactionRequest{TxId: txId.String()}
+	req := pb.GetTransactionRequest{UserId: userId.String(), TxId: txId.String()}
 	resp, err := c.grpcCli.GetTransaction(context.Background(), &req)
 
 	if err != nil {
@@ -47,10 +47,10 @@ func (c *StorageClient) GetTransaction(txId uuid.UUID) (*models.Transaction, err
 	return types.CreateGetTransactionResponse(resp)
 }
 
-func (c *StorageClient) GetTransactionsInPeriod(begin string, end string) ([]*models.Transaction, error) {
+func (c *StorageClient) GetTransactionsInPeriod(userId uuid.UUID, begin string, end string) ([]*models.Transaction, error) {
 	const op = "StorageClient.GetTransactionsInPeriod"
 
-	req := pb.GetTransactionsInPeriodRequest{Begin: begin, End: end}
+	req := pb.GetTransactionsInPeriodRequest{UserId: userId.String(), Begin: begin, End: end}
 	resp, err := c.grpcCli.GetTransactionsInPeriod(context.Background(), &req)
 
 	if err != nil {
@@ -60,10 +60,10 @@ func (c *StorageClient) GetTransactionsInPeriod(begin string, end string) ([]*mo
 	return types.CreateGetTransactionsInPeriodResponse(resp)
 }
 
-func (c *StorageClient) PostTransaction(tx *models.Transaction) (string, error) {
+func (c *StorageClient) PostTransaction(tx *models.Transaction, withAutoCategory bool) (string, error) {
 	const op = "StorageClient.PostTransaction"
 
-	req, err := types.CreatePostTransactionRequest(tx)
+	req, err := types.CreatePostTransactionRequest(tx, withAutoCategory)
 	if err != nil {
 		return "", err
 	}

@@ -21,7 +21,7 @@ func NewTransactionsRepo(conn *pgx.Conn) *TransactionsRepo {
 	return &TransactionsRepo{conn: conn}
 }
 
-func (r *TransactionsRepo) GetTransaction(txId uuid.UUID) (*models.Transaction, error) {
+func (r *TransactionsRepo) GetTransaction(userId uuid.UUID, txId uuid.UUID) (*models.Transaction, error) {
 	const op = "TransactionsRepo.GetTransaction"
 
 	row := r.conn.QueryRow(
@@ -38,16 +38,20 @@ func (r *TransactionsRepo) GetTransaction(txId uuid.UUID) (*models.Transaction, 
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
+	if tx.UserId != userId {
+		return nil, fmt.Errorf("%s: %w", op, repository.ErrorPermissionDenied)
+	}
+
 	return &tx, nil
 }
 
-func (r *TransactionsRepo) GetTransactionsInPeriod(begin time.Time, end time.Time) ([]*models.Transaction, error) {
+func (r *TransactionsRepo) GetTransactionsInPeriod(userId uuid.UUID, begin time.Time, end time.Time) ([]*models.Transaction, error) {
 	const op = "TransactionsRepo.GetTransactionsInPeriod"
 
 	rows, err := r.conn.Query(
 		context.Background(),
-		"SELECT * FROM transactions WHERE (timestamp >= $1 AND timestamp <= $2)",
-		begin, end,
+		"SELECT * FROM transactions WHERE (user_id = $1 AND timestamp >= $2 AND timestamp <= $3)",
+		userId, begin, end,
 	)
 
 	if err != nil {
