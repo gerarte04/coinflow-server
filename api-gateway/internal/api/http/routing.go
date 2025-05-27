@@ -15,7 +15,7 @@ const (
 	LoginPath = "/auth/login"
 	RefreshPath = "/auth/refresh"
 	RegisterPath = "/auth/register"
-	GetUserDataPath = "/user/:usr_id"
+	GetUserDataPath = "/user/:user_id"
 )
 
 func (s *CoinflowServer) RouteHandlers(engine *gin.Engine, opts ...pkgHandlers.RouterOption) {

@@ -26,7 +26,7 @@ func (r *UsersRepo) GetUser(id uuid.UUID) (*models.User, error) {
 
 	row := r.conn.QueryRow(
 		context.Background(),
-		"SELECT id, login, name, email, phone, register_timestamp FROM users WHERE id = $1",
+		"SELECT id, login, name, email, phone, registration_timestamp FROM users WHERE id = $1",
 		id,
 	)
 
@@ -76,7 +76,7 @@ func (r *UsersRepo) GetUserByCred(login, password string) (*models.User, error) 
 func (r *UsersRepo) PostUser(usr *models.User) (uuid.UUID, error) {
 	const op = "UsersRepo.PostUser"
 
-	passwordHash, err := bcrypt.GenerateFromPassword([]byte(usr.Password), 16)
+	passwordHash, err := bcrypt.GenerateFromPassword([]byte(usr.Password), 14)
 	if err != nil {
 		return uuid.Nil, fmt.Errorf("%s: %w", op, err)
 	}

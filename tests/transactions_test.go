@@ -2,6 +2,7 @@ package tests
 
 import (
 	tu "coinflow/coinflow-server/pkg/testutils"
+	"coinflow/coinflow-server/pkg/vars"
 	"fmt"
 	"net/http"
 	"os"
@@ -34,8 +35,6 @@ var (
 
 	clfTimeout = time.Second * 15
 	clfPeriod = time.Millisecond * 2500
-
-	TimeLayout = "02/01/2006 15:04:05 -0700"
 )
 
 func commitTx(t *testing.T, payload tu.Payload) (*http.Response, uuid.UUID) {
@@ -71,8 +70,8 @@ func getById(t *testing.T, txId string) (*http.Response, tu.Payload) {
 func getInPeriod(t *testing.T, begin time.Time, end time.Time) (*http.Response, []tu.Payload) {
 	url := fmt.Sprintf("%s%s", addr, TransactionsInPeriodPath)
 	resp, err := tu.SendRequest(t, http.MethodPost, url, tu.Payload {
-		"begin": begin.UTC().Format(TimeLayout),
-		"end": end.UTC().Format(TimeLayout),
+		"begin": begin.UTC().Format(vars.TimeLayout),
+		"end": end.UTC().Format(vars.TimeLayout),
 	})
 	require.NoError(t, err)
 

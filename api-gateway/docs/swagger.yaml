@@ -273,7 +273,7 @@ paths:
       tags:
       - transactions
   /user/{user_id}:
-    post:
+    get:
       consumes:
       - application/json
       description: get user data by id

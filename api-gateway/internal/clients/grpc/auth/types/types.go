@@ -3,7 +3,9 @@ package types
 import (
 	"coinflow/coinflow-server/api-gateway/internal/models"
 	pb "coinflow/coinflow-server/gen/auth_service/golang"
+	"coinflow/coinflow-server/pkg/vars"
 	"fmt"
+	"time"
 
 	"github.com/jinzhu/copier"
 )
@@ -32,6 +34,13 @@ func CreateGetUserDataResponse(resp *pb.GetUserDataResponse) (*models.User, erro
 	if err := copier.Copy(&usr, resp.Usr); err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
+
+	tm, err := time.Parse(vars.TimeLayout, resp.Usr.RegistrationTimestamp)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	usr.RegistrationTimestamp = tm
 
 	return &usr, nil
 }

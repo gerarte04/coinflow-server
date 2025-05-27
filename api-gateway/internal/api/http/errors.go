@@ -42,7 +42,7 @@ func WriteGrpcError(c *gin.Context, err error) {
 		message = "\\undocumented status\\"
 	}
 
-	c.AbortWithStatusJSON(httpCode, gin.H{
+	c.JSON(httpCode, gin.H{
 		"error": fmt.Sprintf("%s: %s", message, err.Error()),
 	})
 }
@@ -50,7 +50,7 @@ func WriteGrpcError(c *gin.Context, err error) {
 func WriteParseError(c *gin.Context, err error) {
 	log.Printf("%s", err.Error())
 
-	c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+	c.JSON(http.StatusBadRequest, gin.H{
 		"error": fmt.Sprintf("internal error: %s", err.Error()),
 	})
 }

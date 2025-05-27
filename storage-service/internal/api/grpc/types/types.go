@@ -3,16 +3,13 @@ package types
 import (
 	pb "coinflow/coinflow-server/gen/storage_service/golang"
 	"coinflow/coinflow-server/pkg/utils"
+	"coinflow/coinflow-server/pkg/vars"
 	"coinflow/coinflow-server/storage-service/internal/models"
 	"fmt"
 	"time"
 
 	"github.com/google/uuid"
 	"github.com/jinzhu/copier"
-)
-
-const (
-	TimeLayout = "02/01/2006 15:04:05 -0700"
 )
 
 // Requests -------------------------------------------
@@ -40,12 +37,12 @@ type GetTransactionsInPeriodRequestObject struct {
 func CreateGetTransactionsInPeriodRequestObject(r *pb.GetTransactionsInPeriodRequest) (*GetTransactionsInPeriodRequestObject, error) {
 	const op = "CreateGetTransactionsInPeriodRequestObject"
 
-	begin, err := time.Parse(TimeLayout, r.Begin)
+	begin, err := time.Parse(vars.TimeLayout, r.Begin)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	end, err := time.Parse(TimeLayout, r.End)
+	end, err := time.Parse(vars.TimeLayout, r.End)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}

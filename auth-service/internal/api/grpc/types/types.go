@@ -4,14 +4,11 @@ import (
 	"coinflow/coinflow-server/auth-service/internal/models"
 	pb "coinflow/coinflow-server/gen/auth_service/golang"
 	"coinflow/coinflow-server/pkg/utils"
+	"coinflow/coinflow-server/pkg/vars"
 	"fmt"
 
 	"github.com/google/uuid"
 	"github.com/jinzhu/copier"
-)
-
-const (
-	TimeLayout = "02/01/2006 15:04:05 -0700"
 )
 
 // Requests -------------------------------------------
@@ -58,7 +55,7 @@ func CreateGetUserDataResponse(usr *models.User) (*pb.GetUserDataResponse, error
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	pbUsr.RegistrationTimestamp = usr.RegistrationTimestamp.Format(TimeLayout)
+	pbUsr.RegistrationTimestamp = usr.RegistrationTimestamp.Format(vars.TimeLayout)
 
 	return &pb.GetUserDataResponse{Usr: &pbUsr}, nil
 }

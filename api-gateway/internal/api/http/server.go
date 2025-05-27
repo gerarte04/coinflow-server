@@ -241,7 +241,7 @@ func (s *CoinflowServer) RegisterHandler(c *gin.Context) {
 // @Failure 400 {object} string "Bad request"
 // @Failure 401 {object} string "Unauthorized"
 // @Failure 500 {object} string "Internal error"
-// @Router /user/{user_id} [post]
+// @Router /user/{user_id} [get]
 func (s *CoinflowServer) GetUserDataHandler(c *gin.Context) {
 	reqObj, err := types.CreateGetUserDataRequestObject(c)
 	if err != nil {
