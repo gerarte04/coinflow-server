@@ -11,4 +11,4 @@ auth_service:
   port: 5053
 
 security:
-  access_expiration_time: 15m
+  access_expiration_time: 30m
