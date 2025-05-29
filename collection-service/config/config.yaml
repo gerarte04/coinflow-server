@@ -12,3 +12,6 @@ postgres:
   db: coinflow_pg_db
   user: admin
   password: adminpass
+
+service:
+  do_translate: true

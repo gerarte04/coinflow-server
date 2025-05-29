@@ -15,8 +15,8 @@ const (
 )
 
 type TranslateConfig struct {
-	TranslateApiAddress 	string 			`yaml:"translate_api_address" env:"TRANSLATE_API_ADDRESS"`
-	TranslateApiKey 		string 			`yaml:"translate_api_key" env:"TRANSLATE_API_KEY"`
+	TranslateApiAddress 	string 			`yaml:"translate_api_address" env:"TRANSLATE_API_ADDRESS" env-default:""`
+	TranslateApiKey 		string 			`yaml:"translate_api_key" env:"TRANSLATE_API_KEY" env-default:""`
 }
 
 type TranslateRequestBody struct {

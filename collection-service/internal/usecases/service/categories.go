@@ -1,6 +1,7 @@
 package service
 
 import (
+	"coinflow/coinflow-server/collection-service/config"
 	"coinflow/coinflow-server/collection-service/internal/models"
 	"coinflow/coinflow-server/collection-service/internal/repository"
 	pb "coinflow/coinflow-server/gen/classification_service/golang"
@@ -17,14 +18,14 @@ import (
 type CollectionService struct {
 	httpCli *http.Client
 	grpcCli pb.ClassificationClient
-	tlsCfg utils.TranslateConfig
+	svcCfg config.ServiceConfig
 	clfSvcCfg pkgConfig.GrpcConfig
 	catsRepo repository.CategoriesRepo
 	categories []string
 }
 
 func NewCollectionService(
-	tlsCfg utils.TranslateConfig,
+	svcCfg config.ServiceConfig,
 	clfSvcCfg pkgConfig.GrpcConfig,
 	catsRepo repository.CategoriesRepo,
 ) (*CollectionService, error) {
@@ -46,7 +47,7 @@ func NewCollectionService(
 	return &CollectionService{
 		httpCli: &http.Client{},
 		grpcCli: pb.NewClassificationClient(conn),
-		tlsCfg: tlsCfg,
+		svcCfg: svcCfg,
 		clfSvcCfg: clfSvcCfg,
 		catsRepo: catsRepo,
 		categories: categories,
@@ -56,10 +57,20 @@ func NewCollectionService(
 func (s *CollectionService) CollectCategory(ctx context.Context, tx *models.Transaction) (string, error) {
 	const op = "CollectionService.CollectCategory"
 
-	text, err := utils.TranslateToLanguage(s.httpCli, tx.Description, utils.LanguageEnglish, s.tlsCfg)
-	if err != nil {
-		return "", err
+	text := tx.Description
+
+	if s.svcCfg.DoTranslate {
+		var err error
+		text, err = utils.TranslateToLanguage(s.httpCli, tx.Description, utils.LanguageEnglish, s.svcCfg.TranslateCfg)
+
+		fmt.Println("translated")
+
+		if err != nil {
+			return "", err
+		}
 	}
+
+	fmt.Printf("%s\n", text)
 
 	resp, err := s.grpcCli.GetTextCategory(ctx, &pb.GetTextCategoryRequest{
 		Text: text,
