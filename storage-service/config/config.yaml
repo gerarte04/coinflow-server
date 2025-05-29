@@ -12,3 +12,6 @@ postgres:
   db: coinflow_pg_db
   user: admin
   password: adminpass
+
+service:
+  category_chan_buffer: 128

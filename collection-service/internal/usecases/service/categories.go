@@ -63,14 +63,10 @@ func (s *CollectionService) CollectCategory(ctx context.Context, tx *models.Tran
 		var err error
 		text, err = utils.TranslateToLanguage(s.httpCli, tx.Description, utils.LanguageEnglish, s.svcCfg.TranslateCfg)
 
-		fmt.Println("translated")
-
 		if err != nil {
 			return "", err
 		}
 	}
-
-	fmt.Printf("%s\n", text)
 
 	resp, err := s.grpcCli.GetTextCategory(ctx, &pb.GetTextCategoryRequest{
 		Text: text,

@@ -2,6 +2,7 @@ package service
 
 import (
 	pkgConfig "coinflow/coinflow-server/pkg/config"
+	"coinflow/coinflow-server/storage-service/config"
 	"coinflow/coinflow-server/storage-service/internal/models"
 	"coinflow/coinflow-server/storage-service/internal/repository"
 	"context"
@@ -20,11 +21,15 @@ type TransactionsService struct {
 	txRepo repository.TransactionsRepo
 	collectClient pb.CollectionClient
 	collSvcConfig pkgConfig.GrpcConfig
+	svcCfg config.ServiceConfig
+
+	categoryChan chan *models.Transaction
 }
 
 func NewTransactionsService(
 	txRepo repository.TransactionsRepo,
 	collSvcConfig pkgConfig.GrpcConfig,
+	svcCfg config.ServiceConfig,
 ) (*TransactionsService, error) {
 	const op = "NewTransactionsService"
 
@@ -35,11 +40,31 @@ func NewTransactionsService(
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	return &TransactionsService{
+	categoryChan := make(chan *models.Transaction, svcCfg.CategoryChanBuffer)
+	txService := &TransactionsService{
 		txRepo: txRepo,
 		collectClient: pb.NewCollectionClient(conn),
 		collSvcConfig: collSvcConfig,
-	}, nil
+		svcCfg: svcCfg,
+
+		categoryChan: categoryChan,
+	}
+	
+	go txService.ListenCategoryChannel()
+
+	return txService, nil
+}
+
+func (s *TransactionsService) ListenCategoryChannel() {
+	for tx := range s.categoryChan {
+		err := s.GetAndPutCategory(tx)
+
+		if err != nil {
+			log.Printf("[WARN] failed to put category: %s", err.Error())
+		} else {
+			log.Printf("[INFO] successfully got and put category")
+		}
+	}
 }
 
 func (s *TransactionsService) GetTransaction(userId uuid.UUID, txId uuid.UUID) (*models.Transaction, error) {
@@ -86,16 +111,7 @@ func (s *TransactionsService) PostTransaction(tx *models.Transaction, withAutoCa
 		}
 
 		tx.Id = txId
-
-		go func() { 
-			err := s.GetAndPutCategory(tx)
-
-			if err != nil {
-				log.Printf("[WARN] failed to put category: %s", err.Error())
-			} else {
-				log.Printf("[INFO] successfully got and put category")
-			}
-		}()
+		s.categoryChan <- tx
 	} else {
 		txId, err = s.txRepo.PostTransaction(tx)
 		if err != nil {

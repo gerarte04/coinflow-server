@@ -33,7 +33,7 @@ func main() {
 	}
 
 	txRepo := postgres.NewTransactionsRepo(dbConn)
-	txSvc, err := service.NewTransactionsService(txRepo, cfg.CollectionSvcCfg)
+	txSvc, err := service.NewTransactionsService(txRepo, cfg.CollectionSvcCfg, cfg.SvcCfg)
 
 	if err != nil {
 		log.Fatalf("%s", err.Error())
