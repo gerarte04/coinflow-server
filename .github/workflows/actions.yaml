@@ -15,6 +15,8 @@ jobs:
     env:
       TRANSLATE_API_ADDRESS: ${{ secrets.TRANSLATE_API_ADDRESS }}
       TRANSLATE_API_KEY: ${{ secrets.TRANSLATE_API_KEY }}
+      JWT_PRIVATE_KEY: ${{ secrets.JWT_PRIVATE_KEY }}
+      JWT_PUBLIC_KEY: ${{ secrets.JWT_PUBLIC_KEY }}
 
     steps:
     - name: Checkout Code
@@ -34,8 +36,10 @@ jobs:
     - name: Build and Test
       run: |
         mv public.env .env
-        echo $TRANSLATE_API_ADDRESS >> .env
-        echo $TRANSLATE_API_KEY >> .env
+        echo "TRANSLATE_API_ADDRESS=$TRANSLATE_API_ADDRESS" >> .env
+        echo "TRANSLATE_API_KEY=$TRANSLATE_API_KEY" >> .env
+        echo "JWT_PRIVATE_KEY=$JWT_PRIVATE_KEY" >> .env
+        echo "JWT_PUBLIC_KEY=$JWT_PUBLIC_KEY" >> .env
         make launch_services_with_tests
 
     - name: Shut Down Docker Compose
