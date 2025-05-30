@@ -34,11 +34,11 @@ func NewStorageClient(grpcCfg pkgConfig.GrpcConfig) (*StorageClient, error) {
 	}, nil
 }
 
-func (c *StorageClient) GetTransaction(userId uuid.UUID, txId uuid.UUID) (*models.Transaction, error) {
+func (c *StorageClient) GetTransaction(ctx context.Context, userId uuid.UUID, txId uuid.UUID) (*models.Transaction, error) {
 	const op = "StorageClient.GetTransactionsInPeriod"
 
 	req := pb.GetTransactionRequest{UserId: userId.String(), TxId: txId.String()}
-	resp, err := c.grpcCli.GetTransaction(context.Background(), &req)
+	resp, err := c.grpcCli.GetTransaction(ctx, &req)
 
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
@@ -47,11 +47,11 @@ func (c *StorageClient) GetTransaction(userId uuid.UUID, txId uuid.UUID) (*model
 	return types.CreateGetTransactionResponse(resp)
 }
 
-func (c *StorageClient) GetTransactionsInPeriod(userId uuid.UUID, begin string, end string) ([]*models.Transaction, error) {
+func (c *StorageClient) GetTransactionsInPeriod(ctx context.Context, userId uuid.UUID, begin string, end string) ([]*models.Transaction, error) {
 	const op = "StorageClient.GetTransactionsInPeriod"
 
 	req := pb.GetTransactionsInPeriodRequest{UserId: userId.String(), Begin: begin, End: end}
-	resp, err := c.grpcCli.GetTransactionsInPeriod(context.Background(), &req)
+	resp, err := c.grpcCli.GetTransactionsInPeriod(ctx, &req)
 
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
@@ -60,7 +60,7 @@ func (c *StorageClient) GetTransactionsInPeriod(userId uuid.UUID, begin string, 
 	return types.CreateGetTransactionsInPeriodResponse(resp)
 }
 
-func (c *StorageClient) PostTransaction(tx *models.Transaction, withAutoCategory bool) (string, error) {
+func (c *StorageClient) PostTransaction(ctx context.Context, tx *models.Transaction, withAutoCategory bool) (string, error) {
 	const op = "StorageClient.PostTransaction"
 
 	req, err := types.CreatePostTransactionRequest(tx, withAutoCategory)
@@ -68,7 +68,7 @@ func (c *StorageClient) PostTransaction(tx *models.Transaction, withAutoCategory
 		return "", err
 	}
 
-	resp, err := c.grpcCli.PostTransaction(context.Background(), req)
+	resp, err := c.grpcCli.PostTransaction(ctx, req)
 	if err != nil {
 		return "", fmt.Errorf("%s: %w", op, err)
 	}

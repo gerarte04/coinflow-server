@@ -17,13 +17,19 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
+type CategoryQuery struct {
+	ctx context.Context
+	cancel context.CancelFunc
+	tx *models.Transaction
+}
+
 type TransactionsService struct {
 	txRepo repository.TransactionsRepo
 	collectClient pb.CollectionClient
 	collSvcConfig pkgConfig.GrpcConfig
 	svcCfg config.ServiceConfig
 
-	categoryChan chan *models.Transaction
+	categoryChan chan *CategoryQuery
 }
 
 func NewTransactionsService(
@@ -40,7 +46,7 @@ func NewTransactionsService(
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	categoryChan := make(chan *models.Transaction, svcCfg.CategoryChanBuffer)
+	categoryChan := make(chan *CategoryQuery, svcCfg.CategoryChanBuffer)
 	txService := &TransactionsService{
 		txRepo: txRepo,
 		collectClient: pb.NewCollectionClient(conn),
@@ -56,26 +62,36 @@ func NewTransactionsService(
 }
 
 func (s *TransactionsService) ListenCategoryChannel() {
-	for tx := range s.categoryChan {
-		err := s.GetAndPutCategory(tx)
+	for query := range s.categoryChan {
+		select {
+		case <-query.ctx.Done():
+			log.Printf("[WARN] failed to put category: %s", query.ctx.Err())
+			break
+		default:
+			err := s.GetAndPutCategory(query.ctx, query.tx)
 
-		if err != nil {
-			log.Printf("[WARN] failed to put category: %s", err.Error())
-		} else {
-			log.Printf("[INFO] successfully got and put category")
+			if err != nil {
+				log.Printf("[WARN] failed to put category: %s", err.Error())
+			} else {
+				log.Printf("[INFO] successfully got and put category")
+			}
+
+			break
 		}
+
+		query.cancel()
 	}
 }
 
-func (s *TransactionsService) GetTransaction(userId uuid.UUID, txId uuid.UUID) (*models.Transaction, error) {
-	return s.txRepo.GetTransaction(userId, txId)
+func (s *TransactionsService) GetTransaction(ctx context.Context, userId uuid.UUID, txId uuid.UUID) (*models.Transaction, error) {
+	return s.txRepo.GetTransaction(ctx, userId, txId)
 }
 
-func (s *TransactionsService) GetTransactionsInPeriod(userId uuid.UUID, begin time.Time, end time.Time) ([]*models.Transaction, error) {
-	return s.txRepo.GetTransactionsInPeriod(userId, begin, end)
+func (s *TransactionsService) GetTransactionsInPeriod(ctx context.Context, userId uuid.UUID, begin time.Time, end time.Time) ([]*models.Transaction, error) {
+	return s.txRepo.GetTransactionsInPeriod(ctx, userId, begin, end)
 }
 
-func (s *TransactionsService) GetAndPutCategory(tx *models.Transaction) error {
+func (s *TransactionsService) GetAndPutCategory(ctx context.Context, tx *models.Transaction) error {
 	const op = "TransactionsService.GetAndPutCategory"
 
 	pbTx, err := ConvertModelTransactionToProtobuf(tx)
@@ -83,14 +99,12 @@ func (s *TransactionsService) GetAndPutCategory(tx *models.Transaction) error {
 		return fmt.Errorf("%s: %w", op, err)
 	}
 
-	ctx := context.Background()
-
 	resp, err := s.collectClient.GetTransactionCategory(ctx, &pb.GetTransactionCategoryRequest{Tx: pbTx})
 	if err != nil {
 		return fmt.Errorf("%s: received error from collector: %w", op, err)
 	}
 
-	err = s.txRepo.PutCategory(tx.Id, resp.Category)
+	err = s.txRepo.PutCategory(ctx, tx.Id, resp.Category)
 	if err != nil {
 		return fmt.Errorf("%s: %w", op, err)
 	}
@@ -98,22 +112,24 @@ func (s *TransactionsService) GetAndPutCategory(tx *models.Transaction) error {
 	return nil
 }
 
-func (s *TransactionsService) PostTransaction(tx *models.Transaction, withAutoCategory bool) (uuid.UUID, error) {
+func (s *TransactionsService) PostTransaction(ctx context.Context, tx *models.Transaction, withAutoCategory bool) (uuid.UUID, error) {
 	const op = "TransactionsService.PostTransaction"
 
 	var txId uuid.UUID
 	var err error
 	
 	if withAutoCategory {
-		txId, err = s.txRepo.PostTransactionWithoutCategory(tx)
+		txId, err = s.txRepo.PostTransactionWithoutCategory(ctx, tx)
 		if err != nil {
 			return uuid.Nil, err
 		}
 
 		tx.Id = txId
-		s.categoryChan <- tx
+
+		ctx, cancel := context.WithTimeout(context.Background(), s.svcCfg.CategoryTimeout)
+		s.categoryChan <- &CategoryQuery{ctx: ctx, cancel: cancel, tx: tx}
 	} else {
-		txId, err = s.txRepo.PostTransaction(tx)
+		txId, err = s.txRepo.PostTransaction(ctx, tx)
 		if err != nil {
 			return uuid.Nil, err
 		}

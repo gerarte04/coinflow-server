@@ -2,6 +2,7 @@ package usecases
 
 import (
 	"coinflow/coinflow-server/auth-service/internal/models"
+	"context"
 
 	"github.com/google/uuid"
 )
@@ -12,8 +13,8 @@ type TokenPair struct {
 }
 
 type UserService interface {
-	Login(login, password string) (*TokenPair, error)
-	Refresh(refreshToken string) (*TokenPair, error)
-	Register(usr *models.User) (uuid.UUID, error)
-	GetUserData(usrId uuid.UUID) (*models.User, error)
+	Login(ctx context.Context, login, password string) (*TokenPair, error)
+	Refresh(ctx context.Context, refreshToken string) (*TokenPair, error)
+	Register(ctx context.Context, usr *models.User) (uuid.UUID, error)
+	GetUserData(ctx context.Context, usrId uuid.UUID) (*models.User, error)
 }

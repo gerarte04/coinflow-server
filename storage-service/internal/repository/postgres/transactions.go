@@ -21,12 +21,13 @@ func NewTransactionsRepo(conn *pgx.Conn) *TransactionsRepo {
 	return &TransactionsRepo{conn: conn}
 }
 
-func (r *TransactionsRepo) GetTransaction(userId uuid.UUID, txId uuid.UUID) (*models.Transaction, error) {
+func (r *TransactionsRepo) GetTransaction(ctx context.Context, userId uuid.UUID, txId uuid.UUID) (*models.Transaction, error) {
 	const op = "TransactionsRepo.GetTransaction"
 
 	row := r.conn.QueryRow(
-		context.Background(),
-		"SELECT * FROM transactions WHERE id = $1", txId,
+		ctx,
+		"SELECT * FROM transactions WHERE id = $1",
+		txId,
 	)
 
 	var tx models.Transaction
@@ -45,11 +46,11 @@ func (r *TransactionsRepo) GetTransaction(userId uuid.UUID, txId uuid.UUID) (*mo
 	return &tx, nil
 }
 
-func (r *TransactionsRepo) GetTransactionsInPeriod(userId uuid.UUID, begin time.Time, end time.Time) ([]*models.Transaction, error) {
+func (r *TransactionsRepo) GetTransactionsInPeriod(ctx context.Context, userId uuid.UUID, begin time.Time, end time.Time) ([]*models.Transaction, error) {
 	const op = "TransactionsRepo.GetTransactionsInPeriod"
 
 	rows, err := r.conn.Query(
-		context.Background(),
+		ctx,
 		"SELECT * FROM transactions WHERE (user_id = $1 AND timestamp >= $2 AND timestamp <= $3)",
 		userId, begin, end,
 	)
@@ -74,11 +75,11 @@ func (r *TransactionsRepo) GetTransactionsInPeriod(userId uuid.UUID, begin time.
 	return txs, nil
 }
 
-func (r *TransactionsRepo) PostTransaction(tx *models.Transaction) (uuid.UUID, error) {
+func (r *TransactionsRepo) PostTransaction(ctx context.Context, tx *models.Transaction) (uuid.UUID, error) {
 	const op = "TransactionsRepo.PostTransaction"
 
 	row := r.conn.QueryRow(
-		context.Background(),
+		ctx,
 		`INSERT INTO transactions (
 			user_id, type, target, description, category, cost
 		) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id`,
@@ -97,11 +98,11 @@ func (r *TransactionsRepo) PostTransaction(tx *models.Transaction) (uuid.UUID, e
 	return txId, nil
 }
 
-func (r *TransactionsRepo) PostTransactionWithoutCategory(tx *models.Transaction) (uuid.UUID, error) {
+func (r *TransactionsRepo) PostTransactionWithoutCategory(ctx context.Context, tx *models.Transaction) (uuid.UUID, error) {
 	const op = "TransactionsRepo.PostTransactionWithoutCategory"
 
 	row := r.conn.QueryRow(
-		context.Background(),
+		ctx,
 		`INSERT INTO transactions (
 			user_id, type, target, description, cost
 		) VALUES ($1, $2, $3, $4, $5) RETURNING id`,
@@ -120,10 +121,11 @@ func (r *TransactionsRepo) PostTransactionWithoutCategory(tx *models.Transaction
 	return txId, nil
 }
 
-func (r *TransactionsRepo) PutCategory(tsId uuid.UUID, category string) error {
+func (r *TransactionsRepo) PutCategory(ctx context.Context, tsId uuid.UUID, category string) error {
 	const op = "TransactionsRepo.PutCategory"
 
-	tag, err := r.conn.Exec(context.Background(),
+	tag, err := r.conn.Exec(
+		ctx,
 		"UPDATE transactions SET category = $1 WHERE id = $2",
 		category, tsId,
 	)

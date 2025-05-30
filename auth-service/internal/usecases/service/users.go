@@ -66,10 +66,10 @@ func (s *UserService) GenerateNewTokenPair(usrId uuid.UUID) (*usecases.TokenPair
 	return &usecases.TokenPair{Access: access, Refresh: refresh}, nil
 }
 
-func (s *UserService) Login(login, password string) (*usecases.TokenPair, error) {
+func (s *UserService) Login(ctx context.Context, login, password string) (*usecases.TokenPair, error) {
 	const op = "UserService.Login"
 
-	usr, err := s.usersRepo.GetUserByCred(login, password)
+	usr, err := s.usersRepo.GetUserByCred(ctx, login, password)
 	if err != nil {
 		return nil, err
 	}
@@ -82,7 +82,7 @@ func (s *UserService) Login(login, password string) (*usecases.TokenPair, error)
 	return tokens, nil
 }
 
-func (s *UserService) Refresh(refreshToken string) (*usecases.TokenPair, error) {
+func (s *UserService) Refresh(ctx context.Context, refreshToken string) (*usecases.TokenPair, error) {
 	const op = "UserService.Refresh"
 
 	_, err := s.cache.Get(context.Background(), refreshToken)
@@ -111,10 +111,10 @@ func (s *UserService) Refresh(refreshToken string) (*usecases.TokenPair, error) 
 	return tokens, nil
 }
 
-func (s *UserService) Register(usr *models.User) (uuid.UUID, error) {
-	return s.usersRepo.PostUser(usr)
+func (s *UserService) Register(ctx context.Context, usr *models.User) (uuid.UUID, error) {
+	return s.usersRepo.PostUser(ctx, usr)
 }
 
-func (s *UserService) GetUserData(usrId uuid.UUID) (*models.User, error) {
-	return s.usersRepo.GetUser(usrId)
+func (s *UserService) GetUserData(ctx context.Context, usrId uuid.UUID) (*models.User, error) {
+	return s.usersRepo.GetUser(ctx, usrId)
 }

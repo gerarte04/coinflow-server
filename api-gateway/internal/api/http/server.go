@@ -53,7 +53,7 @@ func (s *CoinflowServer) GetTransactionHandler(c *gin.Context) {
 		return
 	}
 
-	res, err := s.storageCli.GetTransaction(reqObj.UserId, reqObj.TxId)
+	res, err := s.storageCli.GetTransaction(c.Request.Context(), reqObj.UserId, reqObj.TxId)
 	if err != nil {
 		WriteGrpcError(c, err)
 		return
@@ -81,7 +81,7 @@ func (s *CoinflowServer) GetTransactionsInPeriodHandler(c *gin.Context) {
 		return
 	}
 
-	res, err := s.storageCli.GetTransactionsInPeriod(reqObj.UserId, reqObj.Begin, reqObj.End)
+	res, err := s.storageCli.GetTransactionsInPeriod(c.Request.Context(), reqObj.UserId, reqObj.Begin, reqObj.End)
 	if err != nil {
 		WriteGrpcError(c, err)
 		return
@@ -116,7 +116,7 @@ func (s *CoinflowServer) PostTransactionHandler(c *gin.Context) {
 		return
 	}
 
-	res, err := s.storageCli.PostTransaction(reqObj.Tx, reqObj.WithAutoCategory)
+	res, err := s.storageCli.PostTransaction(c.Request.Context(), reqObj.Tx, reqObj.WithAutoCategory)
 	if err != nil {
 		WriteGrpcError(c, err)
 		return
@@ -157,7 +157,7 @@ func (s *CoinflowServer) LoginHandler(c *gin.Context) {
 		return
 	}
 
-	access, refresh, err := s.authCli.Login(reqObj.Login, reqObj.Password)
+	access, refresh, err := s.authCli.Login(c.Request.Context(), reqObj.Login, reqObj.Password)
 	if err != nil {
 		WriteGrpcError(c, err)
 		return
@@ -189,7 +189,7 @@ func (s *CoinflowServer) RefreshHandler(c *gin.Context) {
 		return
 	}
 
-	access, refresh, err := s.authCli.Refresh(reqObj.RefreshToken)
+	access, refresh, err := s.authCli.Refresh(c.Request.Context(), reqObj.RefreshToken)
 	if err != nil {
 		WriteGrpcError(c, err)
 		return
@@ -221,7 +221,7 @@ func (s *CoinflowServer) RegisterHandler(c *gin.Context) {
 		return
 	}
 
-	res, err := s.authCli.Register(&reqObj.User)
+	res, err := s.authCli.Register(c.Request.Context(), &reqObj.User)
 	if err != nil {
 		WriteGrpcError(c, err)
 		return
@@ -250,7 +250,7 @@ func (s *CoinflowServer) GetUserDataHandler(c *gin.Context) {
 		return
 	}
 
-	res, err := s.authCli.GetUserData(reqObj.UserId)
+	res, err := s.authCli.GetUserData(c.Request.Context(), reqObj.UserId)
 	if err != nil {
 		WriteGrpcError(c, err)
 		return

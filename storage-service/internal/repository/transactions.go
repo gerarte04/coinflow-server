@@ -2,6 +2,7 @@ package repository
 
 import (
 	"coinflow/coinflow-server/storage-service/internal/models"
+	"context"
 	"time"
 
 	"github.com/google/uuid"
@@ -9,9 +10,9 @@ import (
 
 //go:generate mockgen -source transactions.go -destination mocks/transactions_mock.go -package mocks
 type TransactionsRepo interface {
-	GetTransaction(userId uuid.UUID, txId uuid.UUID) (*models.Transaction, error)
-	GetTransactionsInPeriod(userId uuid.UUID, begin time.Time, end time.Time) ([]*models.Transaction, error)
-	PostTransaction(tx *models.Transaction) (uuid.UUID, error)
-	PostTransactionWithoutCategory(tx *models.Transaction) (uuid.UUID, error)
-	PutCategory(txId uuid.UUID, category string) error
+	GetTransaction(ctx context.Context, userId uuid.UUID, txId uuid.UUID) (*models.Transaction, error)
+	GetTransactionsInPeriod(ctx context.Context, userId uuid.UUID, begin time.Time, end time.Time) ([]*models.Transaction, error)
+	PostTransaction(ctx context.Context, tx *models.Transaction) (uuid.UUID, error)
+	PostTransactionWithoutCategory(ctx context.Context, tx *models.Transaction) (uuid.UUID, error)
+	PutCategory(ctx context.Context, txId uuid.UUID, category string) error
 }

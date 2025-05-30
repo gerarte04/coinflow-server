@@ -3,10 +3,12 @@ package config
 import (
 	pkgConfig "coinflow/coinflow-server/pkg/config"
 	"coinflow/coinflow-server/pkg/database/postgres"
+	"time"
 )
 
 type ServiceConfig struct {
 	CategoryChanBuffer 	int							`yaml:"category_chan_buffer" env:"CATEGORY_CHAN_BUFFER" env-default:"128"`
+	CategoryTimeout		time.Duration				`yaml:"category_timeout" env:"CATEGORY_TIMEOUT" env-default:"5m"`
 }
 
 type Config struct {

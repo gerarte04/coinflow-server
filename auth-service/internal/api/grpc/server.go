@@ -20,7 +20,7 @@ func NewAuthServer(usrService usecases.UserService) *AuthServer {
 }
 
 func (s *AuthServer) Login(ctx context.Context, r *pb.LoginRequest) (*pb.LoginResponse, error) {
-	tokens, err := s.usrService.Login(r.Login, r.Password)
+	tokens, err := s.usrService.Login(ctx, r.Login, r.Password)
 	if err != nil {
 		return nil, grpcErr.CreateResultStatusError(err, errorCodes)
 	}
@@ -29,7 +29,7 @@ func (s *AuthServer) Login(ctx context.Context, r *pb.LoginRequest) (*pb.LoginRe
 }
 
 func (s *AuthServer) Refresh(ctx context.Context, r *pb.RefreshRequest) (*pb.RefreshResponse, error) {
-	tokens, err := s.usrService.Refresh(r.RefreshToken)
+	tokens, err := s.usrService.Refresh(ctx, r.RefreshToken)
 	if err != nil {
 		return nil, grpcErr.CreateResultStatusError(err, errorCodes)
 	}
@@ -43,7 +43,7 @@ func (s *AuthServer) Register(ctx context.Context, r *pb.RegisterRequest) (*pb.R
 		return nil, grpcErr.CreateRequestObjectStatusError(err)
 	}
 
-	usrId, err := s.usrService.Register(reqObj.User)
+	usrId, err := s.usrService.Register(ctx, reqObj.User)
 	if err != nil {
 	    return nil, grpcErr.CreateResultStatusError(err, errorCodes)
 	}
@@ -57,7 +57,7 @@ func (s *AuthServer) GetUserData(ctx context.Context, r *pb.GetUserDataRequest) 
 		return nil, grpcErr.CreateRequestObjectStatusError(err)
 	}
 
-	usr, err := s.usrService.GetUserData(reqObj.UsrId)
+	usr, err := s.usrService.GetUserData(ctx, reqObj.UsrId)
 	if err != nil {
 		return nil, grpcErr.CreateResultStatusError(err, errorCodes)
 	}

@@ -21,11 +21,11 @@ func NewUsersRepo(conn *pgx.Conn) *UsersRepo {
 	return &UsersRepo{conn: conn}
 }
 
-func (r *UsersRepo) GetUser(id uuid.UUID) (*models.User, error) {
+func (r *UsersRepo) GetUser(ctx context.Context, id uuid.UUID) (*models.User, error) {
 	const op = "UsersRepo.GetUser"
 
 	row := r.conn.QueryRow(
-		context.Background(),
+		ctx,
 		"SELECT id, login, name, email, phone, registration_timestamp FROM users WHERE id = $1",
 		id,
 	)
@@ -42,11 +42,11 @@ func (r *UsersRepo) GetUser(id uuid.UUID) (*models.User, error) {
 	return &usr, nil
 }
 
-func (r *UsersRepo) GetUserByCred(login, password string) (*models.User, error) {
+func (r *UsersRepo) GetUserByCred(ctx context.Context, login, password string) (*models.User, error) {
 	const op = "UsersRepo.GetUserByCred"
 
 	row := r.conn.QueryRow(
-		context.Background(),
+		ctx,
 		"SELECT * FROM users WHERE login = $1",
 		login,
 	)
@@ -73,7 +73,7 @@ func (r *UsersRepo) GetUserByCred(login, password string) (*models.User, error) 
 	return &usr, nil
 }
 
-func (r *UsersRepo) PostUser(usr *models.User) (uuid.UUID, error) {
+func (r *UsersRepo) PostUser(ctx context.Context, usr *models.User) (uuid.UUID, error) {
 	const op = "UsersRepo.PostUser"
 
 	passwordHash, err := bcrypt.GenerateFromPassword([]byte(usr.Password), 14)
@@ -82,7 +82,7 @@ func (r *UsersRepo) PostUser(usr *models.User) (uuid.UUID, error) {
 	}
 
 	row := r.conn.QueryRow(
-		context.Background(),
+		ctx,
 		`INSERT INTO users (
 			login, password_hash, name, email, phone
 		) VALUES ($1, $2, $3, $4, $5) RETURNING id`,

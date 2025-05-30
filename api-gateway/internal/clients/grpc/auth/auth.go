@@ -35,11 +35,11 @@ func NewAuthClient(grpcCfg pkgConfig.GrpcConfig) (*AuthClient, error) {
 	}, nil
 }
 
-func (c *AuthClient) Login(login, password string) (string, string, error) {
+func (c *AuthClient) Login(ctx context.Context, login, password string) (string, string, error) {
 	const op = "AuthClient.Login"
 
 	req := pb.LoginRequest{Login: login, Password: password}
-	resp, err := c.grpcCli.Login(context.Background(), &req)
+	resp, err := c.grpcCli.Login(ctx, &req)
 
 	if err != nil {
 		return "", "", fmt.Errorf("%s: %w", op, err)
@@ -48,11 +48,11 @@ func (c *AuthClient) Login(login, password string) (string, string, error) {
 	return resp.AccessToken, resp.RefreshToken, nil
 }
 
-func (c *AuthClient) Refresh(refreshToken string) (string, string, error) {
+func (c *AuthClient) Refresh(ctx context.Context, refreshToken string) (string, string, error) {
 	const op = "AuthClient.Refresh"
 
 	req := pb.RefreshRequest{RefreshToken: refreshToken}
-	resp, err := c.grpcCli.Refresh(context.Background(), &req)
+	resp, err := c.grpcCli.Refresh(ctx, &req)
 
 	if err != nil {
 		return "", "", fmt.Errorf("%s: %w", op, err)
@@ -61,7 +61,7 @@ func (c *AuthClient) Refresh(refreshToken string) (string, string, error) {
 	return resp.AccessToken, resp.RefreshToken, nil
 }
 
-func (c *AuthClient) Register(usr *models.User) (uuid.UUID, error) {
+func (c *AuthClient) Register(ctx context.Context, usr *models.User) (uuid.UUID, error) {
 	const op = "AuthClient.Register"
 
 	req, err := types.CreateRegisterRequest(usr)
@@ -69,7 +69,7 @@ func (c *AuthClient) Register(usr *models.User) (uuid.UUID, error) {
 		return uuid.Nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	resp, err := c.grpcCli.Register(context.Background(), req)
+	resp, err := c.grpcCli.Register(ctx, req)
 	if err != nil {
 		return uuid.Nil, fmt.Errorf("%s: %w", op, err)
 	}
@@ -82,11 +82,11 @@ func (c *AuthClient) Register(usr *models.User) (uuid.UUID, error) {
 	return id, nil
 }
 
-func (c *AuthClient) GetUserData(usrId uuid.UUID) (*models.User, error) {
+func (c *AuthClient) GetUserData(ctx context.Context, usrId uuid.UUID) (*models.User, error) {
 	const op = "AuthClient.GetUserData"
 
 	req := pb.GetUserDataRequest{UserId: usrId.String()}
-	resp, err := c.grpcCli.GetUserData(context.Background(), &req)
+	resp, err := c.grpcCli.GetUserData(ctx, &req)
 
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
