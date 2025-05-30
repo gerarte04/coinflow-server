@@ -9,11 +9,6 @@ import (
 	"github.com/google/uuid"
 )
 
-type JwtKeys struct {
-	PrivateKey 		[]byte
-	PublicKey 		[]byte
-}
-
 var (
 	method = jwt.SigningMethodEdDSA
 )
@@ -61,6 +56,7 @@ func GenerateJwtToken(usrId uuid.UUID, expiresAt time.Time, privateKey []byte) (
 	claims := jwt.RegisteredClaims{
 		Subject: usrId.String(),
 		ExpiresAt: jwt.NewNumericDate(expiresAt),
+		ID: uuid.New().String(),
 	}
 
 	token := jwt.NewWithClaims(method, claims)

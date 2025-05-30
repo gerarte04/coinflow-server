@@ -131,26 +131,34 @@ func TestTransactions_CommitWithAutoCategory(t *testing.T) {
 func TestTransactions_GetTxInPeriod(t *testing.T) {
 	payload := tu.Payload{
 		"tx": exampleTx,
-		"with_auto_category": false,
+		"with_auto_category": true,
 	}
 
-	offset := time.Millisecond * 500
+	sz := 6
+	beginIdx, endIdx := 1, 4
 
-	beginTime := time.Now()
-	endTime := time.Now().Add(time.Millisecond * 3000 + offset)
-
+	var beginTime, endTime time.Time
 	ids := make([]string, 0)
 
-	for time.Now().Before(endTime) {
-		startIterTime := time.Now()
+	for i := 0; i < sz; i++ {
+		startTime := time.Now()
 
-		_, txId := commitTx(t, payload)
-		ids = append(ids, txId.String())
+		if i == beginIdx {
+			beginTime = time.Now()
+		} else if i == endIdx {
+			endTime = time.Now()
+		} else {
+			_, id := commitTx(t, payload)
+			
+			if i > beginIdx && i < endIdx {
+				ids = append(ids, id.String())
+			}
+		}
 
-		time.Sleep(time.Second - time.Now().Sub(startIterTime))
+		time.Sleep(time.Second - time.Now().Sub(startTime))
 	}
 
-	resp, txs := getInPeriod(t, beginTime.Add(offset), endTime.Add(-2 * offset))
+	resp, txs := getInPeriod(t, beginTime, endTime)
 
 	require.Equal(t, http.StatusOK, resp.StatusCode)
 	require.Equal(t, 2, len(txs))
@@ -158,7 +166,7 @@ func TestTransactions_GetTxInPeriod(t *testing.T) {
 	for i, tx := range txs {
 		tu.ValidateResult(t, tx, exampleTx,
 			tu.ValidateOpt{Key: "timestamp", CheckValue: false},
-			tu.ValidateOpt{Key: "id", CheckValue: true, Value: ids[i + 1]},
+			tu.ValidateOpt{Key: "id", CheckValue: true, Value: ids[i]},
 			tu.ValidateOpt{Key: "category", Ignore: true},
 		)
 	}
