@@ -134,7 +134,7 @@ func (s *CoinflowServer) setAccessToken(c *gin.Context, token string) {
 		int(math.Ceil(s.securityCfg.AccessExpirationTime.Seconds())),
 		"",
 		"",
-		true,
+		!s.securityCfg.AllowUnsecureCookies,
 		true,
 	)
 }

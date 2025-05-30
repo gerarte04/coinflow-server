@@ -7,7 +7,8 @@ import (
 
 type SecurityConfig struct {
 	JwtPublicKeyBase64		string					`env:"JWT_PUBLIC_KEY" env-required:"true"`
-	AccessExpirationTime	time.Duration 			`yaml:"access_expiration_time" env-default:"15m"`	
+	AccessExpirationTime	time.Duration 			`yaml:"access_expiration_time" env-default:"15m"`
+	AllowUnsecureCookies	bool					`yaml:"allow_unsecure_cookies" env-default:"false"`
 }
 
 type Config struct {

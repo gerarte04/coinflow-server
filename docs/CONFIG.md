@@ -22,14 +22,20 @@ auth_service:                   # хост и порт auth-service
   port: 5053
 
 security:
-  access_expiration_time: 30m   # время жизни access токена
+  access_expiration_time: 30m
+  allow_unsecure_cookies: true
 ```
+
+| Поле | Значение |
+| --- | --- |
+| access_expiration_time | **string** <br> Время жизни access токена. |
+| allow_unsecure_cookies | **boolean** <br> Указывает, допустимо ли записывать в ответ на запрос небезопасные (unsecure) куки. Включение данной опции небезопасно и рекомендуется лишь для тестирования. |
 
 **Переменные окружения**
 
 | Переменная | Значение |
 | --- | --- |
-| JWT_PUBLIC_KEY | Публичный ключ ed25519, закодированный в base64 |
+| JWT_PUBLIC_KEY | Публичный ключ ed25519, закодированный в base64. |
 
 ## auth-service
 
@@ -55,16 +61,21 @@ redis:                              # данные Redis для подключе
   db_number: 0
 
 jwt:
-  access_expiration_time: 30m       # время жизни access токена
-  refresh_expiration_time: 168h     # время жизни refresh токена
+  access_expiration_time: 30m
+  refresh_expiration_time: 168h
 ```
+
+| Поле | Значение |
+| --- | --- |
+| access_expiration_time | **string** <br> Время жизни access токена. |
+| refresh_expiration_time | **string** <br> Время жизни refresh токена. |
 
 **Переменные окружения**
 
 | Переменная | Значение |
 | --- | --- |
-| JWT_PUBLIC_KEY | Публичный ключ ed25519, закодированный в base64 |
-| JWT_PRIVATE_KEY | Приватный ключ ed25519, закодированный в base64 |
+| JWT_PUBLIC_KEY | Публичный ключ ed25519, закодированный в base64. |
+| JWT_PRIVATE_KEY | Приватный ключ ed25519, закодированный в base64. |
 
 ## classification-service
 
@@ -72,9 +83,9 @@ jwt:
 
 | Переменная | Значение |
 | --- | --- |
-| CLASSIFICATION_MODEL_NAME | Названия языковой модели с Huggingface |
-| GRPC_CLASSIFICATION_SERVICE_HOST | Хост classification-service |
-| GRPC_CLASSIFICATION_SERVICE_POST | Порт classification-service |
+| CLASSIFICATION_MODEL_NAME | Название языковой модели с Huggingface. |
+| GRPC_CLASSIFICATION_SERVICE_HOST | Хост classification-service. |
+| GRPC_CLASSIFICATION_SERVICE_POST | Порт classification-service. |
 
 ## collection-service
 

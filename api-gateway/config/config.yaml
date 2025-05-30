@@ -12,3 +12,4 @@ auth_service:
 
 security:
   access_expiration_time: 30m
+  allow_unsecure_cookies: true

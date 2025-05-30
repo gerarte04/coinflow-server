@@ -10,11 +10,9 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func SendRequest(t *testing.T, method string, url string, payload any) (*http.Response, error) {
+func SendRequest(t *testing.T, cli *http.Client, method string, url string, payload any) (*http.Response, error) {
 	req := request.NewRequest(method, url).WithBody(payload)
 	require.NoError(t, req.Err())
-
-	cli := http.Client{}
 
 	return cli.Do(req.Http())
 }

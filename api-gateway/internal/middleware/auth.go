@@ -40,7 +40,7 @@ func WithAuthMiddleware(publicKey []byte) gin.HandlerFunc {
 		}
 
 		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-			"error": fmt.Sprintf("%s: %s; %s", ErrorTokenNotFound, err1, err2),
+			"error": fmt.Sprintf("%s: %s; %s", ErrorTokenNotFound.Error(), err1, err2),
 		})
 	}
 }

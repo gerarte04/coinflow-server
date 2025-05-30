@@ -98,7 +98,7 @@ func (r *TransactionsRepo) PostTransaction(tx *models.Transaction) (uuid.UUID, e
 }
 
 func (r *TransactionsRepo) PostTransactionWithoutCategory(tx *models.Transaction) (uuid.UUID, error) {
-	const op = "TransactionsRepo.PostTransaction"
+	const op = "TransactionsRepo.PostTransactionWithoutCategory"
 
 	row := r.conn.QueryRow(
 		context.Background(),
