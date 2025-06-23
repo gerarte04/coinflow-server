@@ -66,7 +66,6 @@ func (s *TransactionsService) ListenCategoryChannel() {
 		select {
 		case <-query.ctx.Done():
 			log.Printf("[WARN] failed to put category: %s", query.ctx.Err())
-			break
 		default:
 			err := s.GetAndPutCategory(query.ctx, query.tx)
 
@@ -75,8 +74,6 @@ func (s *TransactionsService) ListenCategoryChannel() {
 			} else {
 				log.Printf("[INFO] successfully got and put category")
 			}
-
-			break
 		}
 
 		query.cancel()
