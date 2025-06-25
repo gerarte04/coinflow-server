@@ -2,6 +2,7 @@ package crypto
 
 import (
 	"crypto/ed25519"
+	"errors"
 	"fmt"
 	"time"
 
@@ -29,12 +30,12 @@ func ValidateJwtToken(tokenStr string, publicKey []byte) (uuid.UUID, error) {
 		jwt.WithExpirationRequired(),
 	)
 
-	expTime, err := token.Claims.GetExpirationTime()
-
-	if err != nil {
-		return uuid.Nil, fmt.Errorf("%s: %w", op, err)
-	} else if time.Now().After(expTime.Time) {
+	if errors.Is(err, jwt.ErrTokenExpired) {
 		return uuid.Nil, fmt.Errorf("%s: %w", op, ErrorTokenExpired)
+	} else if errors.Is(err, jwt.ErrTokenSignatureInvalid) {
+		return uuid.Nil, fmt.Errorf("%s: %w", op, ErrorTokenSignatureInvalid)
+	} else if err != nil {
+		return uuid.Nil, fmt.Errorf("%s: %w", op, ErrorTokenParsingFailed)
 	}
 
 	sub, err := token.Claims.GetSubject()

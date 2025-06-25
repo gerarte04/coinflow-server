@@ -1,22 +1,17 @@
 services:
-  api-gateway:
+  envoy-gateway:
     build:
       context: .
-      dockerfile: api-gateway/Dockerfile
-    environment:
-      - JWT_PUBLIC_KEY=${JWT_PUBLIC_KEY}
+      dockerfile: envoy/Dockerfile
     ports:
       - 8080:8080
+    volumes:
+      - ./envoy/envoy-gateway.yaml:/etc/envoy/envoy.yaml
+      - ./envoy/lua:/etc/lua
+      - ./gen/descriptor_set.pb:/etc/protos/descriptor_set.pb
     depends_on:
-      collection-service:
+      auth-service:
         condition: service_started
-      storage-service:
-        condition: service_started
-    healthcheck:
-      test: curl --fail -X GET http://api-gateway:8080/health || exit 1
-      interval: 10s
-      timeout: 1s
-      retries: 1
 
   auth-service:
     build:
@@ -25,6 +20,8 @@ services:
     environment:
       - JWT_PRIVATE_KEY=${JWT_PRIVATE_KEY}
       - JWT_PUBLIC_KEY=${JWT_PUBLIC_KEY}
+    ports:
+    - 5053:5053
     depends_on:
       postgres:
         condition: service_healthy
@@ -103,15 +100,15 @@ services:
       timeout: 10s
       retries: 3
 
-  tester:
-    build:
-      context: .
-      dockerfile: tests/Dockerfile
-    environment:
-      - HTTP_HOST=${HTTP_HOST}
-      - HTTP_PORT=${HTTP_PORT}
-    profiles:
-      - test
-    depends_on:
-      api-gateway:
-        condition: service_healthy
+  # tester:
+  #   build:
+  #     context: .
+  #     dockerfile: tests/Dockerfile
+  #   environment:
+  #     - HTTP_HOST=${HTTP_HOST}
+  #     - HTTP_PORT=${HTTP_PORT}
+  #   profiles:
+  #     - test
+  #   depends_on:
+  #     api-gateway:
+  #       condition: service_healthy

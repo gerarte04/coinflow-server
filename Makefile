@@ -8,6 +8,10 @@ gen_proto:
 	protoc -Igoogleapis -I./protos --go_out=. --go-grpc_out=. collection-service.proto classification-service.proto storage-service.proto auth-service.proto
 	python3 -m grpc_tools.protoc --pyi_out=$(py_grpc_path) --python_out=$(py_grpc_path) --grpc_python_out=$(py_grpc_path) -I./protos protos/classification-service.proto
 
+gen_descriptor_set:
+	-git clone https://github.com/googleapis/googleapis
+	protoc -Igoogleapis -I./protos --include_imports --include_source_info --descriptor_set_out=$(desc_set_path) auth-service.proto collection-service.proto storage-service.proto
+
 build_services:
 	docker compose build
 

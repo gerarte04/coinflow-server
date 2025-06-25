@@ -4,8 +4,13 @@ import (
 	"coinflow/coinflow-server/auth-service/internal/api/grpc/types"
 	"coinflow/coinflow-server/auth-service/internal/usecases"
 	pb "coinflow/coinflow-server/gen/auth_service/golang"
+	pkgGrpc "coinflow/coinflow-server/pkg/grpc"
 	grpcErr "coinflow/coinflow-server/pkg/pkgerrors/grpc"
 	"context"
+	"fmt"
+
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/metadata"
 )
 
 type AuthServer struct {
@@ -19,11 +24,17 @@ func NewAuthServer(usrService usecases.UserService) *AuthServer {
 	}
 }
 
+func setAccessCookie(ctx context.Context, token string) {
+	grpc.SetHeader(ctx, metadata.Pairs("Set-Cookie", fmt.Sprintf("accessToken=%s", token)))
+}
+
 func (s *AuthServer) Login(ctx context.Context, r *pb.LoginRequest) (*pb.LoginResponse, error) {
 	tokens, err := s.usrService.Login(ctx, r.Login, r.Password)
 	if err != nil {
 		return nil, grpcErr.CreateResultStatusError(err, errorCodes)
 	}
+
+	setAccessCookie(ctx, tokens.Access)
 
 	return &pb.LoginResponse{AccessToken: tokens.Access, RefreshToken: tokens.Refresh}, nil
 }
@@ -33,6 +44,8 @@ func (s *AuthServer) Refresh(ctx context.Context, r *pb.RefreshRequest) (*pb.Ref
 	if err != nil {
 		return nil, grpcErr.CreateResultStatusError(err, errorCodes)
 	}
+
+	setAccessCookie(ctx, tokens.Access)
 
 	return &pb.RefreshResponse{AccessToken: tokens.Access, RefreshToken: tokens.Refresh}, nil
 }
@@ -47,6 +60,8 @@ func (s *AuthServer) Register(ctx context.Context, r *pb.RegisterRequest) (*pb.R
 	if err != nil {
 	    return nil, grpcErr.CreateResultStatusError(err, errorCodes)
 	}
+
+	pkgGrpc.SetResponseCode(ctx, 201)
 
 	return &pb.RegisterResponse{UserId: usrId.String()}, nil
 }

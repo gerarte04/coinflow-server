@@ -117,7 +117,3 @@ func CreateGetTransactionsInPeriodResponse(txs []*models.Transaction) (*pb.GetTr
 
 	return &pb.GetTransactionsInPeriodResponse{Txs: pbTxs}, nil
 }
-
-func CreatePostTransactionResponse(txId uuid.UUID) (*pb.PostTransactionResponse, error) {
-	return &pb.PostTransactionResponse{TxId: txId.String()}, nil
-}

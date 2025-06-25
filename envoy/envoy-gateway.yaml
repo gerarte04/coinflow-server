@@ -1,0 +1,121 @@
+static_resources:
+  listeners:
+  - name: listener_0
+    address:
+      socket_address:
+        address: 0.0.0.0
+        port_value: 8080
+    filter_chains:
+    - filters:
+      - name: envoy.http_connection_manager
+        typed_config:
+          "@type": type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
+          stat_prefix: ingress_http
+          codec_type: HTTP1
+          http_filters:
+          - name: envoy.filters.http.lua
+            typed_config:
+              "@type": type.googleapis.com/envoy.extensions.filters.http.lua.v3.Lua
+              default_source_code:
+                filename: /etc/lua/default_handlers.lua
+          
+          - name: envoy.filters.http.grpc_json_transcoder
+            typed_config:
+              "@type": type.googleapis.com/envoy.extensions.filters.http.grpc_json_transcoder.v3.GrpcJsonTranscoder
+              proto_descriptor: /etc/protos/descriptor_set.pb
+              services:
+              - auth_service.Auth
+              - collection_service.Collection
+              - storage_service.Storage
+              match_incoming_request_route: true
+              print_options:
+                add_whitespace: true
+                always_print_primitive_fields: true
+                always_print_enums_as_ints: false
+                preserve_proto_field_names: true
+          
+          - name: envoy.filters.http.router
+            typed_config:
+              "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
+
+          route_config:
+            name: local_route
+            virtual_hosts:
+            - name: local_service
+              domains: ["*"]
+              routes:
+                - name: route_auth
+                  match:
+                    prefix: /v1/auth
+                  route:
+                    cluster: auth-service
+                
+                - name: route_user
+                  match:
+                    prefix: /v1/user
+                  route:
+                    cluster: auth-service
+
+                - name: route_tx
+                  match:
+                    prefix: /v1/transaction
+                  route:
+                    cluster: storage-service
+
+                - name: route_commit
+                  match:
+                    prefix: /v1/commit
+                  route:
+                    cluster: storage-service
+
+            request_headers_to_add:
+            - header:
+                key: Content-Type
+                value: application/grpc+proto
+              append: false
+
+  clusters:
+  - name: auth-service
+    type: LOGICAL_DNS
+    lb_policy: ROUND_ROBIN
+    dns_lookup_family: V4_ONLY
+    http2_protocol_options: {}
+    load_assignment:
+      cluster_name: auth-service
+      endpoints:
+      - lb_endpoints:
+        - endpoint:
+            address:
+              socket_address:
+                address: auth-service
+                port_value: 5053
+
+  - name: storage-service
+    type: LOGICAL_DNS
+    lb_policy: ROUND_ROBIN
+    dns_lookup_family: V4_ONLY
+    http2_protocol_options: {}
+    load_assignment:
+      cluster_name: storage-service
+      endpoints:
+      - lb_endpoints:
+        - endpoint:
+            address:
+              socket_address:
+                address: storage-service
+                port_value: 5051
+
+  - name: collection-service
+    type: LOGICAL_DNS
+    lb_policy: ROUND_ROBIN
+    dns_lookup_family: V4_ONLY
+    http2_protocol_options: {}
+    load_assignment:
+      cluster_name: collection-service
+      endpoints:
+      - lb_endpoints:
+        - endpoint:
+            address:
+              socket_address:
+                address: collection-service
+                port_value: 50051
