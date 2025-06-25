@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.5.1
 // - protoc             v5.29.3
-// source: protos/storage-service.proto
+// source: storage-service.proto
 
 package golang
 
@@ -193,5 +193,5 @@ var Storage_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "protos/storage-service.proto",
+	Metadata: "storage-service.proto",
 }

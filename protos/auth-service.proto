@@ -4,6 +4,8 @@ package auth_service;
 
 option go_package = "gen/auth_service/golang";
 
+import "google/api/annotations.proto";
+
 message User {
     string id = 1;
     string login = 2;
@@ -58,8 +60,25 @@ message GetUserDataResponse {
 // Service -----------------------------------
 
 service Auth {
-	rpc Login(LoginRequest) returns (LoginResponse);
-    rpc Refresh(RefreshRequest) returns (RefreshResponse);
-	rpc Register(RegisterRequest) returns (RegisterResponse);
-    rpc GetUserData(GetUserDataRequest) returns (GetUserDataResponse);
+	rpc Login(LoginRequest) returns (LoginResponse) {
+        option (google.api.http) = {
+            post: "/v1/auth/login"
+        };
+    }
+    rpc Refresh(RefreshRequest) returns (RefreshResponse) {
+        option (google.api.http) = {
+            post: "/v1/auth/refresh"
+        };
+    }
+	rpc Register(RegisterRequest) returns (RegisterResponse) {
+        option (google.api.http) = {
+            post: "/v1/auth/register"
+            body: "usr"
+        };
+    }
+    rpc GetUserData(GetUserDataRequest) returns (GetUserDataResponse) {
+        option (google.api.http) = {
+            get: "/v1/user/{user_id}"
+        };
+    }
 }

@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.5.1
 // - protoc             v5.29.3
-// source: protos/collection-service.proto
+// source: collection-service.proto
 
 package golang
 
@@ -117,5 +117,5 @@ var Collection_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "protos/collection-service.proto",
+	Metadata: "collection-service.proto",
 }

@@ -4,6 +4,8 @@ package storage_service;
 
 option go_package = "gen/storage_service/golang";
 
+import "google/api/annotations.proto";
+
 message Transaction {
 	string id = 1;
 	string userId = 2;
@@ -18,19 +20,19 @@ message Transaction {
 // Requests ----------------------------------
 
 message GetTransactionRequest {
-	string userId = 1;
-	string txId = 2;
+	string user_id = 1;
+	string tx_id = 2;
 }
 
 message GetTransactionsInPeriodRequest {
-	string userId = 1;
+	string user_id = 1;
 	string begin = 2;
 	string end = 3;
 }
 
 message PostTransactionRequest {
 	Transaction tx = 1;
-	bool withAutoCategory = 2;
+	bool with_auto_category = 2;
 }
 
 // Responses ---------------------------------
@@ -44,13 +46,25 @@ message GetTransactionsInPeriodResponse {
 }
 
 message PostTransactionResponse {
-	string txId = 1;
+	string tx_id = 1;
 }
 
 // Service -----------------------------------
 
 service Storage {
-	rpc GetTransaction(GetTransactionRequest) returns (GetTransactionResponse);
-	rpc GetTransactionsInPeriod(GetTransactionsInPeriodRequest) returns (GetTransactionsInPeriodResponse);
-    rpc PostTransaction(PostTransactionRequest) returns (PostTransactionResponse);
+	rpc GetTransaction(GetTransactionRequest) returns (GetTransactionResponse) {
+		option (google.api.http) = {
+			get: "/v1/transaction/id/{tx_id}"
+		};
+	}
+	rpc GetTransactionsInPeriod(GetTransactionsInPeriodRequest) returns (GetTransactionsInPeriodResponse) {
+		option (google.api.http) = {
+			post: "/v1/transaction/period"
+		};
+	}
+    rpc PostTransaction(PostTransactionRequest) returns (PostTransactionResponse) {
+		option (google.api.http) = {
+			post: "/v1/commit"
+		};
+	}
 }

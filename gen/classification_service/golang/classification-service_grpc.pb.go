@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.5.1
 // - protoc             v5.29.3
-// source: protos/classification-service.proto
+// source: classification-service.proto
 
 package golang
 
@@ -117,5 +117,5 @@ var Classification_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "protos/classification-service.proto",
+	Metadata: "classification-service.proto",
 }
