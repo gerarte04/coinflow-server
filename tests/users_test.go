@@ -12,7 +12,7 @@ import (
 
 func getUserById(t *testing.T, userId string) (*http.Response, tu.Payload) {
 	url := fmt.Sprintf("%s%s/%s", addr, GetUserDataPath, userId)
-	resp, err := tu.SendRequest(t, cli, http.MethodGet, url, nil)
+	resp, err := tu.SendRequest(t, cli, http.MethodGet, url, tu.Payload{})
 	require.NoError(t, err)
 
 	if resp.StatusCode != http.StatusOK {
@@ -30,8 +30,12 @@ func TestUsers_GetUserData(t *testing.T) {
 
 	resp, decoded := getUserById(t, userId.String())
 	require.Equal(t, http.StatusOK, resp.StatusCode)
+	require.Contains(t, decoded, "usr")
 
-	tu.ValidateResult(t, decoded, exampleUser,
+	gotUsr, ok := decoded["usr"].(map[string]any)
+	require.True(t, ok)
+
+	tu.ValidateResult(t, gotUsr, exampleUser,
 		tu.ValidateOpt{Key: "password", Ignore: true},
 		tu.ValidateOpt{Key: "id", Value: userId.String(), CheckValue: true},
 		tu.ValidateOpt{Key: "registration_timestamp", CheckValue: false},

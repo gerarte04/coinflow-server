@@ -14,6 +14,12 @@ var (
 	method = jwt.SigningMethodEdDSA
 )
 
+type TokenClaims struct {
+	Iss string
+	Sub string
+	Exp time.Time
+}
+
 func ValidateJwtToken(tokenStr string, publicKey []byte) (uuid.UUID, error) {
 	const op = "ValidateJwtToken"
 
@@ -51,12 +57,13 @@ func ValidateJwtToken(tokenStr string, publicKey []byte) (uuid.UUID, error) {
 	return usrId, nil
 }
 
-func GenerateJwtToken(usrId uuid.UUID, expiresAt time.Time, privateKey []byte) (string, error) {
+func GenerateJwtToken(cm TokenClaims, privateKey []byte) (string, error) {
 	const op = "GenerateJwtToken"
 
 	claims := jwt.RegisteredClaims{
-		Subject: usrId.String(),
-		ExpiresAt: jwt.NewNumericDate(expiresAt),
+		Issuer: cm.Iss,
+		Subject: cm.Sub,
+		ExpiresAt: jwt.NewNumericDate(cm.Exp),
 		ID: uuid.New().String(),
 	}
 

@@ -3,3 +3,5 @@ main
 .env
 __pycache__
 googleapis
+id_ed25519*
+export.sh

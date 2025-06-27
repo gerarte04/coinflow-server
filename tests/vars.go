@@ -8,14 +8,14 @@ import (
 )
 
 const (
-	CommitPath = "/commit"
-	TransactionPath = "/transaction/id"
-	TransactionsInPeriodPath = "/transaction/period"
+	CommitPath = "/v1/commit"
+	TransactionPath = "/v1/transaction/id"
+	TransactionsInPeriodPath = "/v1/transaction/period"
 
-	RegisterPath = "/auth/register"
-	LoginPath = "/auth/login"
-	RefreshPath = "/auth/refresh"
-	GetUserDataPath = "/user"
+	RegisterPath = "/v1/auth/register"
+	LoginPath = "/v1/auth/login"
+	RefreshPath = "/v1/auth/refresh"
+	GetUserDataPath = "/v1/user"
 )
 
 var (

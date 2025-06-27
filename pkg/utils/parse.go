@@ -33,6 +33,7 @@ func ParseStringToUuid(s string) (uuid.UUID, error) {
 }
 
 func CheckJwtFormat(token string) error {
+	fmt.Println(token)
 	parts := strings.Split(token, ".")
 
 	if len(parts) != 3 {

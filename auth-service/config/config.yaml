@@ -17,5 +17,10 @@ redis:
   db_number: 0
 
 jwt:
+  issuer: coinflow-server.auth-service
   access_expiration_time: 30m
   refresh_expiration_time: 168h
+
+service:
+  auth_cookie_name: accessToken
+  http_code_header_name: x-http-code

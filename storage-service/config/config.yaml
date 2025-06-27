@@ -16,3 +16,4 @@ postgres:
 service:
   category_chan_buffer: 128
   category_timeout: 5m
+  http_code_header_name: x-http-code

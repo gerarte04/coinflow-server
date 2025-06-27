@@ -8,7 +8,6 @@ import (
 	"coinflow/coinflow-server/pkg/infra/cache"
 	pkgCrypto "coinflow/coinflow-server/pkg/utils/crypto"
 	"context"
-	"encoding/base64"
 	"errors"
 	"fmt"
 	"time"
@@ -31,12 +30,12 @@ func NewUserService(
 ) (*UserService, error) {
 	const op = "NewUserService"
 
-	privateKey, err := base64.StdEncoding.DecodeString(jwtCfg.PrivateKeyBase64)
+	privateKey, err := pkgCrypto.ParsePrivateKeyFromPEM(jwtCfg.PrivateKeyPEM)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	publicKey, err := base64.StdEncoding.DecodeString(jwtCfg.PublicKeyBase64)
+	publicKey, err := pkgCrypto.ParsePublicKeyFromPEM(jwtCfg.PublicKeyPEM)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
@@ -50,20 +49,32 @@ func NewUserService(
 	}, nil
 }
 
-func (s *UserService) GenerateNewTokenPair(usrId uuid.UUID) (*usecases.TokenPair, error) {
+func (s *UserService) generateNewTokenPair(usrId uuid.UUID) (*usecases.TokenPair, error) {
 	const op = "UserService.GenerateNewTokenPair"
 
-	access, err := pkgCrypto.GenerateJwtToken(usrId, time.Now().Add(s.jwtCfg.AccessExpirationTime), s.privateKey)
+	accessClaims := pkgCrypto.TokenClaims{
+		Iss: s.jwtCfg.Issuer,
+		Sub: usrId.String(),
+		Exp: time.Now().Add(s.jwtCfg.AccessExpirationTime),
+	}
+
+	accessToken, err := pkgCrypto.GenerateJwtToken(accessClaims, s.privateKey)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	refresh, err := pkgCrypto.GenerateJwtToken(usrId, time.Now().Add(s.jwtCfg.RefreshExpirationTime), s.privateKey)
+	refreshClaims := pkgCrypto.TokenClaims{
+		Iss: s.jwtCfg.Issuer,
+		Sub: usrId.String(),
+		Exp: time.Now().Add(s.jwtCfg.RefreshExpirationTime),
+	}
+
+	refreshToken, err := pkgCrypto.GenerateJwtToken(refreshClaims, s.privateKey)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	return &usecases.TokenPair{Access: access, Refresh: refresh}, nil
+	return &usecases.TokenPair{Access: accessToken, Refresh: refreshToken}, nil
 }
 
 func (s *UserService) Login(ctx context.Context, login, password string) (*usecases.TokenPair, error) {
@@ -74,7 +85,7 @@ func (s *UserService) Login(ctx context.Context, login, password string) (*useca
 		return nil, err
 	}
 
-	tokens, err := s.GenerateNewTokenPair(usr.Id)
+	tokens, err := s.generateNewTokenPair(usr.Id)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
@@ -103,7 +114,7 @@ func (s *UserService) Refresh(ctx context.Context, refreshToken string) (*usecas
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	tokens, err := s.GenerateNewTokenPair(usrId)
+	tokens, err := s.generateNewTokenPair(usrId)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}

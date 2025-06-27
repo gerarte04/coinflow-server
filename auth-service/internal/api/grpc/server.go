@@ -1,6 +1,7 @@
 package grpc
 
 import (
+	"coinflow/coinflow-server/auth-service/config"
 	"coinflow/coinflow-server/auth-service/internal/api/grpc/types"
 	"coinflow/coinflow-server/auth-service/internal/usecases"
 	pb "coinflow/coinflow-server/gen/auth_service/golang"
@@ -16,16 +17,18 @@ import (
 type AuthServer struct {
 	pb.UnimplementedAuthServer
 	usrService usecases.UserService
+	cfg config.ServiceConfig
 }
 
-func NewAuthServer(usrService usecases.UserService) *AuthServer {
+func NewAuthServer(usrService usecases.UserService, cfg config.ServiceConfig) *AuthServer {
 	return &AuthServer{
 		usrService: usrService,
+		cfg: cfg,
 	}
 }
 
-func setAccessCookie(ctx context.Context, token string) {
-	grpc.SetHeader(ctx, metadata.Pairs("Set-Cookie", fmt.Sprintf("accessToken=%s", token)))
+func (s *AuthServer) setAccessCookie(ctx context.Context, token string) {
+	grpc.SetHeader(ctx, metadata.Pairs("Set-Cookie", fmt.Sprintf("%s=%s; Path=/; HttpOnly", s.cfg.AuthCookieName, token)))
 }
 
 func (s *AuthServer) Login(ctx context.Context, r *pb.LoginRequest) (*pb.LoginResponse, error) {
@@ -34,7 +37,7 @@ func (s *AuthServer) Login(ctx context.Context, r *pb.LoginRequest) (*pb.LoginRe
 		return nil, grpcErr.CreateResultStatusError(err, errorCodes)
 	}
 
-	setAccessCookie(ctx, tokens.Access)
+	s.setAccessCookie(ctx, tokens.Access)
 
 	return &pb.LoginResponse{AccessToken: tokens.Access, RefreshToken: tokens.Refresh}, nil
 }
@@ -45,7 +48,7 @@ func (s *AuthServer) Refresh(ctx context.Context, r *pb.RefreshRequest) (*pb.Ref
 		return nil, grpcErr.CreateResultStatusError(err, errorCodes)
 	}
 
-	setAccessCookie(ctx, tokens.Access)
+	s.setAccessCookie(ctx, tokens.Access)
 
 	return &pb.RefreshResponse{AccessToken: tokens.Access, RefreshToken: tokens.Refresh}, nil
 }
@@ -61,7 +64,7 @@ func (s *AuthServer) Register(ctx context.Context, r *pb.RegisterRequest) (*pb.R
 	    return nil, grpcErr.CreateResultStatusError(err, errorCodes)
 	}
 
-	pkgGrpc.SetResponseCode(ctx, 201)
+	pkgGrpc.SetResponseCode(ctx, s.cfg.HttpCodeHeaderName, 201)
 
 	return &pb.RegisterResponse{UserId: usrId.String()}, nil
 }

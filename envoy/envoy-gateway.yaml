@@ -19,6 +19,39 @@ static_resources:
               log_format:
                 text_format: "[INFO] [HTTP/1.1] %REQ(:AUTHORITY)% | %REQ(X-ENVOY-ORIGINAL-PATH?:PATH)% | %REQ(:METHOD)% | %RESPONSE_CODE% | %DURATION%ms\n"
           http_filters:
+          - name: envoy.filters.http.jwt_authn
+            typed_config:
+              "@type": type.googleapis.com/envoy.extensions.filters.http.jwt_authn.v3.JwtAuthentication
+              providers:
+                provider1:
+                  issuer: coinflow-server.auth-service
+                  require_expiration: true
+                  from_headers:
+                  - name: Authorization
+                    value_prefix: "Bearer "
+                  from_cookies:
+                  - accessToken
+                  claim_to_headers:
+                  - claim_name: sub
+                    header_name: User-Id
+                  local_jwks:
+                    environment_variable: AUTH_JWKS
+              rules:
+              - match:
+                  prefix: /v1/user
+                requires:
+                  provider_name: provider1
+              
+              - match:
+                  prefix: /v1/transaction
+                requires:
+                  provider_name: provider1
+
+              - match:
+                  prefix: /v1/commit
+                requires:
+                  provider_name: provider1
+          
           - name: envoy.filters.http.lua
             typed_config:
               "@type": type.googleapis.com/envoy.extensions.filters.http.lua.v3.Lua

@@ -39,7 +39,7 @@ func main() {
 		log.Fatalf("%s", err.Error())
 	}
 
-	stServer := apiGrpc.NewStorageServer(txSvc)
+	stServer := apiGrpc.NewStorageServer(txSvc, cfg.SvcCfg)
 
 	svr := grpc.NewServer()
 	pb.RegisterStorageServer(svr, stServer)

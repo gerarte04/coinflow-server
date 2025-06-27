@@ -1,10 +1,10 @@
 services:
   envoy-gateway:
-    build:
-      context: .
-      dockerfile: envoy/Dockerfile
+    image: envoyproxy/envoy:v1.34-latest
     ports:
       - 8080:8080
+    environment:
+      - AUTH_JWKS=${AUTH_JWKS}
     volumes:
       - ./envoy/envoy-gateway.yaml:/etc/envoy/envoy.yaml
       - ./envoy/lua:/etc/lua
@@ -18,8 +18,8 @@ services:
       context: .
       dockerfile: auth-service/Dockerfile
     environment:
-      - JWT_PRIVATE_KEY=${JWT_PRIVATE_KEY}
-      - JWT_PUBLIC_KEY=${JWT_PUBLIC_KEY}
+      - PRIVATE_KEY_PEM=${PRIVATE_KEY_PEM}
+      - PUBLIC_KEY_PEM=${PUBLIC_KEY_PEM}
     ports:
     - 5053:5053
     depends_on:
@@ -100,15 +100,15 @@ services:
       timeout: 10s
       retries: 3
 
-  # tester:
-  #   build:
-  #     context: .
-  #     dockerfile: tests/Dockerfile
-  #   environment:
-  #     - HTTP_HOST=${HTTP_HOST}
-  #     - HTTP_PORT=${HTTP_PORT}
-  #   profiles:
-  #     - test
-  #   depends_on:
-  #     api-gateway:
-  #       condition: service_healthy
+  tester:
+    build:
+      context: .
+      dockerfile: tests/Dockerfile
+    environment:
+      - HTTP_HOST=${HTTP_HOST}
+      - HTTP_PORT=${HTTP_PORT}
+    profiles:
+      - test
+    depends_on:
+      envoy-gateway:
+        condition: service_started

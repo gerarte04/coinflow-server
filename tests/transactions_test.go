@@ -37,7 +37,7 @@ func commitTx(t *testing.T, payload tu.Payload) (*http.Response, uuid.UUID) {
 
 func getTxById(t *testing.T, txId string) (*http.Response, tu.Payload) {
 	url := fmt.Sprintf("%s%s/%s", addr, TransactionPath, txId)
-	resp, err := tu.SendRequest(t, cli, http.MethodGet, url, nil)
+	resp, err := tu.SendRequest(t, cli, http.MethodGet, url, tu.Payload{})
 	require.NoError(t, err)
 
 	if resp.StatusCode != http.StatusOK {
@@ -89,8 +89,12 @@ func TestTransactions_CommitWithoutAutoCategory(t *testing.T) {
 
 	resp, decoded := getTxById(t, txId.String())
 	require.Equal(t, http.StatusOK, resp.StatusCode)
+	require.Contains(t, decoded, "tx")
 
-	tu.ValidateResult(t, decoded, exampleTx,
+	gotTx, ok := decoded["tx"].(map[string]any)
+	require.True(t, ok)
+
+	tu.ValidateResult(t, gotTx, exampleTx,
 		tu.ValidateOpt{Key: "timestamp", CheckValue: false},
 		tu.ValidateOpt{Key: "id", CheckValue: true, Value: txId.String()},
 	)
@@ -106,22 +110,28 @@ func TestTransactions_CommitWithAutoCategory(t *testing.T) {
 	})
 
 	var resp *http.Response
-	var decoded tu.Payload
+	var gotTx tu.Payload
 	endTime := time.Now().Add(clfTimeout)
 	
 	for time.Now().Before(endTime) {
+		var decoded tu.Payload
 		resp, decoded = getTxById(t, txId.String())
 		require.Equal(t, http.StatusOK, resp.StatusCode)
-		require.Contains(t, decoded, "category")
+		require.Contains(t, decoded, "tx")
+
+		var ok bool
+		gotTx, ok = decoded["tx"].(map[string]any)
+		require.True(t, ok)
+		require.Contains(t, gotTx, "category")
 		
-		if decoded["category"] != "other" {
+		if gotTx["category"] != "other" {
 			break
 		}
 
 		time.Sleep(clfPeriod)
 	}
 
-	tu.ValidateResult(t, decoded, exampleTx,
+	tu.ValidateResult(t, gotTx, exampleTx,
 		tu.ValidateOpt{Key: "timestamp", CheckValue: false},
 		tu.ValidateOpt{Key: "id", CheckValue: true, Value: txId.String()},
 		tu.ValidateOpt{Key: "category", CheckValue: true, Value: exampleTx["category"]},
@@ -155,7 +165,7 @@ func TestTransactions_GetTxInPeriod(t *testing.T) {
 			}
 		}
 
-		time.Sleep(time.Second - time.Now().Sub(startTime))
+		time.Sleep(time.Second - time.Since(startTime))
 	}
 
 	resp, txs := getInPeriod(t, beginTime, endTime)

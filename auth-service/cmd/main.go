@@ -42,7 +42,7 @@ func main() {
 		log.Fatalf("%s", err.Error())
 	}
 
-	authServer := apiGrpc.NewAuthServer(userSvc)
+	authServer := apiGrpc.NewAuthServer(userSvc, cfg.SvcCfg)
 
 	svr := grpc.NewServer()
 	pb.RegisterAuthServer(svr, authServer)

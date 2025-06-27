@@ -2,15 +2,31 @@ package types
 
 import (
 	pb "coinflow/coinflow-server/gen/storage_service/golang"
+	pkgGrpc "coinflow/coinflow-server/pkg/grpc"
 	"coinflow/coinflow-server/pkg/utils"
 	"coinflow/coinflow-server/pkg/vars"
 	"coinflow/coinflow-server/storage-service/internal/models"
+	"context"
 	"fmt"
 	"time"
 
 	"github.com/google/uuid"
 	"github.com/jinzhu/copier"
 )
+
+func getUserId(ctx context.Context) (uuid.UUID, error) {
+	val, err := pkgGrpc.GetHeader(ctx, "user-id")
+	if err != nil {
+		return uuid.Nil, err
+	}
+
+	id, err := utils.ParseStringToUuid(val)
+	if err != nil {
+		return uuid.Nil, err
+	}
+
+	return id, nil
+}
 
 // Requests -------------------------------------------
 
@@ -19,15 +35,16 @@ type GetTransactionRequestObject struct {
 	TxId uuid.UUID
 }
 
-func CreateGetTransactionRequestObject(r *pb.GetTransactionRequest) (*GetTransactionRequestObject, error) {
+func CreateGetTransactionRequestObject(ctx context.Context, r *pb.GetTransactionRequest) (*GetTransactionRequestObject, error) {
 	const op = "CreateGetTransactionRequestObject"
 
-	usrId, err := utils.ParseStringToUuid(r.UserId)
+	
+	txId, err := utils.ParseStringToUuid(r.TxId)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	txId, err := utils.ParseStringToUuid(r.TxId)
+	usrId, err := getUserId(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
@@ -41,7 +58,7 @@ type GetTransactionsInPeriodRequestObject struct {
 	UserId uuid.UUID
 }
 
-func CreateGetTransactionsInPeriodRequestObject(r *pb.GetTransactionsInPeriodRequest) (*GetTransactionsInPeriodRequestObject, error) {
+func CreateGetTransactionsInPeriodRequestObject(ctx context.Context, r *pb.GetTransactionsInPeriodRequest) (*GetTransactionsInPeriodRequestObject, error) {
 	const op = "CreateGetTransactionsInPeriodRequestObject"
 
 	begin, err := time.Parse(vars.TimeLayout, r.Begin)
@@ -54,12 +71,12 @@ func CreateGetTransactionsInPeriodRequestObject(r *pb.GetTransactionsInPeriodReq
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	id, err := uuid.Parse(r.UserId)
+	usrId, err := getUserId(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	return &GetTransactionsInPeriodRequestObject{Begin: begin, End: end, UserId: id}, nil
+	return &GetTransactionsInPeriodRequestObject{Begin: begin, End: end, UserId: usrId}, nil
 }
 
 type PostTransactionRequestObject struct {
@@ -67,7 +84,7 @@ type PostTransactionRequestObject struct {
 	WithAutoCategory bool
 }
 
-func CreatePostTransactionRequestObject(r *pb.PostTransactionRequest) (*PostTransactionRequestObject, error) {
+func CreatePostTransactionRequestObject(ctx context.Context, r *pb.PostTransactionRequest) (*PostTransactionRequestObject, error) {
 	const op = "CreatePostTransactionRequestObject"
 
 	var tx models.Transaction
@@ -75,6 +92,13 @@ func CreatePostTransactionRequestObject(r *pb.PostTransactionRequest) (*PostTran
 	if err := copier.Copy(&tx, r.Tx); err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
+
+	usrId, err := getUserId(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	tx.UserId = usrId
 
 	return &PostTransactionRequestObject{
 		Tx: &tx,
