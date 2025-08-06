@@ -36,7 +36,7 @@ jobs:
 
     - name: Build and Test
       run: |
-        mv public.env .env
+        mv .env.example .env
         make launch_services_with_tests
 
     - name: Shut Down Docker Compose

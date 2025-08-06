@@ -107,6 +107,12 @@ static_resources:
                   route:
                     cluster: storage-service
 
+                - name: route_swagger
+                  match:
+                    prefix: /v1/swagger
+                  route:
+                    cluster: swagger
+
             request_headers_to_add:
             - header:
                 key: Content-Type
@@ -158,3 +164,18 @@ static_resources:
               socket_address:
                 address: collection-service
                 port_value: 50051
+
+  - name: swagger
+    type: LOGICAL_DNS
+    lb_policy: ROUND_ROBIN
+    dns_lookup_family: V4_ONLY
+    http_protocol_options: {}
+    load_assignment:
+      cluster_name: swagger
+      endpoints:
+      - lb_endpoints:
+        - endpoint:
+            address:
+              socket_address:
+                address: swagger
+                port_value: 1488

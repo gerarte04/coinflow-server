@@ -1,0 +1,12 @@
+migrations/
+scripts/
+protos/
+envoy/
+docs/
+.github/
+
+Makefile
+.env
+.env.example
+export.sh
+docker-compose.yaml

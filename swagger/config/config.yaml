@@ -1,0 +1,5 @@
+http:
+  host: 0.0.0.0
+  port: 1488
+
+swagger_path: /v1/swagger

@@ -1,0 +1,308 @@
+basePath: /v1
+definitions:
+  models.Transaction:
+    properties:
+      category:
+        type: string
+      cost:
+        type: number
+      description:
+        type: string
+      target:
+        type: string
+      type:
+        type: string
+    type: object
+  models.User:
+    properties:
+      email:
+        type: string
+      login:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+      phone:
+        type: string
+    type: object
+  types.GetTransactionsInPeriodRequestObject:
+    properties:
+      begin:
+        type: string
+      end:
+        type: string
+      with_summary:
+        type: boolean
+    type: object
+  types.LoginRequestObject:
+    properties:
+      login:
+        type: string
+      password:
+        type: string
+    type: object
+  types.PostTransactionRequestObject:
+    properties:
+      tx:
+        $ref: '#/definitions/models.Transaction'
+      with_auto_category:
+        type: boolean
+    type: object
+  types.RefreshRequestObject:
+    properties:
+      refresh_token:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: API Gateway for Coinflow service
+  title: Coinflow API
+  version: "1.0"
+paths:
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: login and get tokens
+      parameters:
+      - description: request object
+        in: body
+        name: reqObj
+        required: true
+        schema:
+          $ref: '#/definitions/types.LoginRequestObject'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "500":
+          description: Internal error
+          schema:
+            type: string
+      summary: Login
+      tags:
+      - users
+  /auth/refresh:
+    post:
+      consumes:
+      - application/json
+      description: refresh and get new tokens
+      parameters:
+      - description: request object
+        in: body
+        name: reqObj
+        required: true
+        schema:
+          $ref: '#/definitions/types.RefreshRequestObject'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "500":
+          description: Internal error
+          schema:
+            type: string
+      summary: Refresh
+      tags:
+      - users
+  /auth/register:
+    post:
+      consumes:
+      - application/json
+      description: register new user
+      parameters:
+      - description: request object
+        in: body
+        name: reqObj
+        required: true
+        schema:
+          $ref: '#/definitions/models.User'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            type: string
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "500":
+          description: Internal error
+          schema:
+            type: string
+      summary: Register
+      tags:
+      - users
+  /commit:
+    post:
+      consumes:
+      - application/json
+      description: commit transaction
+      parameters:
+      - description: transaction
+        in: body
+        name: tx
+        required: true
+        schema:
+          $ref: '#/definitions/types.PostTransactionRequestObject'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            type: string
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "500":
+          description: Internal error
+          schema:
+            type: string
+      summary: PostTransaction
+      tags:
+      - transactions
+  /transaction/id/{tx_id}:
+    get:
+      description: get transaction by id
+      parameters:
+      - description: Transaction ID
+        in: path
+        name: tx_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "403":
+          description: Forbidden
+          schema:
+            type: string
+        "404":
+          description: Not found
+          schema:
+            type: string
+        "500":
+          description: Internal error
+          schema:
+            type: string
+      summary: GetTransaction
+      tags:
+      - transactions
+  /transaction/period:
+    post:
+      consumes:
+      - application/json
+      description: get transactions in period between begin and end
+      parameters:
+      - description: Request object
+        in: body
+        name: reqObj
+        required: true
+        schema:
+          $ref: '#/definitions/types.GetTransactionsInPeriodRequestObject'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "404":
+          description: Not found
+          schema:
+            type: string
+        "500":
+          description: Internal error
+          schema:
+            type: string
+      summary: GetTransactionsInPeriod
+      tags:
+      - transactions
+  /user/{user_id}:
+    get:
+      description: get user data by id
+      parameters:
+      - description: User ID
+        in: path
+        name: user_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "500":
+          description: Internal error
+          schema:
+            type: string
+      summary: GetUserData
+      tags:
+      - users
+swagger: "2.0"
