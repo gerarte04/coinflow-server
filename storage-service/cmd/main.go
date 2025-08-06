@@ -26,13 +26,13 @@ func main() {
 		log.Fatalf("failed to listen address: %s", err.Error())
 	}
 
-	dbConn, err := pkgPostgres.NewPostgresConn(cfg.PostgresCfg)
+	pool, err := pkgPostgres.NewPostgresPool(cfg.PostgresCfg)
 
 	if err != nil {
 		log.Fatalf("%s", err.Error())
 	}
 
-	txRepo := postgres.NewTransactionsRepo(dbConn)
+	txRepo := postgres.NewTransactionsRepo(pool)
 	txSvc, err := service.NewTransactionsService(txRepo, cfg.CollectionSvcCfg, cfg.SvcCfg)
 
 	if err != nil {

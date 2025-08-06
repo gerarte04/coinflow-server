@@ -10,21 +10,22 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"golang.org/x/crypto/bcrypt"
 )
 
 type UsersRepo struct {
-	conn *pgx.Conn
+	pool *pgxpool.Pool
 }
 
-func NewUsersRepo(conn *pgx.Conn) *UsersRepo {
-	return &UsersRepo{conn: conn}
+func NewUsersRepo(pool *pgxpool.Pool) *UsersRepo {
+	return &UsersRepo{pool: pool}
 }
 
 func (r *UsersRepo) GetUser(ctx context.Context, id uuid.UUID) (*models.User, error) {
 	const op = "UsersRepo.GetUser"
 
-	row := r.conn.QueryRow(
+	row := r.pool.QueryRow(
 		ctx,
 		"SELECT id, login, name, email, phone, registration_timestamp FROM users WHERE id = $1",
 		id,
@@ -45,7 +46,7 @@ func (r *UsersRepo) GetUser(ctx context.Context, id uuid.UUID) (*models.User, er
 func (r *UsersRepo) GetUserByCred(ctx context.Context, login, password string) (*models.User, error) {
 	const op = "UsersRepo.GetUserByCred"
 
-	row := r.conn.QueryRow(
+	row := r.pool.QueryRow(
 		ctx,
 		"SELECT * FROM users WHERE login = $1",
 		login,
@@ -81,7 +82,7 @@ func (r *UsersRepo) PostUser(ctx context.Context, usr *models.User) (uuid.UUID, 
 		return uuid.Nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	row := r.conn.QueryRow(
+	row := r.pool.QueryRow(
 		ctx,
 		`INSERT INTO users (
 			login, password_hash, name, email, phone

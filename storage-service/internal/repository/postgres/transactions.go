@@ -11,20 +11,21 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type TransactionsRepo struct {
-	conn *pgx.Conn
+	pool *pgxpool.Pool
 }
 
-func NewTransactionsRepo(conn *pgx.Conn) *TransactionsRepo {
-	return &TransactionsRepo{conn: conn}
+func NewTransactionsRepo(pool *pgxpool.Pool) *TransactionsRepo {
+	return &TransactionsRepo{pool: pool}
 }
 
 func (r *TransactionsRepo) GetTransaction(ctx context.Context, userId uuid.UUID, txId uuid.UUID) (*models.Transaction, error) {
 	const op = "TransactionsRepo.GetTransaction"
 
-	row := r.conn.QueryRow(
+	row := r.pool.QueryRow(
 		ctx,
 		"SELECT * FROM transactions WHERE id = $1",
 		txId,
@@ -49,7 +50,7 @@ func (r *TransactionsRepo) GetTransaction(ctx context.Context, userId uuid.UUID,
 func (r *TransactionsRepo) GetTransactionsInPeriod(ctx context.Context, userId uuid.UUID, begin time.Time, end time.Time) ([]*models.Transaction, error) {
 	const op = "TransactionsRepo.GetTransactionsInPeriod"
 
-	rows, err := r.conn.Query(
+	rows, err := r.pool.Query(
 		ctx,
 		"SELECT * FROM transactions WHERE (user_id = $1 AND timestamp >= $2 AND timestamp <= $3)",
 		userId, begin, end,
@@ -78,7 +79,7 @@ func (r *TransactionsRepo) GetTransactionsInPeriod(ctx context.Context, userId u
 func (r *TransactionsRepo) PostTransaction(ctx context.Context, tx *models.Transaction) (uuid.UUID, error) {
 	const op = "TransactionsRepo.PostTransaction"
 
-	row := r.conn.QueryRow(
+	row := r.pool.QueryRow(
 		ctx,
 		`INSERT INTO transactions (
 			user_id, type, target, description, category, cost
@@ -101,7 +102,7 @@ func (r *TransactionsRepo) PostTransaction(ctx context.Context, tx *models.Trans
 func (r *TransactionsRepo) PostTransactionWithoutCategory(ctx context.Context, tx *models.Transaction) (uuid.UUID, error) {
 	const op = "TransactionsRepo.PostTransactionWithoutCategory"
 
-	row := r.conn.QueryRow(
+	row := r.pool.QueryRow(
 		ctx,
 		`INSERT INTO transactions (
 			user_id, type, target, description, cost
@@ -124,7 +125,7 @@ func (r *TransactionsRepo) PostTransactionWithoutCategory(ctx context.Context, t
 func (r *TransactionsRepo) PutCategory(ctx context.Context, tsId uuid.UUID, category string) error {
 	const op = "TransactionsRepo.PutCategory"
 
-	tag, err := r.conn.Exec(
+	tag, err := r.pool.Exec(
 		ctx,
 		"UPDATE transactions SET category = $1 WHERE id = $2",
 		category, tsId,

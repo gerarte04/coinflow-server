@@ -4,21 +4,21 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type CategoriesRepo struct {
-	conn *pgx.Conn
+	pool *pgxpool.Pool
 }
 
-func NewCategoriesRepo(conn *pgx.Conn) *CategoriesRepo {
-	return &CategoriesRepo{conn: conn}
+func NewCategoriesRepo(pool *pgxpool.Pool) *CategoriesRepo {
+	return &CategoriesRepo{pool: pool}
 }
 
 func (r *CategoriesRepo) GetCategories() ([]string, error) {
 	const op = "CategoriesRepo.GetCategories"
 
-	rows, err := r.conn.Query(context.Background(), "SELECT * FROM categories")
+	rows, err := r.pool.Query(context.Background(), "SELECT * FROM categories")
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}

@@ -30,12 +30,12 @@ func main() {
 		log.Fatalf("%s", err.Error())
 	}
 
-	dbConn, err := pkgPostgres.NewPostgresConn(cfg.PostgresCfg)
+	pool, err := pkgPostgres.NewPostgresPool(cfg.PostgresCfg)
 	if err != nil {
 		log.Fatalf("%s", err.Error())
 	}
 
-	usersRepo := postgres.NewUsersRepo(dbConn)
+	usersRepo := postgres.NewUsersRepo(pool)
 	userSvc, err := service.NewUserService(usersRepo, cache, cfg.JwtCfg)
 
 	if err != nil {
