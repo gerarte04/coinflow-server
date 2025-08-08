@@ -69,8 +69,10 @@ services:
       - PGDATA=/var/lib/postgresql/data/pgdata
     volumes:
       - /home/${USER}/.pgdata:/var/lib/postgresql/data/pgdata
-      - ./migrations/data:/etc/postgres/data
-      - ./migrations/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./migrations/postgres/data:/etc/postgres/data
+      - ./migrations/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./config/postgresql.conf:/etc/postgresql.conf
+    command: -c config_file=/etc/postgresql.conf
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U admin -d ${POSTGRES_DB}" ]
       interval: 10s
@@ -79,6 +81,20 @@ services:
     restart: unless-stopped
     tty: true
     stdin_open: true
+
+  clickhouse:
+    image: clickhouse/clickhouse-server:latest
+    environment:
+      - CLICKHOUSE_DB=${CLICKHOUSE_DB}
+      - CLICKHOUSE_USER=${CLICKHOUSE_USER}
+      - CLICKHOUSE_PASSWORD=${CLICKHOUSE_PASSWORD}
+      - POSTGRES_ADDRESS=${POSTGRES_HOST}:${POSTGRES_PORT}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    volumes:
+      - /home/${USER}/.chdata:/var/lib/clickhouse
+      - ./migrations/clickhouse/init.sql:/docker-entrypoint-initdb.d/init.sql
 
   redis:
     image: redis:latest
