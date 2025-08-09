@@ -94,6 +94,7 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     volumes:
       - /home/${USER}/.chdata:/var/lib/clickhouse
+      - ./config/users.yaml:/etc/clickhouse-server/users.d/users.yaml
       - ./migrations/clickhouse/init.sql:/docker-entrypoint-initdb.d/init.sql
 
   redis:
