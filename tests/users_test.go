@@ -30,12 +30,8 @@ func TestUsers_GetUserData(t *testing.T) {
 
 	resp, decoded := getUserById(t, userId.String())
 	require.Equal(t, http.StatusOK, resp.StatusCode)
-	require.Contains(t, decoded, "usr")
 
-	gotUsr, ok := decoded["usr"].(map[string]any)
-	require.True(t, ok)
-
-	tu.ValidateResult(t, gotUsr, exampleUser,
+	tu.ValidateResult(t, decoded, exampleUser,
 		tu.ValidateOpt{Key: "password", Ignore: true},
 		tu.ValidateOpt{Key: "id", Value: userId.String(), CheckValue: true},
 		tu.ValidateOpt{Key: "registration_timestamp", CheckValue: false},
@@ -43,17 +39,11 @@ func TestUsers_GetUserData(t *testing.T) {
 }
 
 func TestUsers_WrongId(t *testing.T) {
-	register(t, exampleUser)
-	login(t, exampleUser)
-
 	resp, _ := getUserById(t, uuid.New().String())
 	require.Equal(t, http.StatusNotFound, resp.StatusCode)
 }
 
 func TestUsers_InvalidId(t *testing.T) {
-	register(t, exampleUser)
-	login(t, exampleUser)
-
 	resp, _ := getUserById(t, exampleInvalidId)
 	require.Equal(t, http.StatusBadRequest, resp.StatusCode)
 }

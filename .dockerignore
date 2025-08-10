@@ -4,6 +4,8 @@ protos/
 envoy/
 docs/
 .github/
+googleapis/
+venv/
 
 Makefile
 .env

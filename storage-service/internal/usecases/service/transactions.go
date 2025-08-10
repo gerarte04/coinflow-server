@@ -109,28 +109,25 @@ func (s *TransactionsService) GetAndPutCategory(ctx context.Context, tx *models.
 	return nil
 }
 
-func (s *TransactionsService) PostTransaction(ctx context.Context, tx *models.Transaction, withAutoCategory bool) (uuid.UUID, error) {
+func (s *TransactionsService) PostTransaction(ctx context.Context, tx *models.Transaction, withAutoCategory bool) (*models.Transaction, error) {
 	const op = "TransactionsService.PostTransaction"
 
-	var txId uuid.UUID
 	var err error
 	
 	if withAutoCategory {
-		txId, err = s.txRepo.PostTransactionWithoutCategory(ctx, tx)
+		tx, err = s.txRepo.PostTransactionWithoutCategory(ctx, tx)
 		if err != nil {
-			return uuid.Nil, err
+			return nil, err
 		}
-
-		tx.Id = txId
 
 		ctx, cancel := context.WithTimeout(context.Background(), s.svcCfg.CategoryTimeout)
 		s.categoryChan <- &CategoryQuery{ctx: ctx, cancel: cancel, tx: tx}
 	} else {
-		txId, err = s.txRepo.PostTransaction(ctx, tx)
+		tx, err = s.txRepo.PostTransaction(ctx, tx)
 		if err != nil {
-			return uuid.Nil, err
+			return nil, err
 		}
 	}
 
-	return txId, nil
+	return tx, nil
 }

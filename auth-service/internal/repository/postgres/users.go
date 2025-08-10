@@ -74,30 +74,29 @@ func (r *UsersRepo) GetUserByCred(ctx context.Context, login, password string) (
 	return &usr, nil
 }
 
-func (r *UsersRepo) PostUser(ctx context.Context, usr *models.User) (uuid.UUID, error) {
+func (r *UsersRepo) PostUser(ctx context.Context, usr *models.User) (*models.User, error) {
 	const op = "UsersRepo.PostUser"
 
 	passwordHash, err := bcrypt.GenerateFromPassword([]byte(usr.Password), 14)
 	if err != nil {
-		return uuid.Nil, fmt.Errorf("%s: %w", op, err)
+		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
 	row := r.pool.QueryRow(
 		ctx,
 		`INSERT INTO users (
 			login, password_hash, name, email, phone
-		) VALUES ($1, $2, $3, $4, $5) RETURNING id`,
+		) VALUES ($1, $2, $3, $4, $5) RETURNING id, registration_timestamp`,
 		usr.Login, passwordHash, usr.Name, usr.Email, usr.Phone,
 	)
 
-	var usrId uuid.UUID
-	err = row.Scan(&usrId)
+	err = row.Scan(&usr.Id, &usr.RegistrationTimestamp)
 
 	if dbErr := postgres.DetectError(err); dbErr == database.ErrorUniqueViolation {
-		return uuid.Nil, fmt.Errorf("%s: %w", op, repository.ErrorUserCredAlreadyExists)
+		return nil, fmt.Errorf("%s: %w", op, repository.ErrorUserCredAlreadyExists)
 	} else if err != nil {
-		return uuid.Nil, fmt.Errorf("%s: %w", op, err)
+		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	return usrId, nil
+	return usr, nil
 }

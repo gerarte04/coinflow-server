@@ -122,7 +122,7 @@ func (s *UserService) Refresh(ctx context.Context, refreshToken string) (*usecas
 	return tokens, nil
 }
 
-func (s *UserService) Register(ctx context.Context, usr *models.User) (uuid.UUID, error) {
+func (s *UserService) Register(ctx context.Context, usr *models.User) (*models.User, error) {
 	return s.usersRepo.PostUser(ctx, usr)
 }
 

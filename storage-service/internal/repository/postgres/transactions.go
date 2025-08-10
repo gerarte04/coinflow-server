@@ -76,50 +76,48 @@ func (r *TransactionsRepo) GetTransactionsInPeriod(ctx context.Context, userId u
 	return txs, nil
 }
 
-func (r *TransactionsRepo) PostTransaction(ctx context.Context, tx *models.Transaction) (uuid.UUID, error) {
+func (r *TransactionsRepo) PostTransaction(ctx context.Context, tx *models.Transaction) (*models.Transaction, error) {
 	const op = "TransactionsRepo.PostTransaction"
 
 	row := r.pool.QueryRow(
 		ctx,
 		`INSERT INTO transactions (
 			user_id, type, target, description, category, cost
-		) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id`,
+		) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, timestamp`,
 		tx.UserId, tx.Type, tx.Target, tx.Description, tx.Category, tx.Cost,
 	)
 
-	var txId uuid.UUID
-	err := row.Scan(&txId)
+	err := row.Scan(&tx.Id, &tx.Timestamp)
 
 	if dbErr := postgres.DetectError(err); dbErr == database.ErrorUniqueViolation {
-		return uuid.Nil, fmt.Errorf("%s: %w", op, repository.ErrorTxIdAlreadyExists)
+		return nil, fmt.Errorf("%s: %w", op, repository.ErrorTxIdAlreadyExists)
 	} else if err != nil {
-		return uuid.Nil, fmt.Errorf("%s: %w", op, err)
+		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	return txId, nil
+	return tx, nil
 }
 
-func (r *TransactionsRepo) PostTransactionWithoutCategory(ctx context.Context, tx *models.Transaction) (uuid.UUID, error) {
+func (r *TransactionsRepo) PostTransactionWithoutCategory(ctx context.Context, tx *models.Transaction) (*models.Transaction, error) {
 	const op = "TransactionsRepo.PostTransactionWithoutCategory"
 
 	row := r.pool.QueryRow(
 		ctx,
 		`INSERT INTO transactions (
 			user_id, type, target, description, cost
-		) VALUES ($1, $2, $3, $4, $5) RETURNING id`,
+		) VALUES ($1, $2, $3, $4, $5) RETURNING id, timestamp`,
 		tx.UserId, tx.Type, tx.Target, tx.Description, tx.Cost,
 	)
 
-	var txId uuid.UUID
-	err := row.Scan(&txId)
+	err := row.Scan(&tx.Id, &tx.Timestamp)
 
 	if dbErr := postgres.DetectError(err); dbErr == database.ErrorUniqueViolation {
-		return uuid.Nil, fmt.Errorf("%s: %w", op, repository.ErrorTxIdAlreadyExists)
+		return nil, fmt.Errorf("%s: %w", op, repository.ErrorTxIdAlreadyExists)
 	} else if err != nil {
-		return uuid.Nil, fmt.Errorf("%s: %w", op, err)
+		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	return txId, nil
+	return tx, nil
 }
 
 func (r *TransactionsRepo) PutCategory(ctx context.Context, tsId uuid.UUID, category string) error {

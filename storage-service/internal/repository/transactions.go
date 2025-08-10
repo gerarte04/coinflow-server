@@ -12,7 +12,7 @@ import (
 type TransactionsRepo interface {
 	GetTransaction(ctx context.Context, userId uuid.UUID, txId uuid.UUID) (*models.Transaction, error)
 	GetTransactionsInPeriod(ctx context.Context, userId uuid.UUID, begin time.Time, end time.Time) ([]*models.Transaction, error)
-	PostTransaction(ctx context.Context, tx *models.Transaction) (uuid.UUID, error)
-	PostTransactionWithoutCategory(ctx context.Context, tx *models.Transaction) (uuid.UUID, error)
+	PostTransaction(ctx context.Context, tx *models.Transaction) (*models.Transaction, error)
+	PostTransactionWithoutCategory(ctx context.Context, tx *models.Transaction) (*models.Transaction, error)
 	PutCategory(ctx context.Context, txId uuid.UUID, category string) error
 }

@@ -17,7 +17,6 @@ const docTemplate = `{
     "paths": {
         "/auth/login": {
             "post": {
-                "description": "login and get tokens",
                 "consumes": [
                     "application/json"
                 ],
@@ -27,10 +26,10 @@ const docTemplate = `{
                 "tags": [
                     "users"
                 ],
-                "summary": "Login",
+                "summary": "Login and get pair of tokens",
                 "parameters": [
                     {
-                        "description": "request object",
+                        "description": "Login and password",
                         "name": "reqObj",
                         "in": "body",
                         "required": true,
@@ -69,7 +68,6 @@ const docTemplate = `{
         },
         "/auth/refresh": {
             "post": {
-                "description": "refresh and get new tokens",
                 "consumes": [
                     "application/json"
                 ],
@@ -79,10 +77,10 @@ const docTemplate = `{
                 "tags": [
                     "users"
                 ],
-                "summary": "Refresh",
+                "summary": "Refresh and get new pair of tokens",
                 "parameters": [
                     {
-                        "description": "request object",
+                        "description": "Refresh token",
                         "name": "reqObj",
                         "in": "body",
                         "required": true,
@@ -121,7 +119,6 @@ const docTemplate = `{
         },
         "/auth/register": {
             "post": {
-                "description": "register new user",
                 "consumes": [
                     "application/json"
                 ],
@@ -131,10 +128,10 @@ const docTemplate = `{
                 "tags": [
                     "users"
                 ],
-                "summary": "Register",
+                "summary": "Register new user",
                 "parameters": [
                     {
-                        "description": "request object",
+                        "description": "User data",
                         "name": "reqObj",
                         "in": "body",
                         "required": true,
@@ -173,7 +170,7 @@ const docTemplate = `{
         },
         "/commit": {
             "post": {
-                "description": "commit transaction",
+                "description": "Transaction's type and category must be one of allowed values (view docs/VARS.md on github for values list).",
                 "consumes": [
                     "application/json"
                 ],
@@ -183,16 +180,29 @@ const docTemplate = `{
                 "tags": [
                     "transactions"
                 ],
-                "summary": "PostTransaction",
+                "summary": "Commit transaction",
                 "parameters": [
                     {
-                        "description": "transaction",
+                        "description": "Transaction data",
                         "name": "tx",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/types.PostTransactionRequestObject"
+                            "$ref": "#/definitions/models.Transaction"
                         }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Creator id",
+                        "name": "user_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "Defines if category should be auto-detected by description (default is false)",
+                        "name": "with_auto_category",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -225,14 +235,14 @@ const docTemplate = `{
         },
         "/transaction/id/{tx_id}": {
             "get": {
-                "description": "get transaction by id",
+                "description": "WARNING: Viewing other user's transactions is not allowed.",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "transactions"
                 ],
-                "summary": "GetTransaction",
+                "summary": "Get transaction by id",
                 "parameters": [
                     {
                         "type": "string",
@@ -283,8 +293,8 @@ const docTemplate = `{
             }
         },
         "/transaction/period": {
-            "post": {
-                "description": "get transactions in period between begin and end",
+            "get": {
+                "description": "Time should be presented in RFC3339 format.",
                 "consumes": [
                     "application/json"
                 ],
@@ -294,16 +304,40 @@ const docTemplate = `{
                 "tags": [
                     "transactions"
                 ],
-                "summary": "GetTransactionsInPeriod",
+                "summary": "Get transactions in period between begin and end",
                 "parameters": [
                     {
-                        "description": "Request object",
-                        "name": "reqObj",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/types.GetTransactionsInPeriodRequestObject"
-                        }
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "user_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Begin time in RFC3339 format",
+                        "name": "begin_time",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "End time in RFC3339 format",
+                        "name": "end_time",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Requested page size",
+                        "name": "page_size",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Requested page token",
+                        "name": "page_token",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -321,6 +355,12 @@ const docTemplate = `{
                     },
                     "401": {
                         "description": "Unauthorized",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
                         "schema": {
                             "type": "string"
                         }
@@ -429,20 +469,6 @@ const docTemplate = `{
                 }
             }
         },
-        "types.GetTransactionsInPeriodRequestObject": {
-            "type": "object",
-            "properties": {
-                "begin": {
-                    "type": "string"
-                },
-                "end": {
-                    "type": "string"
-                },
-                "with_summary": {
-                    "type": "boolean"
-                }
-            }
-        },
         "types.LoginRequestObject": {
             "type": "object",
             "properties": {
@@ -451,17 +477,6 @@ const docTemplate = `{
                 },
                 "password": {
                     "type": "string"
-                }
-            }
-        },
-        "types.PostTransactionRequestObject": {
-            "type": "object",
-            "properties": {
-                "tx": {
-                    "$ref": "#/definitions/models.Transaction"
-                },
-                "with_auto_category": {
-                    "type": "boolean"
                 }
             }
         },
@@ -478,12 +493,12 @@ const docTemplate = `{
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
-	Version:          "1.0",
+	Version:          "0.1.0",
 	Host:             "localhost:8080",
 	BasePath:         "/v1",
 	Schemes:          []string{},
 	Title:            "Coinflow API",
-	Description:      "API Gateway for Coinflow service",
+	Description:      "",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",

@@ -24,12 +24,12 @@ func register(t *testing.T, usr tu.Payload) uuid.UUID {
 	require.Equal(t, http.StatusCreated, resp.StatusCode)
 
 	decoded := tu.DecodeResponse(t, resp)
-	require.Contains(t, decoded, "user_id")
+	tu.ValidateResult(t, decoded, usr, 
+		tu.ValidateOpt{Key: "registration_timestamp", CheckValue: false},
+		tu.ValidateOpt{Key: "id", CheckValue: false},
+	)
 
-	decVal, ok := decoded["user_id"].(string)
-	require.True(t, ok)
-
-	userId, err := uuid.Parse(decVal)
+	userId, err := uuid.Parse(decoded["id"].(string))
 	require.NoError(t, err)
 
 	registered[usr["login"].(string)] = userId

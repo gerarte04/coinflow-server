@@ -19,18 +19,18 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	Storage_GetTransaction_FullMethodName          = "/storage_service.Storage/GetTransaction"
-	Storage_GetTransactionsInPeriod_FullMethodName = "/storage_service.Storage/GetTransactionsInPeriod"
-	Storage_PostTransaction_FullMethodName         = "/storage_service.Storage/PostTransaction"
+	Storage_GetTransaction_FullMethodName    = "/storage_service.Storage/GetTransaction"
+	Storage_ListTransactions_FullMethodName  = "/storage_service.Storage/ListTransactions"
+	Storage_CreateTransaction_FullMethodName = "/storage_service.Storage/CreateTransaction"
 )
 
 // StorageClient is the client API for Storage service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type StorageClient interface {
-	GetTransaction(ctx context.Context, in *GetTransactionRequest, opts ...grpc.CallOption) (*GetTransactionResponse, error)
-	GetTransactionsInPeriod(ctx context.Context, in *GetTransactionsInPeriodRequest, opts ...grpc.CallOption) (*GetTransactionsInPeriodResponse, error)
-	PostTransaction(ctx context.Context, in *PostTransactionRequest, opts ...grpc.CallOption) (*PostTransactionResponse, error)
+	GetTransaction(ctx context.Context, in *GetTransactionRequest, opts ...grpc.CallOption) (*Transaction, error)
+	ListTransactions(ctx context.Context, in *ListTransactionsRequest, opts ...grpc.CallOption) (*ListTransactionsResponse, error)
+	CreateTransaction(ctx context.Context, in *CreateTransactionRequest, opts ...grpc.CallOption) (*Transaction, error)
 }
 
 type storageClient struct {
@@ -41,9 +41,9 @@ func NewStorageClient(cc grpc.ClientConnInterface) StorageClient {
 	return &storageClient{cc}
 }
 
-func (c *storageClient) GetTransaction(ctx context.Context, in *GetTransactionRequest, opts ...grpc.CallOption) (*GetTransactionResponse, error) {
+func (c *storageClient) GetTransaction(ctx context.Context, in *GetTransactionRequest, opts ...grpc.CallOption) (*Transaction, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetTransactionResponse)
+	out := new(Transaction)
 	err := c.cc.Invoke(ctx, Storage_GetTransaction_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -51,20 +51,20 @@ func (c *storageClient) GetTransaction(ctx context.Context, in *GetTransactionRe
 	return out, nil
 }
 
-func (c *storageClient) GetTransactionsInPeriod(ctx context.Context, in *GetTransactionsInPeriodRequest, opts ...grpc.CallOption) (*GetTransactionsInPeriodResponse, error) {
+func (c *storageClient) ListTransactions(ctx context.Context, in *ListTransactionsRequest, opts ...grpc.CallOption) (*ListTransactionsResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetTransactionsInPeriodResponse)
-	err := c.cc.Invoke(ctx, Storage_GetTransactionsInPeriod_FullMethodName, in, out, cOpts...)
+	out := new(ListTransactionsResponse)
+	err := c.cc.Invoke(ctx, Storage_ListTransactions_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *storageClient) PostTransaction(ctx context.Context, in *PostTransactionRequest, opts ...grpc.CallOption) (*PostTransactionResponse, error) {
+func (c *storageClient) CreateTransaction(ctx context.Context, in *CreateTransactionRequest, opts ...grpc.CallOption) (*Transaction, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(PostTransactionResponse)
-	err := c.cc.Invoke(ctx, Storage_PostTransaction_FullMethodName, in, out, cOpts...)
+	out := new(Transaction)
+	err := c.cc.Invoke(ctx, Storage_CreateTransaction_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -75,9 +75,9 @@ func (c *storageClient) PostTransaction(ctx context.Context, in *PostTransaction
 // All implementations must embed UnimplementedStorageServer
 // for forward compatibility.
 type StorageServer interface {
-	GetTransaction(context.Context, *GetTransactionRequest) (*GetTransactionResponse, error)
-	GetTransactionsInPeriod(context.Context, *GetTransactionsInPeriodRequest) (*GetTransactionsInPeriodResponse, error)
-	PostTransaction(context.Context, *PostTransactionRequest) (*PostTransactionResponse, error)
+	GetTransaction(context.Context, *GetTransactionRequest) (*Transaction, error)
+	ListTransactions(context.Context, *ListTransactionsRequest) (*ListTransactionsResponse, error)
+	CreateTransaction(context.Context, *CreateTransactionRequest) (*Transaction, error)
 	mustEmbedUnimplementedStorageServer()
 }
 
@@ -88,14 +88,14 @@ type StorageServer interface {
 // pointer dereference when methods are called.
 type UnimplementedStorageServer struct{}
 
-func (UnimplementedStorageServer) GetTransaction(context.Context, *GetTransactionRequest) (*GetTransactionResponse, error) {
+func (UnimplementedStorageServer) GetTransaction(context.Context, *GetTransactionRequest) (*Transaction, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetTransaction not implemented")
 }
-func (UnimplementedStorageServer) GetTransactionsInPeriod(context.Context, *GetTransactionsInPeriodRequest) (*GetTransactionsInPeriodResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetTransactionsInPeriod not implemented")
+func (UnimplementedStorageServer) ListTransactions(context.Context, *ListTransactionsRequest) (*ListTransactionsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListTransactions not implemented")
 }
-func (UnimplementedStorageServer) PostTransaction(context.Context, *PostTransactionRequest) (*PostTransactionResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method PostTransaction not implemented")
+func (UnimplementedStorageServer) CreateTransaction(context.Context, *CreateTransactionRequest) (*Transaction, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateTransaction not implemented")
 }
 func (UnimplementedStorageServer) mustEmbedUnimplementedStorageServer() {}
 func (UnimplementedStorageServer) testEmbeddedByValue()                 {}
@@ -136,38 +136,38 @@ func _Storage_GetTransaction_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Storage_GetTransactionsInPeriod_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetTransactionsInPeriodRequest)
+func _Storage_ListTransactions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListTransactionsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(StorageServer).GetTransactionsInPeriod(ctx, in)
+		return srv.(StorageServer).ListTransactions(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Storage_GetTransactionsInPeriod_FullMethodName,
+		FullMethod: Storage_ListTransactions_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(StorageServer).GetTransactionsInPeriod(ctx, req.(*GetTransactionsInPeriodRequest))
+		return srv.(StorageServer).ListTransactions(ctx, req.(*ListTransactionsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Storage_PostTransaction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(PostTransactionRequest)
+func _Storage_CreateTransaction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateTransactionRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(StorageServer).PostTransaction(ctx, in)
+		return srv.(StorageServer).CreateTransaction(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Storage_PostTransaction_FullMethodName,
+		FullMethod: Storage_CreateTransaction_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(StorageServer).PostTransaction(ctx, req.(*PostTransactionRequest))
+		return srv.(StorageServer).CreateTransaction(ctx, req.(*CreateTransactionRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -184,12 +184,12 @@ var Storage_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Storage_GetTransaction_Handler,
 		},
 		{
-			MethodName: "GetTransactionsInPeriod",
-			Handler:    _Storage_GetTransactionsInPeriod_Handler,
+			MethodName: "ListTransactions",
+			Handler:    _Storage_ListTransactions_Handler,
 		},
 		{
-			MethodName: "PostTransaction",
-			Handler:    _Storage_PostTransaction_Handler,
+			MethodName: "CreateTransaction",
+			Handler:    _Storage_CreateTransaction_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

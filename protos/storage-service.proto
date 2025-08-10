@@ -5,6 +5,7 @@ package storage_service;
 option go_package = "gen/storage_service/golang";
 
 import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
 
 message Transaction {
 	string id = 1;
@@ -19,49 +20,48 @@ message Transaction {
 // Requests ----------------------------------
 
 message GetTransactionRequest {
-	string tx_id = 1;
+	string tx_id = 1 [(google.api.field_behavior) = REQUIRED];
 }
 
-message GetTransactionsInPeriodRequest {
-	string begin = 1;
-	string end = 2;
+message ListTransactionsRequest {
+	string user_id = 1 [(google.api.field_behavior) = REQUIRED];
+	string begin_time = 2;
+	string end_time = 3;
+
+	int32 page_size = 4;
+	int32 page_token = 5;
 }
 
-message PostTransactionRequest {
-	Transaction tx = 1;
-	bool with_auto_category = 2;
+message CreateTransactionRequest {
+	string user_id = 1 [(google.api.field_behavior) = REQUIRED];
+	Transaction tx = 2 [(google.api.field_behavior) = REQUIRED];
+	bool with_auto_category = 3;
 }
 
 // Responses ---------------------------------
 
-message GetTransactionResponse {
-	Transaction tx = 1;
-}
-
-message GetTransactionsInPeriodResponse {
+message ListTransactionsResponse {
 	repeated Transaction txs = 1;
-}
-
-message PostTransactionResponse {
-	string tx_id = 1;
+	int32 next_page_token = 2;
 }
 
 // Service -----------------------------------
 
 service Storage {
-	rpc GetTransaction(GetTransactionRequest) returns (GetTransactionResponse) {
+	rpc GetTransaction(GetTransactionRequest) returns (Transaction) {
 		option (google.api.http) = {
 			get: "/v1/transaction/id/{tx_id}"
 		};
 	}
-	rpc GetTransactionsInPeriod(GetTransactionsInPeriodRequest) returns (GetTransactionsInPeriodResponse) {
+	rpc ListTransactions(ListTransactionsRequest) returns (ListTransactionsResponse) {
 		option (google.api.http) = {
-			post: "/v1/transaction/period"
+			get: "/v1/transaction/period"
 		};
 	}
-    rpc PostTransaction(PostTransactionRequest) returns (PostTransactionResponse) {
+    rpc CreateTransaction(CreateTransactionRequest) returns (Transaction) {
 		option (google.api.http) = {
 			post: "/v1/commit"
+			body: "tx"
 		};
 	}
 }

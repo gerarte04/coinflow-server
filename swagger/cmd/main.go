@@ -15,8 +15,8 @@ import (
 
 // Transactions ----------------------------------------------
 
-// @Summary GetTransaction
-// @Description get transaction by id
+// @Summary Get transaction by id
+// @Description WARNING: Viewing other user's transactions is not allowed.
 // @Tags transactions
 // @Produce json
 // @Param tx_id path string true "Transaction ID"
@@ -29,41 +29,47 @@ import (
 // @Router /transaction/id/{tx_id} [get]
 func GetTransaction() {}
 
-// @Summary GetTransactionsInPeriod
-// @Description get transactions in period between begin and end
+// @Summary Get transactions in period between begin and end
+// @Description Time should be presented in RFC3339 format.
 // @Tags transactions
 // @Accept json
 // @Produce json
-// @Param reqObj body types.GetTransactionsInPeriodRequestObject true "Request object"
+// @Param user_id query string true "User ID"
+// @Param begin_time query string true "Begin time in RFC3339 format"
+// @Param end_time query string true "End time in RFC3339 format"
+// @Param page_size query int false "Requested page size"
+// @Param page_token query int false "Requested page token"
 // @Success 200 {object} string "OK"
 // @Failure 400 {object} string "Bad request"
 // @Failure 401 {object} string "Unauthorized"
+// @Failure 403 {object} string "Forbidden"
 // @Failure 404 {object} string "Not found"
 // @Failure 500 {object} string "Internal error"
-// @Router /transaction/period [post]
-func GetTransactionsInPeriod() {}
+// @Router /transaction/period [get]
+func ListTransactions() {}
 
-// @Summary PostTransaction
-// @Description commit transaction
+// @Summary Commit transaction
+// @Description Transaction's type and category must be one of allowed values (view docs/VARS.md on github for values list).
 // @Tags transactions
 // @Accept json
 // @Produce json
-// @Param tx body types.PostTransactionRequestObject true "transaction"
+// @Param tx body models.Transaction true "Transaction data"
+// @Param user_id query string true "Creator id"
+// @Param with_auto_category query bool false "Defines if category should be auto-detected by description (default is false)"
 // @Success 201 {object} string "Created"
 // @Failure 400 {object} string "Bad request"
 // @Failure 401 {object} string "Unauthorized"
 // @Failure 500 {object} string "Internal error"
 // @Router /commit [post]
-func PostTransaction() {}
+func CreateTransaction() {}
 
 // Users ---------------------------------------------
 
-// @Summary Login
-// @Description login and get tokens
+// @Summary Login and get pair of tokens
 // @Tags users
 // @Accept json
 // @Produce json
-// @Param reqObj body types.LoginRequestObject true "request object"
+// @Param reqObj body types.LoginRequestObject true "Login and password"
 // @Success 200 {object} string "OK"
 // @Failure 400 {object} string "Bad request"
 // @Failure 401 {object} string "Unauthorized"
@@ -71,12 +77,11 @@ func PostTransaction() {}
 // @Router /auth/login [post]
 func Login() {}
 
-// @Summary Refresh
-// @Description refresh and get new tokens
+// @Summary Refresh and get new pair of tokens
 // @Tags users
 // @Accept json
 // @Produce json
-// @Param reqObj body types.RefreshRequestObject true "request object"
+// @Param reqObj body types.RefreshRequestObject true "Refresh token"
 // @Success 200 {object} string "OK"
 // @Failure 400 {object} string "Bad request"
 // @Failure 401 {object} string "Unauthorized"
@@ -84,12 +89,11 @@ func Login() {}
 // @Router /auth/refresh [post]
 func Refresh() {}
 
-// @Summary Register
-// @Description register new user
+// @Summary Register new user
 // @Tags users
 // @Accept json
 // @Produce json
-// @Param reqObj body models.User true "request object"
+// @Param reqObj body models.User true "User data"
 // @Success 201 {object} string "Created"
 // @Failure 400 {object} string "Bad request"
 // @Failure 401 {object} string "Unauthorized"
@@ -110,8 +114,7 @@ func Register() {}
 func GetUserData() {}
 
 // @title Coinflow API
-// @version 1.0
-// @description API Gateway for Coinflow service
+// @version 0.1.0
 
 // @host localhost:8080
 // @BasePath /v1
@@ -121,7 +124,7 @@ func main() {
 	pkgConfig.MustLoadConfig(flg.ConfigPath, &cfg)
 
 	r := chi.NewRouter()
-	r.Get(cfg.SwaggerPath + "/*", httpSwagger.WrapHandler)
+	r.Get(cfg.SwaggerPath+"/*", httpSwagger.WrapHandler)
 
 	addr := fmt.Sprintf("%s:%s", cfg.HttpCfg.Host, cfg.HttpCfg.Port)
 

@@ -210,27 +210,27 @@ func (x *RefreshRequest) GetRefreshToken() string {
 	return ""
 }
 
-type RegisterRequest struct {
+type CreateUserRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Usr           *User                  `protobuf:"bytes,1,opt,name=usr,proto3" json:"usr,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *RegisterRequest) Reset() {
-	*x = RegisterRequest{}
+func (x *CreateUserRequest) Reset() {
+	*x = CreateUserRequest{}
 	mi := &file_auth_service_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *RegisterRequest) String() string {
+func (x *CreateUserRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*RegisterRequest) ProtoMessage() {}
+func (*CreateUserRequest) ProtoMessage() {}
 
-func (x *RegisterRequest) ProtoReflect() protoreflect.Message {
+func (x *CreateUserRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_auth_service_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -242,39 +242,39 @@ func (x *RegisterRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use RegisterRequest.ProtoReflect.Descriptor instead.
-func (*RegisterRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use CreateUserRequest.ProtoReflect.Descriptor instead.
+func (*CreateUserRequest) Descriptor() ([]byte, []int) {
 	return file_auth_service_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *RegisterRequest) GetUsr() *User {
+func (x *CreateUserRequest) GetUsr() *User {
 	if x != nil {
 		return x.Usr
 	}
 	return nil
 }
 
-type GetUserDataRequest struct {
+type GetUserRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *GetUserDataRequest) Reset() {
-	*x = GetUserDataRequest{}
+func (x *GetUserRequest) Reset() {
+	*x = GetUserRequest{}
 	mi := &file_auth_service_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *GetUserDataRequest) String() string {
+func (x *GetUserRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*GetUserDataRequest) ProtoMessage() {}
+func (*GetUserRequest) ProtoMessage() {}
 
-func (x *GetUserDataRequest) ProtoReflect() protoreflect.Message {
+func (x *GetUserRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_auth_service_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -286,12 +286,12 @@ func (x *GetUserDataRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetUserDataRequest.ProtoReflect.Descriptor instead.
-func (*GetUserDataRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use GetUserRequest.ProtoReflect.Descriptor instead.
+func (*GetUserRequest) Descriptor() ([]byte, []int) {
 	return file_auth_service_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *GetUserDataRequest) GetUserId() string {
+func (x *GetUserRequest) GetUserId() string {
 	if x != nil {
 		return x.UserId
 	}
@@ -300,8 +300,8 @@ func (x *GetUserDataRequest) GetUserId() string {
 
 type LoginResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	AccessToken   string                 `protobuf:"bytes,2,opt,name=access_token,json=accessToken,proto3" json:"access_token,omitempty"`
-	RefreshToken  string                 `protobuf:"bytes,3,opt,name=refresh_token,json=refreshToken,proto3" json:"refresh_token,omitempty"`
+	AccessToken   string                 `protobuf:"bytes,1,opt,name=access_token,json=accessToken,proto3" json:"access_token,omitempty"`
+	RefreshToken  string                 `protobuf:"bytes,2,opt,name=refresh_token,json=refreshToken,proto3" json:"refresh_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -402,99 +402,11 @@ func (x *RefreshResponse) GetRefreshToken() string {
 	return ""
 }
 
-type RegisterResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *RegisterResponse) Reset() {
-	*x = RegisterResponse{}
-	mi := &file_auth_service_proto_msgTypes[7]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *RegisterResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*RegisterResponse) ProtoMessage() {}
-
-func (x *RegisterResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_auth_service_proto_msgTypes[7]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use RegisterResponse.ProtoReflect.Descriptor instead.
-func (*RegisterResponse) Descriptor() ([]byte, []int) {
-	return file_auth_service_proto_rawDescGZIP(), []int{7}
-}
-
-func (x *RegisterResponse) GetUserId() string {
-	if x != nil {
-		return x.UserId
-	}
-	return ""
-}
-
-type GetUserDataResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Usr           *User                  `protobuf:"bytes,1,opt,name=usr,proto3" json:"usr,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *GetUserDataResponse) Reset() {
-	*x = GetUserDataResponse{}
-	mi := &file_auth_service_proto_msgTypes[8]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GetUserDataResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GetUserDataResponse) ProtoMessage() {}
-
-func (x *GetUserDataResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_auth_service_proto_msgTypes[8]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GetUserDataResponse.ProtoReflect.Descriptor instead.
-func (*GetUserDataResponse) Descriptor() ([]byte, []int) {
-	return file_auth_service_proto_rawDescGZIP(), []int{8}
-}
-
-func (x *GetUserDataResponse) GetUsr() *User {
-	if x != nil {
-		return x.Usr
-	}
-	return nil
-}
-
 var File_auth_service_proto protoreflect.FileDescriptor
 
 const file_auth_service_proto_rawDesc = "" +
 	"\n" +
-	"\x12auth-service.proto\x12\fauth_service\x1a\x1cgoogle/api/annotations.proto\"\xbf\x01\n" +
+	"\x12auth-service.proto\x12\fauth_service\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\"\xbf\x01\n" +
 	"\x04User\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
 	"\x05login\x18\x02 \x01(\tR\x05login\x12\x1a\n" +
@@ -502,31 +414,28 @@ const file_auth_service_proto_rawDesc = "" +
 	"\x04name\x18\x04 \x01(\tR\x04name\x12\x14\n" +
 	"\x05email\x18\x05 \x01(\tR\x05email\x12\x14\n" +
 	"\x05phone\x18\x06 \x01(\tR\x05phone\x125\n" +
-	"\x16registration_timestamp\x18\a \x01(\tR\x15registrationTimestamp\"@\n" +
-	"\fLoginRequest\x12\x14\n" +
-	"\x05login\x18\x01 \x01(\tR\x05login\x12\x1a\n" +
-	"\bpassword\x18\x02 \x01(\tR\bpassword\"5\n" +
-	"\x0eRefreshRequest\x12#\n" +
-	"\rrefresh_token\x18\x01 \x01(\tR\frefreshToken\"7\n" +
-	"\x0fRegisterRequest\x12$\n" +
-	"\x03usr\x18\x01 \x01(\v2\x12.auth_service.UserR\x03usr\"-\n" +
-	"\x12GetUserDataRequest\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\tR\x06userId\"W\n" +
+	"\x16registration_timestamp\x18\a \x01(\tR\x15registrationTimestamp\"J\n" +
+	"\fLoginRequest\x12\x19\n" +
+	"\x05login\x18\x01 \x01(\tB\x03\xe0A\x02R\x05login\x12\x1f\n" +
+	"\bpassword\x18\x02 \x01(\tB\x03\xe0A\x02R\bpassword\":\n" +
+	"\x0eRefreshRequest\x12(\n" +
+	"\rrefresh_token\x18\x01 \x01(\tB\x03\xe0A\x02R\frefreshToken\">\n" +
+	"\x11CreateUserRequest\x12)\n" +
+	"\x03usr\x18\x01 \x01(\v2\x12.auth_service.UserB\x03\xe0A\x02R\x03usr\".\n" +
+	"\x0eGetUserRequest\x12\x1c\n" +
+	"\auser_id\x18\x01 \x01(\tB\x03\xe0A\x02R\x06userId\"W\n" +
 	"\rLoginResponse\x12!\n" +
-	"\faccess_token\x18\x02 \x01(\tR\vaccessToken\x12#\n" +
-	"\rrefresh_token\x18\x03 \x01(\tR\frefreshToken\"Y\n" +
+	"\faccess_token\x18\x01 \x01(\tR\vaccessToken\x12#\n" +
+	"\rrefresh_token\x18\x02 \x01(\tR\frefreshToken\"Y\n" +
 	"\x0fRefreshResponse\x12!\n" +
 	"\faccess_token\x18\x01 \x01(\tR\vaccessToken\x12#\n" +
-	"\rrefresh_token\x18\x02 \x01(\tR\frefreshToken\"+\n" +
-	"\x10RegisterResponse\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\tR\x06userId\";\n" +
-	"\x13GetUserDataResponse\x12$\n" +
-	"\x03usr\x18\x01 \x01(\v2\x12.auth_service.UserR\x03usr2\x9d\x03\n" +
+	"\rrefresh_token\x18\x02 \x01(\tR\frefreshToken2\xfe\x02\n" +
 	"\x04Auth\x12X\n" +
 	"\x05Login\x12\x1a.auth_service.LoginRequest\x1a\x1b.auth_service.LoginResponse\"\x16\x82\xd3\xe4\x93\x02\x10\"\x0e/v1/auth/login\x12`\n" +
-	"\aRefresh\x12\x1c.auth_service.RefreshRequest\x1a\x1d.auth_service.RefreshResponse\"\x18\x82\xd3\xe4\x93\x02\x12\"\x10/v1/auth/refresh\x12i\n" +
-	"\bRegister\x12\x1d.auth_service.RegisterRequest\x1a\x1e.auth_service.RegisterResponse\"\x1e\x82\xd3\xe4\x93\x02\x18:\x03usr\"\x11/v1/auth/register\x12n\n" +
-	"\vGetUserData\x12 .auth_service.GetUserDataRequest\x1a!.auth_service.GetUserDataResponse\"\x1a\x82\xd3\xe4\x93\x02\x14\x12\x12/v1/user/{user_id}B\x19Z\x17gen/auth_service/golangb\x06proto3"
+	"\aRefresh\x12\x1c.auth_service.RefreshRequest\x1a\x1d.auth_service.RefreshResponse\"\x18\x82\xd3\xe4\x93\x02\x12\"\x10/v1/auth/refresh\x12a\n" +
+	"\n" +
+	"CreateUser\x12\x1f.auth_service.CreateUserRequest\x1a\x12.auth_service.User\"\x1e\x82\xd3\xe4\x93\x02\x18:\x03usr\"\x11/v1/auth/register\x12W\n" +
+	"\aGetUser\x12\x1c.auth_service.GetUserRequest\x1a\x12.auth_service.User\"\x1a\x82\xd3\xe4\x93\x02\x14\x12\x12/v1/user/{user_id}B\x19Z\x17gen/auth_service/golangb\x06proto3"
 
 var (
 	file_auth_service_proto_rawDescOnce sync.Once
@@ -540,34 +449,31 @@ func file_auth_service_proto_rawDescGZIP() []byte {
 	return file_auth_service_proto_rawDescData
 }
 
-var file_auth_service_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
+var file_auth_service_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
 var file_auth_service_proto_goTypes = []any{
-	(*User)(nil),                // 0: auth_service.User
-	(*LoginRequest)(nil),        // 1: auth_service.LoginRequest
-	(*RefreshRequest)(nil),      // 2: auth_service.RefreshRequest
-	(*RegisterRequest)(nil),     // 3: auth_service.RegisterRequest
-	(*GetUserDataRequest)(nil),  // 4: auth_service.GetUserDataRequest
-	(*LoginResponse)(nil),       // 5: auth_service.LoginResponse
-	(*RefreshResponse)(nil),     // 6: auth_service.RefreshResponse
-	(*RegisterResponse)(nil),    // 7: auth_service.RegisterResponse
-	(*GetUserDataResponse)(nil), // 8: auth_service.GetUserDataResponse
+	(*User)(nil),              // 0: auth_service.User
+	(*LoginRequest)(nil),      // 1: auth_service.LoginRequest
+	(*RefreshRequest)(nil),    // 2: auth_service.RefreshRequest
+	(*CreateUserRequest)(nil), // 3: auth_service.CreateUserRequest
+	(*GetUserRequest)(nil),    // 4: auth_service.GetUserRequest
+	(*LoginResponse)(nil),     // 5: auth_service.LoginResponse
+	(*RefreshResponse)(nil),   // 6: auth_service.RefreshResponse
 }
 var file_auth_service_proto_depIdxs = []int32{
-	0, // 0: auth_service.RegisterRequest.usr:type_name -> auth_service.User
-	0, // 1: auth_service.GetUserDataResponse.usr:type_name -> auth_service.User
-	1, // 2: auth_service.Auth.Login:input_type -> auth_service.LoginRequest
-	2, // 3: auth_service.Auth.Refresh:input_type -> auth_service.RefreshRequest
-	3, // 4: auth_service.Auth.Register:input_type -> auth_service.RegisterRequest
-	4, // 5: auth_service.Auth.GetUserData:input_type -> auth_service.GetUserDataRequest
-	5, // 6: auth_service.Auth.Login:output_type -> auth_service.LoginResponse
-	6, // 7: auth_service.Auth.Refresh:output_type -> auth_service.RefreshResponse
-	7, // 8: auth_service.Auth.Register:output_type -> auth_service.RegisterResponse
-	8, // 9: auth_service.Auth.GetUserData:output_type -> auth_service.GetUserDataResponse
-	6, // [6:10] is the sub-list for method output_type
-	2, // [2:6] is the sub-list for method input_type
-	2, // [2:2] is the sub-list for extension type_name
-	2, // [2:2] is the sub-list for extension extendee
-	0, // [0:2] is the sub-list for field type_name
+	0, // 0: auth_service.CreateUserRequest.usr:type_name -> auth_service.User
+	1, // 1: auth_service.Auth.Login:input_type -> auth_service.LoginRequest
+	2, // 2: auth_service.Auth.Refresh:input_type -> auth_service.RefreshRequest
+	3, // 3: auth_service.Auth.CreateUser:input_type -> auth_service.CreateUserRequest
+	4, // 4: auth_service.Auth.GetUser:input_type -> auth_service.GetUserRequest
+	5, // 5: auth_service.Auth.Login:output_type -> auth_service.LoginResponse
+	6, // 6: auth_service.Auth.Refresh:output_type -> auth_service.RefreshResponse
+	0, // 7: auth_service.Auth.CreateUser:output_type -> auth_service.User
+	0, // 8: auth_service.Auth.GetUser:output_type -> auth_service.User
+	5, // [5:9] is the sub-list for method output_type
+	1, // [1:5] is the sub-list for method input_type
+	1, // [1:1] is the sub-list for extension type_name
+	1, // [1:1] is the sub-list for extension extendee
+	0, // [0:1] is the sub-list for field type_name
 }
 
 func init() { file_auth_service_proto_init() }
@@ -581,7 +487,7 @@ func file_auth_service_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_auth_service_proto_rawDesc), len(file_auth_service_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   9,
+			NumMessages:   7,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

@@ -5,6 +5,7 @@ package auth_service;
 option go_package = "gen/auth_service/golang";
 
 import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
 
 message User {
     string id = 1;
@@ -21,40 +22,32 @@ message User {
 // Requests ----------------------------------
 
 message LoginRequest {
-    string login = 1;
-    string password = 2;
+    string login = 1 [(google.api.field_behavior) = REQUIRED];
+    string password = 2 [(google.api.field_behavior) = REQUIRED];
 }
 
 message RefreshRequest {
-    string refresh_token = 1;
+    string refresh_token = 1 [(google.api.field_behavior) = REQUIRED];
 }
 
-message RegisterRequest {
-    User usr = 1;
+message CreateUserRequest {
+    User usr = 1 [(google.api.field_behavior) = REQUIRED];
 }
 
-message GetUserDataRequest {
-    string user_id = 1;
+message GetUserRequest {
+    string user_id = 1 [(google.api.field_behavior) = REQUIRED];
 }
 
 // Responses ---------------------------------
 
 message LoginResponse {
-    string access_token = 2;
-    string refresh_token = 3;
+    string access_token = 1;
+    string refresh_token = 2;
 }
 
 message RefreshResponse {
     string access_token = 1;
     string refresh_token = 2;
-}
-
-message RegisterResponse {
-    string user_id = 1;
-}
-
-message GetUserDataResponse {
-    User usr = 1;
 }
 
 // Service -----------------------------------
@@ -70,13 +63,13 @@ service Auth {
             post: "/v1/auth/refresh"
         };
     }
-	rpc Register(RegisterRequest) returns (RegisterResponse) {
+	rpc CreateUser(CreateUserRequest) returns (User) {
         option (google.api.http) = {
             post: "/v1/auth/register"
             body: "usr"
         };
     }
-    rpc GetUserData(GetUserDataRequest) returns (GetUserDataResponse) {
+    rpc GetUser(GetUserRequest) returns (User) {
         option (google.api.http) = {
             get: "/v1/user/{user_id}"
         };

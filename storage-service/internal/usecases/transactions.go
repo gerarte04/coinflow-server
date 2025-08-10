@@ -11,5 +11,5 @@ import (
 type TransactionsService interface {
 	GetTransaction(ctx context.Context, userId uuid.UUID, txId uuid.UUID) (*models.Transaction, error)
 	GetTransactionsInPeriod(ctx context.Context, userId uuid.UUID, begin time.Time, end time.Time) ([]*models.Transaction, error)
-	PostTransaction(ctx context.Context, tx *models.Transaction, withAutoCategory bool) (uuid.UUID, error)
+	PostTransaction(ctx context.Context, tx *models.Transaction, withAutoCategory bool) (*models.Transaction, error)
 }

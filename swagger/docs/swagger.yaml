@@ -26,28 +26,12 @@ definitions:
       phone:
         type: string
     type: object
-  types.GetTransactionsInPeriodRequestObject:
-    properties:
-      begin:
-        type: string
-      end:
-        type: string
-      with_summary:
-        type: boolean
-    type: object
   types.LoginRequestObject:
     properties:
       login:
         type: string
       password:
         type: string
-    type: object
-  types.PostTransactionRequestObject:
-    properties:
-      tx:
-        $ref: '#/definitions/models.Transaction'
-      with_auto_category:
-        type: boolean
     type: object
   types.RefreshRequestObject:
     properties:
@@ -57,17 +41,15 @@ definitions:
 host: localhost:8080
 info:
   contact: {}
-  description: API Gateway for Coinflow service
   title: Coinflow API
-  version: "1.0"
+  version: 0.1.0
 paths:
   /auth/login:
     post:
       consumes:
       - application/json
-      description: login and get tokens
       parameters:
-      - description: request object
+      - description: Login and password
         in: body
         name: reqObj
         required: true
@@ -92,16 +74,15 @@ paths:
           description: Internal error
           schema:
             type: string
-      summary: Login
+      summary: Login and get pair of tokens
       tags:
       - users
   /auth/refresh:
     post:
       consumes:
       - application/json
-      description: refresh and get new tokens
       parameters:
-      - description: request object
+      - description: Refresh token
         in: body
         name: reqObj
         required: true
@@ -126,16 +107,15 @@ paths:
           description: Internal error
           schema:
             type: string
-      summary: Refresh
+      summary: Refresh and get new pair of tokens
       tags:
       - users
   /auth/register:
     post:
       consumes:
       - application/json
-      description: register new user
       parameters:
-      - description: request object
+      - description: User data
         in: body
         name: reqObj
         required: true
@@ -160,21 +140,32 @@ paths:
           description: Internal error
           schema:
             type: string
-      summary: Register
+      summary: Register new user
       tags:
       - users
   /commit:
     post:
       consumes:
       - application/json
-      description: commit transaction
+      description: Transaction's type and category must be one of allowed values (view
+        docs/VARS.md on github for values list).
       parameters:
-      - description: transaction
+      - description: Transaction data
         in: body
         name: tx
         required: true
         schema:
-          $ref: '#/definitions/types.PostTransactionRequestObject'
+          $ref: '#/definitions/models.Transaction'
+      - description: Creator id
+        in: query
+        name: user_id
+        required: true
+        type: string
+      - description: Defines if category should be auto-detected by description (default
+          is false)
+        in: query
+        name: with_auto_category
+        type: boolean
       produces:
       - application/json
       responses:
@@ -194,12 +185,12 @@ paths:
           description: Internal error
           schema:
             type: string
-      summary: PostTransaction
+      summary: Commit transaction
       tags:
       - transactions
   /transaction/id/{tx_id}:
     get:
-      description: get transaction by id
+      description: 'WARNING: Viewing other user''s transactions is not allowed.'
       parameters:
       - description: Transaction ID
         in: path
@@ -233,21 +224,38 @@ paths:
           description: Internal error
           schema:
             type: string
-      summary: GetTransaction
+      summary: Get transaction by id
       tags:
       - transactions
   /transaction/period:
-    post:
+    get:
       consumes:
       - application/json
-      description: get transactions in period between begin and end
+      description: Time should be presented in RFC3339 format.
       parameters:
-      - description: Request object
-        in: body
-        name: reqObj
+      - description: User ID
+        in: query
+        name: user_id
         required: true
-        schema:
-          $ref: '#/definitions/types.GetTransactionsInPeriodRequestObject'
+        type: string
+      - description: Begin time in RFC3339 format
+        in: query
+        name: begin_time
+        required: true
+        type: string
+      - description: End time in RFC3339 format
+        in: query
+        name: end_time
+        required: true
+        type: string
+      - description: Requested page size
+        in: query
+        name: page_size
+        type: integer
+      - description: Requested page token
+        in: query
+        name: page_token
+        type: integer
       produces:
       - application/json
       responses:
@@ -263,6 +271,10 @@ paths:
           description: Unauthorized
           schema:
             type: string
+        "403":
+          description: Forbidden
+          schema:
+            type: string
         "404":
           description: Not found
           schema:
@@ -271,7 +283,7 @@ paths:
           description: Internal error
           schema:
             type: string
-      summary: GetTransactionsInPeriod
+      summary: Get transactions in period between begin and end
       tags:
       - transactions
   /user/{user_id}:

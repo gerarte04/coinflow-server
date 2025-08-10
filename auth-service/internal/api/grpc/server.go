@@ -53,24 +53,29 @@ func (s *AuthServer) Refresh(ctx context.Context, r *pb.RefreshRequest) (*pb.Ref
 	return &pb.RefreshResponse{AccessToken: tokens.Access, RefreshToken: tokens.Refresh}, nil
 }
 
-func (s *AuthServer) Register(ctx context.Context, r *pb.RegisterRequest) (*pb.RegisterResponse, error) {
+func (s *AuthServer) CreateUser(ctx context.Context, r *pb.CreateUserRequest) (*pb.User, error) {
 	reqObj, err := types.CreateRegisterRequestObject(r)
 	if err != nil {
 		return nil, grpcErr.CreateRequestObjectStatusError(err)
 	}
 
-	usrId, err := s.usrService.Register(ctx, reqObj.User)
+	usr, err := s.usrService.Register(ctx, reqObj.User)
 	if err != nil {
 	    return nil, grpcErr.CreateResultStatusError(err, errorCodes)
 	}
-
+	
+	resp, err := types.GetProtobufUserFromModel(usr)
+	if err != nil {
+		return nil, grpcErr.CreateResponseStatusError(err)
+	}
+	
 	pkgGrpc.SetResponseCode(ctx, s.cfg.HttpCodeHeaderName, 201)
 
-	return &pb.RegisterResponse{UserId: usrId.String()}, nil
+	return resp, nil
 }
 
-func (s *AuthServer) GetUserData(ctx context.Context, r *pb.GetUserDataRequest) (*pb.GetUserDataResponse, error) {
-	reqObj, err := types.CreateGetUserDataRequestObject(r)
+func (s *AuthServer) GetUser(ctx context.Context, r *pb.GetUserRequest) (*pb.User, error) {
+	reqObj, err := types.CreateGetUserRequestObject(r)
 	if err != nil {
 		return nil, grpcErr.CreateRequestObjectStatusError(err)
 	}
@@ -80,7 +85,7 @@ func (s *AuthServer) GetUserData(ctx context.Context, r *pb.GetUserDataRequest) 
 		return nil, grpcErr.CreateResultStatusError(err, errorCodes)
 	}
 
-	resp, err := types.CreateGetUserDataResponse(usr)
+	resp, err := types.GetProtobufUserFromModel(usr)
 	if err != nil {
 		return nil, grpcErr.CreateResponseStatusError(err)
 	}

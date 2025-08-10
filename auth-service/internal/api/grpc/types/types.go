@@ -17,7 +17,7 @@ type RegisterRequestObject struct {
 	User *models.User
 }
 
-func CreateRegisterRequestObject(r *pb.RegisterRequest) (*RegisterRequestObject, error) {
+func CreateRegisterRequestObject(r *pb.CreateUserRequest) (*RegisterRequestObject, error) {
 	const op = "CreateRegisterRequestObject"
 
 	var usr models.User
@@ -29,25 +29,25 @@ func CreateRegisterRequestObject(r *pb.RegisterRequest) (*RegisterRequestObject,
 	return &RegisterRequestObject{User: &usr}, nil
 }
 
-type GetUserDataRequestObject struct {
+type GetUserRequestObject struct {
 	UsrId uuid.UUID
 }
 
-func CreateGetUserDataRequestObject(r *pb.GetUserDataRequest) (*GetUserDataRequestObject, error) {
-	const op = "CreateUserDataRequestObject"
+func CreateGetUserRequestObject(r *pb.GetUserRequest) (*GetUserRequestObject, error) {
+	const op = "CreateGetUserRequestObject"
 
 	usrId, err := utils.ParseStringToUuid(r.UserId)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	return &GetUserDataRequestObject{UsrId: usrId}, nil
+	return &GetUserRequestObject{UsrId: usrId}, nil
 }
 
 // Responses -------------------------------------------
 
-func CreateGetUserDataResponse(usr *models.User) (*pb.GetUserDataResponse, error) {
-	const op = "CreateGetTransactionResponse"
+func GetProtobufUserFromModel(usr *models.User) (*pb.User, error) {
+	const op = "GetProtobufUserFromModel"
 
 	var pbUsr pb.User
 
@@ -57,5 +57,5 @@ func CreateGetUserDataResponse(usr *models.User) (*pb.GetUserDataResponse, error
 
 	pbUsr.RegistrationTimestamp = usr.RegistrationTimestamp.Format(vars.TimeLayout)
 
-	return &pb.GetUserDataResponse{Usr: &pbUsr}, nil
+	return &pbUsr, nil
 }

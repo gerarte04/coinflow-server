@@ -10,5 +10,5 @@ import (
 type UsersRepo interface {
 	GetUser(ctx context.Context, id uuid.UUID) (*models.User, error)
 	GetUserByCred(ctx context.Context, login, password string) (*models.User, error)
-	PostUser(ctx context.Context, usr *models.User) (uuid.UUID, error)
+	PostUser(ctx context.Context, usr *models.User) (*models.User, error)
 }

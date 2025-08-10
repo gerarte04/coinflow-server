@@ -96,6 +96,9 @@ services:
       - /home/${USER}/.chdata:/var/lib/clickhouse
       - ./config/users.yaml:/etc/clickhouse-server/users.d/users.yaml
       - ./migrations/clickhouse/init.sql:/docker-entrypoint-initdb.d/init.sql
+    depends_on:
+      postgres:
+        condition: service_healthy
 
   redis:
     image: redis:latest
