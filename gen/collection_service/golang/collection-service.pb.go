@@ -9,6 +9,7 @@ package golang
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
@@ -29,6 +30,7 @@ type Transaction struct {
 	Type          string                 `protobuf:"bytes,4,opt,name=type,proto3" json:"type,omitempty"`
 	Category      string                 `protobuf:"bytes,5,opt,name=category,proto3" json:"category,omitempty"`
 	Cost          float64                `protobuf:"fixed64,6,opt,name=cost,proto3" json:"cost,omitempty"`
+	Timestamp     *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=timestamp,proto3" json:"timestamp,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -105,113 +107,28 @@ func (x *Transaction) GetCost() float64 {
 	return 0
 }
 
-type GetTransactionCategoryRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Tx            *Transaction           `protobuf:"bytes,1,opt,name=tx,proto3" json:"tx,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *GetTransactionCategoryRequest) Reset() {
-	*x = GetTransactionCategoryRequest{}
-	mi := &file_collection_service_proto_msgTypes[1]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GetTransactionCategoryRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GetTransactionCategoryRequest) ProtoMessage() {}
-
-func (x *GetTransactionCategoryRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_collection_service_proto_msgTypes[1]
+func (x *Transaction) GetTimestamp() *timestamppb.Timestamp {
 	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GetTransactionCategoryRequest.ProtoReflect.Descriptor instead.
-func (*GetTransactionCategoryRequest) Descriptor() ([]byte, []int) {
-	return file_collection_service_proto_rawDescGZIP(), []int{1}
-}
-
-func (x *GetTransactionCategoryRequest) GetTx() *Transaction {
-	if x != nil {
-		return x.Tx
+		return x.Timestamp
 	}
 	return nil
-}
-
-type GetTransactionCategoryResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Category      string                 `protobuf:"bytes,1,opt,name=category,proto3" json:"category,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *GetTransactionCategoryResponse) Reset() {
-	*x = GetTransactionCategoryResponse{}
-	mi := &file_collection_service_proto_msgTypes[2]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GetTransactionCategoryResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GetTransactionCategoryResponse) ProtoMessage() {}
-
-func (x *GetTransactionCategoryResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_collection_service_proto_msgTypes[2]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GetTransactionCategoryResponse.ProtoReflect.Descriptor instead.
-func (*GetTransactionCategoryResponse) Descriptor() ([]byte, []int) {
-	return file_collection_service_proto_rawDescGZIP(), []int{2}
-}
-
-func (x *GetTransactionCategoryResponse) GetCategory() string {
-	if x != nil {
-		return x.Category
-	}
-	return ""
 }
 
 var File_collection_service_proto protoreflect.FileDescriptor
 
 const file_collection_service_proto_rawDesc = "" +
 	"\n" +
-	"\x18collection-service.proto\x12\x12collection_service\"\x9b\x01\n" +
+	"\x18collection-service.proto\x12\x12collection_service\x1a\x1fgoogle/protobuf/timestamp.proto\"\xd5\x01\n" +
 	"\vTransaction\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x16\n" +
 	"\x06target\x18\x02 \x01(\tR\x06target\x12 \n" +
 	"\vdescription\x18\x03 \x01(\tR\vdescription\x12\x12\n" +
 	"\x04type\x18\x04 \x01(\tR\x04type\x12\x1a\n" +
 	"\bcategory\x18\x05 \x01(\tR\bcategory\x12\x12\n" +
-	"\x04cost\x18\x06 \x01(\x01R\x04cost\"P\n" +
-	"\x1dGetTransactionCategoryRequest\x12/\n" +
-	"\x02tx\x18\x01 \x01(\v2\x1f.collection_service.TransactionR\x02tx\"<\n" +
-	"\x1eGetTransactionCategoryResponse\x12\x1a\n" +
-	"\bcategory\x18\x01 \x01(\tR\bcategory2\x8d\x01\n" +
+	"\x04cost\x18\x06 \x01(\x01R\x04cost\x128\n" +
+	"\ttimestamp\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\ttimestamp2\f\n" +
 	"\n" +
-	"Collection\x12\x7f\n" +
-	"\x16GetTransactionCategory\x121.collection_service.GetTransactionCategoryRequest\x1a2.collection_service.GetTransactionCategoryResponseB\x1fZ\x1dgen/collection_service/golangb\x06proto3"
+	"CollectionB\x1fZ\x1dgen/collection_service/golangb\x06proto3"
 
 var (
 	file_collection_service_proto_rawDescOnce sync.Once
@@ -225,18 +142,15 @@ func file_collection_service_proto_rawDescGZIP() []byte {
 	return file_collection_service_proto_rawDescData
 }
 
-var file_collection_service_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
+var file_collection_service_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_collection_service_proto_goTypes = []any{
-	(*Transaction)(nil),                    // 0: collection_service.Transaction
-	(*GetTransactionCategoryRequest)(nil),  // 1: collection_service.GetTransactionCategoryRequest
-	(*GetTransactionCategoryResponse)(nil), // 2: collection_service.GetTransactionCategoryResponse
+	(*Transaction)(nil),           // 0: collection_service.Transaction
+	(*timestamppb.Timestamp)(nil), // 1: google.protobuf.Timestamp
 }
 var file_collection_service_proto_depIdxs = []int32{
-	0, // 0: collection_service.GetTransactionCategoryRequest.tx:type_name -> collection_service.Transaction
-	1, // 1: collection_service.Collection.GetTransactionCategory:input_type -> collection_service.GetTransactionCategoryRequest
-	2, // 2: collection_service.Collection.GetTransactionCategory:output_type -> collection_service.GetTransactionCategoryResponse
-	2, // [2:3] is the sub-list for method output_type
-	1, // [1:2] is the sub-list for method input_type
+	1, // 0: collection_service.Transaction.timestamp:type_name -> google.protobuf.Timestamp
+	1, // [1:1] is the sub-list for method output_type
+	1, // [1:1] is the sub-list for method input_type
 	1, // [1:1] is the sub-list for extension type_name
 	1, // [1:1] is the sub-list for extension extendee
 	0, // [0:1] is the sub-list for field type_name
@@ -253,7 +167,7 @@ func file_collection_service_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_collection_service_proto_rawDesc), len(file_collection_service_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   3,
+			NumMessages:   1,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

@@ -2,15 +2,17 @@ package service
 
 import (
 	pkgConfig "coinflow/coinflow-server/pkg/config"
+	"coinflow/coinflow-server/pkg/utils"
 	"coinflow/coinflow-server/storage-service/config"
 	"coinflow/coinflow-server/storage-service/internal/models"
 	"coinflow/coinflow-server/storage-service/internal/repository"
 	"context"
 	"fmt"
 	"log"
+	"net/http"
 	"time"
 
-	pb "coinflow/coinflow-server/gen/collection_service/golang"
+	pb "coinflow/coinflow-server/gen/classification_service/golang"
 
 	"github.com/google/uuid"
 	"google.golang.org/grpc"
@@ -24,23 +26,37 @@ type CategoryQuery struct {
 }
 
 type TransactionsService struct {
-	txRepo repository.TransactionsRepo
-	collectClient pb.CollectionClient
-	collSvcConfig pkgConfig.GrpcConfig
+	httpCli *http.Client
+	clfCli pb.ClassificationClient
+	clfSvcCfg pkgConfig.GrpcConfig
 	svcCfg config.ServiceConfig
+	
+	txRepo repository.TransactionsRepo
+	catsRepo repository.CategoriesRepo
+	categories []string
 
 	categoryChan chan *CategoryQuery
 }
 
 func NewTransactionsService(
-	txRepo repository.TransactionsRepo,
-	collSvcConfig pkgConfig.GrpcConfig,
+	clfSvcCfg pkgConfig.GrpcConfig,
 	svcCfg config.ServiceConfig,
+	txRepo repository.TransactionsRepo,
+	catsRepo repository.CategoriesRepo,
 ) (*TransactionsService, error) {
 	const op = "NewTransactionsService"
 
-	addr := fmt.Sprintf("%s:%s", collSvcConfig.Host, collSvcConfig.Port)
+	addr := fmt.Sprintf("%s:%s", clfSvcCfg.Host, clfSvcCfg.Port)
 	conn, err := grpc.NewClient(addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 300 * time.Millisecond)
+	defer cancel()
+
+	categories, err := catsRepo.GetCategories(ctx)
 
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
@@ -48,20 +64,24 @@ func NewTransactionsService(
 
 	categoryChan := make(chan *CategoryQuery, svcCfg.CategoryChanBuffer)
 	txService := &TransactionsService{
-		txRepo: txRepo,
-		collectClient: pb.NewCollectionClient(conn),
-		collSvcConfig: collSvcConfig,
+		httpCli: &http.Client{},
+		clfCli: pb.NewClassificationClient(conn),
+		clfSvcCfg: clfSvcCfg,
 		svcCfg: svcCfg,
+
+		txRepo: txRepo,
+		catsRepo: catsRepo,
+		categories: categories,
 
 		categoryChan: categoryChan,
 	}
 	
-	go txService.ListenCategoryChannel()
+	go txService.listenCategoryChannel()
 
 	return txService, nil
 }
 
-func (s *TransactionsService) ListenCategoryChannel() {
+func (s *TransactionsService) listenCategoryChannel() {
 	for query := range s.categoryChan {
 		select {
 		case <-query.ctx.Done():
@@ -91,17 +111,28 @@ func (s *TransactionsService) GetTransactionsInPeriod(ctx context.Context, userI
 func (s *TransactionsService) GetAndPutCategory(ctx context.Context, tx *models.Transaction) error {
 	const op = "TransactionsService.GetAndPutCategory"
 
-	pbTx, err := ConvertModelTransactionToProtobuf(tx)
+	text := tx.Description
+
+	if s.svcCfg.DoTranslate {
+		var err error
+		text, err = utils.TranslateToLanguage(s.httpCli, tx.Description, utils.LanguageEnglish, s.svcCfg.TranslateCfg)
+		
+		if err != nil {
+			return fmt.Errorf("%s: %w", op, err)
+		}
+	}
+
+	resp, err := s.clfCli.GetTextCategory(ctx, &pb.GetTextCategoryRequest{
+		Text: text,
+		Labels: s.categories,
+	})
+
 	if err != nil {
 		return fmt.Errorf("%s: %w", op, err)
 	}
 
-	resp, err := s.collectClient.GetTransactionCategory(ctx, &pb.GetTransactionCategoryRequest{Tx: pbTx})
-	if err != nil {
-		return fmt.Errorf("%s: received error from collector: %w", op, err)
-	}
-
 	err = s.txRepo.PutCategory(ctx, tx.Id, resp.Category)
+
 	if err != nil {
 		return fmt.Errorf("%s: %w", op, err)
 	}

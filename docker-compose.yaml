@@ -32,6 +32,9 @@ services:
     build:
       context: .
       dockerfile: storage-service/Dockerfile
+    environment:
+      - TRANSLATE_API_ADDRESS=${TRANSLATE_API_ADDRESS}
+      - TRANSLATE_API_KEY=${TRANSLATE_API_KEY}
     depends_on:
       collection-service:
         condition: service_started
@@ -42,9 +45,6 @@ services:
     build:
       context: .
       dockerfile: collection-service/Dockerfile
-    environment:
-      - TRANSLATE_API_ADDRESS=${TRANSLATE_API_ADDRESS}
-      - TRANSLATE_API_KEY=${TRANSLATE_API_KEY}
     depends_on:
       classification-service:
         condition: service_started

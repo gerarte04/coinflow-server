@@ -33,7 +33,14 @@ func main() {
 	}
 
 	txRepo := postgres.NewTransactionsRepo(pool)
-	txSvc, err := service.NewTransactionsService(txRepo, cfg.CollectionSvcCfg, cfg.SvcCfg)
+	catsRepo := postgres.NewCategoriesRepo(pool)
+
+	txSvc, err := service.NewTransactionsService(
+		cfg.ClfSvcCfg,
+		cfg.SvcCfg,
+		txRepo,
+		catsRepo,
+	)
 
 	if err != nil {
 		log.Fatalf("%s", err.Error())

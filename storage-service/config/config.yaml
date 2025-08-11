@@ -2,9 +2,9 @@ storage_service:
   host: storage-service
   port: 5051
 
-collection_service:
-  host: collection-service
-  port: 50051
+classification_service:
+  host: classification-service
+  port: 50052
 
 postgres:
   host: postgres
@@ -14,6 +14,7 @@ postgres:
   password: adminpass
 
 service:
+  do_translate: true
   category_chan_buffer: 128
   category_timeout: 5m
   http_code_header_name: x-http-code

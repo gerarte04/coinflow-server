@@ -7,10 +7,7 @@
 package golang
 
 import (
-	context "context"
 	grpc "google.golang.org/grpc"
-	codes "google.golang.org/grpc/codes"
-	status "google.golang.org/grpc/status"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -18,15 +15,10 @@ import (
 // Requires gRPC-Go v1.64.0 or later.
 const _ = grpc.SupportPackageIsVersion9
 
-const (
-	Collection_GetTransactionCategory_FullMethodName = "/collection_service.Collection/GetTransactionCategory"
-)
-
 // CollectionClient is the client API for Collection service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CollectionClient interface {
-	GetTransactionCategory(ctx context.Context, in *GetTransactionCategoryRequest, opts ...grpc.CallOption) (*GetTransactionCategoryResponse, error)
 }
 
 type collectionClient struct {
@@ -37,21 +29,10 @@ func NewCollectionClient(cc grpc.ClientConnInterface) CollectionClient {
 	return &collectionClient{cc}
 }
 
-func (c *collectionClient) GetTransactionCategory(ctx context.Context, in *GetTransactionCategoryRequest, opts ...grpc.CallOption) (*GetTransactionCategoryResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetTransactionCategoryResponse)
-	err := c.cc.Invoke(ctx, Collection_GetTransactionCategory_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // CollectionServer is the server API for Collection service.
 // All implementations must embed UnimplementedCollectionServer
 // for forward compatibility.
 type CollectionServer interface {
-	GetTransactionCategory(context.Context, *GetTransactionCategoryRequest) (*GetTransactionCategoryResponse, error)
 	mustEmbedUnimplementedCollectionServer()
 }
 
@@ -62,9 +43,6 @@ type CollectionServer interface {
 // pointer dereference when methods are called.
 type UnimplementedCollectionServer struct{}
 
-func (UnimplementedCollectionServer) GetTransactionCategory(context.Context, *GetTransactionCategoryRequest) (*GetTransactionCategoryResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetTransactionCategory not implemented")
-}
 func (UnimplementedCollectionServer) mustEmbedUnimplementedCollectionServer() {}
 func (UnimplementedCollectionServer) testEmbeddedByValue()                    {}
 
@@ -86,36 +64,13 @@ func RegisterCollectionServer(s grpc.ServiceRegistrar, srv CollectionServer) {
 	s.RegisterService(&Collection_ServiceDesc, srv)
 }
 
-func _Collection_GetTransactionCategory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetTransactionCategoryRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(CollectionServer).GetTransactionCategory(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Collection_GetTransactionCategory_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CollectionServer).GetTransactionCategory(ctx, req.(*GetTransactionCategoryRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // Collection_ServiceDesc is the grpc.ServiceDesc for Collection service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var Collection_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "collection_service.Collection",
 	HandlerType: (*CollectionServer)(nil),
-	Methods: []grpc.MethodDesc{
-		{
-			MethodName: "GetTransactionCategory",
-			Handler:    _Collection_GetTransactionCategory_Handler,
-		},
-	},
-	Streams:  []grpc.StreamDesc{},
-	Metadata: "collection-service.proto",
+	Methods:     []grpc.MethodDesc{},
+	Streams:     []grpc.StreamDesc{},
+	Metadata:    "collection-service.proto",
 }

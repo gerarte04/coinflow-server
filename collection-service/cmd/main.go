@@ -32,7 +32,7 @@ func main() {
 	}
 
 	catsRepo := postgres.NewCategoriesRepo(pool)
-	collectSvc, err := service.NewCollectionService(cfg.SvcCfg, cfg.ClassificationSvcCfg, catsRepo)
+	collectSvc, err := service.NewCollectionService(catsRepo)
 
 	if err != nil {
 		log.Fatalf("%s", err.Error())
