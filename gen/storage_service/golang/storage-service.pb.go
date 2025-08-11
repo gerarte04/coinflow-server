@@ -10,6 +10,7 @@ import (
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
@@ -30,7 +31,7 @@ type Transaction struct {
 	Type          string                 `protobuf:"bytes,5,opt,name=type,proto3" json:"type,omitempty"`
 	Category      string                 `protobuf:"bytes,6,opt,name=category,proto3" json:"category,omitempty"`
 	Cost          float64                `protobuf:"fixed64,7,opt,name=cost,proto3" json:"cost,omitempty"`
-	Timestamp     string                 `protobuf:"bytes,8,opt,name=timestamp,proto3" json:"timestamp,omitempty"`
+	Timestamp     *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=timestamp,proto3" json:"timestamp,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -107,11 +108,11 @@ func (x *Transaction) GetCost() float64 {
 	return 0
 }
 
-func (x *Transaction) GetTimestamp() string {
+func (x *Transaction) GetTimestamp() *timestamppb.Timestamp {
 	if x != nil {
 		return x.Timestamp
 	}
-	return ""
+	return nil
 }
 
 type GetTransactionRequest struct {
@@ -161,8 +162,8 @@ func (x *GetTransactionRequest) GetTxId() string {
 type ListTransactionsRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	BeginTime     string                 `protobuf:"bytes,2,opt,name=begin_time,json=beginTime,proto3" json:"begin_time,omitempty"`
-	EndTime       string                 `protobuf:"bytes,3,opt,name=end_time,json=endTime,proto3" json:"end_time,omitempty"`
+	BeginTime     *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=begin_time,json=beginTime,proto3" json:"begin_time,omitempty"`
+	EndTime       *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=end_time,json=endTime,proto3" json:"end_time,omitempty"`
 	PageSize      int32                  `protobuf:"varint,4,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
 	PageToken     int32                  `protobuf:"varint,5,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -206,18 +207,18 @@ func (x *ListTransactionsRequest) GetUserId() string {
 	return ""
 }
 
-func (x *ListTransactionsRequest) GetBeginTime() string {
+func (x *ListTransactionsRequest) GetBeginTime() *timestamppb.Timestamp {
 	if x != nil {
 		return x.BeginTime
 	}
-	return ""
+	return nil
 }
 
-func (x *ListTransactionsRequest) GetEndTime() string {
+func (x *ListTransactionsRequest) GetEndTime() *timestamppb.Timestamp {
 	if x != nil {
 		return x.EndTime
 	}
-	return ""
+	return nil
 }
 
 func (x *ListTransactionsRequest) GetPageSize() int32 {
@@ -350,22 +351,22 @@ var File_storage_service_proto protoreflect.FileDescriptor
 
 const file_storage_service_proto_rawDesc = "" +
 	"\n" +
-	"\x15storage-service.proto\x12\x0fstorage_service\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\"\xb9\x01\n" +
+	"\x15storage-service.proto\x12\x0fstorage_service\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xd5\x01\n" +
 	"\vTransaction\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x16\n" +
 	"\x06target\x18\x03 \x01(\tR\x06target\x12 \n" +
 	"\vdescription\x18\x04 \x01(\tR\vdescription\x12\x12\n" +
 	"\x04type\x18\x05 \x01(\tR\x04type\x12\x1a\n" +
 	"\bcategory\x18\x06 \x01(\tR\bcategory\x12\x12\n" +
-	"\x04cost\x18\a \x01(\x01R\x04cost\x12\x1c\n" +
-	"\ttimestamp\x18\b \x01(\tR\ttimestamp\"1\n" +
+	"\x04cost\x18\a \x01(\x01R\x04cost\x128\n" +
+	"\ttimestamp\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\ttimestamp\"1\n" +
 	"\x15GetTransactionRequest\x12\x18\n" +
-	"\x05tx_id\x18\x01 \x01(\tB\x03\xe0A\x02R\x04txId\"\xad\x01\n" +
+	"\x05tx_id\x18\x01 \x01(\tB\x03\xe0A\x02R\x04txId\"\xe5\x01\n" +
 	"\x17ListTransactionsRequest\x12\x1c\n" +
-	"\auser_id\x18\x01 \x01(\tB\x03\xe0A\x02R\x06userId\x12\x1d\n" +
+	"\auser_id\x18\x01 \x01(\tB\x03\xe0A\x02R\x06userId\x129\n" +
 	"\n" +
-	"begin_time\x18\x02 \x01(\tR\tbeginTime\x12\x19\n" +
-	"\bend_time\x18\x03 \x01(\tR\aendTime\x12\x1b\n" +
+	"begin_time\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\tbeginTime\x125\n" +
+	"\bend_time\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\aendTime\x12\x1b\n" +
 	"\tpage_size\x18\x04 \x01(\x05R\bpageSize\x12\x1d\n" +
 	"\n" +
 	"page_token\x18\x05 \x01(\x05R\tpageToken\"\x99\x01\n" +
@@ -401,21 +402,25 @@ var file_storage_service_proto_goTypes = []any{
 	(*ListTransactionsRequest)(nil),  // 2: storage_service.ListTransactionsRequest
 	(*CreateTransactionRequest)(nil), // 3: storage_service.CreateTransactionRequest
 	(*ListTransactionsResponse)(nil), // 4: storage_service.ListTransactionsResponse
+	(*timestamppb.Timestamp)(nil),    // 5: google.protobuf.Timestamp
 }
 var file_storage_service_proto_depIdxs = []int32{
-	0, // 0: storage_service.CreateTransactionRequest.tx:type_name -> storage_service.Transaction
-	0, // 1: storage_service.ListTransactionsResponse.txs:type_name -> storage_service.Transaction
-	1, // 2: storage_service.Storage.GetTransaction:input_type -> storage_service.GetTransactionRequest
-	2, // 3: storage_service.Storage.ListTransactions:input_type -> storage_service.ListTransactionsRequest
-	3, // 4: storage_service.Storage.CreateTransaction:input_type -> storage_service.CreateTransactionRequest
-	0, // 5: storage_service.Storage.GetTransaction:output_type -> storage_service.Transaction
-	4, // 6: storage_service.Storage.ListTransactions:output_type -> storage_service.ListTransactionsResponse
-	0, // 7: storage_service.Storage.CreateTransaction:output_type -> storage_service.Transaction
-	5, // [5:8] is the sub-list for method output_type
-	2, // [2:5] is the sub-list for method input_type
-	2, // [2:2] is the sub-list for extension type_name
-	2, // [2:2] is the sub-list for extension extendee
-	0, // [0:2] is the sub-list for field type_name
+	5, // 0: storage_service.Transaction.timestamp:type_name -> google.protobuf.Timestamp
+	5, // 1: storage_service.ListTransactionsRequest.begin_time:type_name -> google.protobuf.Timestamp
+	5, // 2: storage_service.ListTransactionsRequest.end_time:type_name -> google.protobuf.Timestamp
+	0, // 3: storage_service.CreateTransactionRequest.tx:type_name -> storage_service.Transaction
+	0, // 4: storage_service.ListTransactionsResponse.txs:type_name -> storage_service.Transaction
+	1, // 5: storage_service.Storage.GetTransaction:input_type -> storage_service.GetTransactionRequest
+	2, // 6: storage_service.Storage.ListTransactions:input_type -> storage_service.ListTransactionsRequest
+	3, // 7: storage_service.Storage.CreateTransaction:input_type -> storage_service.CreateTransactionRequest
+	0, // 8: storage_service.Storage.GetTransaction:output_type -> storage_service.Transaction
+	4, // 9: storage_service.Storage.ListTransactions:output_type -> storage_service.ListTransactionsResponse
+	0, // 10: storage_service.Storage.CreateTransaction:output_type -> storage_service.Transaction
+	8, // [8:11] is the sub-list for method output_type
+	5, // [5:8] is the sub-list for method input_type
+	5, // [5:5] is the sub-list for extension type_name
+	5, // [5:5] is the sub-list for extension extendee
+	0, // [0:5] is the sub-list for field type_name
 }
 
 func init() { file_storage_service_proto_init() }

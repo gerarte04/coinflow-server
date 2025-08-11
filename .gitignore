@@ -1,8 +1,9 @@
-.vscode
+.vscode/
+__pycache__/
+venv/
+googleapis/
+
 main
 .env
-__pycache__
-googleapis
 id_ed25519*
 export.sh
-venv

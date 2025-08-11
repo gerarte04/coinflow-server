@@ -4,7 +4,6 @@ import (
 	pb "coinflow/coinflow-server/gen/storage_service/golang"
 	pkgGrpc "coinflow/coinflow-server/pkg/grpc"
 	"coinflow/coinflow-server/pkg/utils"
-	"coinflow/coinflow-server/pkg/vars"
 	"coinflow/coinflow-server/storage-service/internal/models"
 	"context"
 	"fmt"
@@ -12,6 +11,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/jinzhu/copier"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 func getUserId(ctx context.Context) (uuid.UUID, error) {
@@ -58,24 +58,18 @@ type ListTransactionsRequestObject struct {
 }
 
 func CreateListTransactionsRequestObject(ctx context.Context, r *pb.ListTransactionsRequest) (*ListTransactionsRequestObject, error) {
-	const op = "CreateGetTransactionsInPeriodRequestObject"
-
-	begin, err := time.Parse(time.RFC3339, r.BeginTime)
-	if err != nil {
-		return nil, fmt.Errorf("%s: %w", op, err)
-	}
-
-	end, err := time.Parse(time.RFC3339, r.EndTime)
-	if err != nil {
-		return nil, fmt.Errorf("%s: %w", op, err)
-	}
+	const op = "CreateListTransactionsRequestObject"
 
 	usrId, err := getUserId(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	return &ListTransactionsRequestObject{Begin: begin, End: end, UserId: usrId}, nil
+	return &ListTransactionsRequestObject{
+		Begin: r.BeginTime.AsTime(),
+		End: r.EndTime.AsTime(),
+		UserId: usrId,
+	}, nil
 }
 
 type PostTransactionRequestObject struct {
@@ -116,7 +110,7 @@ func GetProtobufTxFromModel(tx *models.Transaction) (*pb.Transaction, error) {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	pbTx.Timestamp = tx.Timestamp.Format(vars.TimeLayout)
+	pbTx.Timestamp = timestamppb.New(tx.Timestamp)
 
 	return &pbTx, nil
 }

@@ -4,11 +4,11 @@ import (
 	"coinflow/coinflow-server/auth-service/internal/models"
 	pb "coinflow/coinflow-server/gen/auth_service/golang"
 	"coinflow/coinflow-server/pkg/utils"
-	"coinflow/coinflow-server/pkg/vars"
 	"fmt"
 
 	"github.com/google/uuid"
 	"github.com/jinzhu/copier"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 // Requests -------------------------------------------
@@ -55,7 +55,7 @@ func GetProtobufUserFromModel(usr *models.User) (*pb.User, error) {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	pbUsr.RegistrationTimestamp = usr.RegistrationTimestamp.Format(vars.TimeLayout)
+	pbUsr.RegistrationTimestamp = timestamppb.New(usr.RegistrationTimestamp)
 
 	return &pbUsr, nil
 }
