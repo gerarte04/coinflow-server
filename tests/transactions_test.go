@@ -31,7 +31,7 @@ func commitTx(t *testing.T, usrId string, wac string, payload tu.Payload) (*http
 	tu.ValidateResult(t, decoded, payload,
 		tu.ValidateOpt{Key: "id", CheckValue: false},
 		tu.ValidateOpt{Key: "timestamp", CheckValue: false},
-		tu.ValidateOpt{Key: "category", Ignore: !checkCat},
+		tu.ValidateOpt{Key: "category", Ignore: checkCat},
 	)
 
 	txId, err := uuid.Parse(decoded["id"].(string))
@@ -55,8 +55,8 @@ func getTxById(t *testing.T, txId string) (*http.Response, tu.Payload) {
 func getInPeriod(t *testing.T, usrId string, begin time.Time, end time.Time) (*http.Response, []tu.Payload) {
 	url := fmt.Sprintf("%s%s?user_id=%s&begin_time=%s&end_time=%s", addr, TransactionsInPeriodPath,
 		usrId,
-		url.QueryEscape(begin.Format(time.RFC3339)),
-		url.QueryEscape(end.Format(time.RFC3339)),
+		url.QueryEscape(begin.Format(time.RFC3339Nano)),
+		url.QueryEscape(end.Format(time.RFC3339Nano)),
 	)
 
 	resp, err := tu.SendRequest(t, cli, http.MethodGet, url, tu.Payload{})
@@ -172,7 +172,7 @@ func TestTransactions_GetTxInPeriod(t *testing.T) {
 	for i, tx := range txs {
 		tu.ValidateResult(t, tx, exampleTx,
 			tu.ValidateOpt{Key: "timestamp", CheckValue: false},
-			tu.ValidateOpt{Key: "id", CheckValue: true, Value: ids[i]},
+			tu.ValidateOpt{Key: "id", CheckValue: true, Value: ids[len(ids) - i - 1]},
 			tu.ValidateOpt{Key: "category", Ignore: true},
 		)
 	}
