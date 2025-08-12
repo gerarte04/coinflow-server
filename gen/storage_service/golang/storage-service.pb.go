@@ -165,7 +165,7 @@ type ListTransactionsRequest struct {
 	BeginTime     *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=begin_time,json=beginTime,proto3" json:"begin_time,omitempty"`
 	EndTime       *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=end_time,json=endTime,proto3" json:"end_time,omitempty"`
 	PageSize      int32                  `protobuf:"varint,4,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
-	PageToken     int32                  `protobuf:"varint,5,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
+	PageToken     string                 `protobuf:"bytes,5,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -228,11 +228,11 @@ func (x *ListTransactionsRequest) GetPageSize() int32 {
 	return 0
 }
 
-func (x *ListTransactionsRequest) GetPageToken() int32 {
+func (x *ListTransactionsRequest) GetPageToken() string {
 	if x != nil {
 		return x.PageToken
 	}
-	return 0
+	return ""
 }
 
 type CreateTransactionRequest struct {
@@ -298,7 +298,7 @@ func (x *CreateTransactionRequest) GetWithAutoCategory() bool {
 type ListTransactionsResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Txs           []*Transaction         `protobuf:"bytes,1,rep,name=txs,proto3" json:"txs,omitempty"`
-	NextPageToken int32                  `protobuf:"varint,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
+	NextPageToken string                 `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -340,11 +340,11 @@ func (x *ListTransactionsResponse) GetTxs() []*Transaction {
 	return nil
 }
 
-func (x *ListTransactionsResponse) GetNextPageToken() int32 {
+func (x *ListTransactionsResponse) GetNextPageToken() string {
 	if x != nil {
 		return x.NextPageToken
 	}
-	return 0
+	return ""
 }
 
 var File_storage_service_proto protoreflect.FileDescriptor
@@ -369,14 +369,14 @@ const file_storage_service_proto_rawDesc = "" +
 	"\bend_time\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\aendTime\x12\x1b\n" +
 	"\tpage_size\x18\x04 \x01(\x05R\bpageSize\x12\x1d\n" +
 	"\n" +
-	"page_token\x18\x05 \x01(\x05R\tpageToken\"\x99\x01\n" +
+	"page_token\x18\x05 \x01(\tR\tpageToken\"\x99\x01\n" +
 	"\x18CreateTransactionRequest\x12\x1c\n" +
 	"\auser_id\x18\x01 \x01(\tB\x03\xe0A\x02R\x06userId\x121\n" +
 	"\x02tx\x18\x02 \x01(\v2\x1c.storage_service.TransactionB\x03\xe0A\x02R\x02tx\x12,\n" +
 	"\x12with_auto_category\x18\x03 \x01(\bR\x10withAutoCategory\"r\n" +
 	"\x18ListTransactionsResponse\x12.\n" +
 	"\x03txs\x18\x01 \x03(\v2\x1c.storage_service.TransactionR\x03txs\x12&\n" +
-	"\x0fnext_page_token\x18\x02 \x01(\x05R\rnextPageToken2\x85\x03\n" +
+	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken2\x85\x03\n" +
 	"\aStorage\x12z\n" +
 	"\x0eGetTransaction\x12&.storage_service.GetTransactionRequest\x1a\x1c.storage_service.Transaction\"\"\x82\xd3\xe4\x93\x02\x1c\x12\x1a/v1/transaction/id/{tx_id}\x12\x87\x01\n" +
 	"\x10ListTransactions\x12(.storage_service.ListTransactionsRequest\x1a).storage_service.ListTransactionsResponse\"\x1e\x82\xd3\xe4\x93\x02\x18\x12\x16/v1/transaction/period\x12t\n" +

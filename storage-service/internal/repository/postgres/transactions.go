@@ -47,13 +47,22 @@ func (r *TransactionsRepo) GetTransaction(ctx context.Context, userId uuid.UUID,
 	return &tx, nil
 }
 
-func (r *TransactionsRepo) GetTransactionsInPeriod(ctx context.Context, userId uuid.UUID, begin time.Time, end time.Time) ([]*models.Transaction, error) {
+func (r *TransactionsRepo) GetTransactionsInPeriod(
+	ctx context.Context,
+	userId uuid.UUID,
+	begin time.Time, end time.Time,
+	limit int,
+) ([]*models.Transaction, error) {
 	const op = "TransactionsRepo.GetTransactionsInPeriod"
 
 	rows, err := r.pool.Query(
 		ctx,
-		"SELECT * FROM transactions WHERE (user_id = $1 AND timestamp >= $2 AND timestamp <= $3)",
-		userId, begin, end,
+		`SELECT * FROM transactions
+		WHERE (user_id = $1 AND timestamp >= $2 AND timestamp < $3)
+		ORDER BY timestamp DESC
+		LIMIT $4
+		`,
+		userId, begin, end, limit,
 	)
 
 	if err != nil {
@@ -105,11 +114,11 @@ func (r *TransactionsRepo) PostTransactionWithoutCategory(ctx context.Context, t
 		ctx,
 		`INSERT INTO transactions (
 			user_id, type, target, description, cost
-		) VALUES ($1, $2, $3, $4, $5) RETURNING id, timestamp`,
+		) VALUES ($1, $2, $3, $4, $5) RETURNING id, timestamp, category`,
 		tx.UserId, tx.Type, tx.Target, tx.Description, tx.Cost,
 	)
 
-	err := row.Scan(&tx.Id, &tx.Timestamp)
+	err := row.Scan(&tx.Id, &tx.Timestamp, &tx.Category)
 
 	if dbErr := postgres.DetectError(err); dbErr == database.ErrorUniqueViolation {
 		return nil, fmt.Errorf("%s: %w", op, repository.ErrorTxIdAlreadyExists)

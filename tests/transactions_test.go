@@ -4,8 +4,8 @@ import (
 	tu "coinflow/coinflow-server/pkg/testutils"
 	"fmt"
 	"net/http"
+	"net/url"
 	"strconv"
-	"strings"
 	"testing"
 	"time"
 
@@ -55,8 +55,8 @@ func getTxById(t *testing.T, txId string) (*http.Response, tu.Payload) {
 func getInPeriod(t *testing.T, usrId string, begin time.Time, end time.Time) (*http.Response, []tu.Payload) {
 	url := fmt.Sprintf("%s%s?user_id=%s&begin_time=%s&end_time=%s", addr, TransactionsInPeriodPath,
 		usrId,
-		strings.ReplaceAll(begin.Format(time.RFC3339), ":", "%3A"),
-		strings.ReplaceAll(end.Format(time.RFC3339), ":", "%3A"),
+		url.QueryEscape(begin.Format(time.RFC3339)),
+		url.QueryEscape(end.Format(time.RFC3339)),
 	)
 
 	resp, err := tu.SendRequest(t, cli, http.MethodGet, url, tu.Payload{})

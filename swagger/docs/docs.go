@@ -329,13 +329,13 @@ const docTemplate = `{
                     },
                     {
                         "type": "integer",
-                        "description": "Requested page size",
+                        "description": "Requested page size (optional, default is 10)",
                         "name": "page_size",
                         "in": "query"
                     },
                     {
-                        "type": "integer",
-                        "description": "Requested page token",
+                        "type": "string",
+                        "description": "Last timestamp used in previous page (optional, for keyset pagination)",
                         "name": "page_token",
                         "in": "query"
                     }

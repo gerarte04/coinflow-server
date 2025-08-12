@@ -44,7 +44,7 @@ func (s *StorageServer) GetTransaction(ctx context.Context, r *pb.GetTransaction
 }
 
 func (s *StorageServer) ListTransactions(ctx context.Context, r *pb.ListTransactionsRequest) (*pb.ListTransactionsResponse, error) {
-	reqObj, err := types.CreateListTransactionsRequestObject(ctx, r)
+	reqObj, err := types.CreateListTransactionsRequestObject(ctx, r, s.cfg)
 	if err != nil {
 		return nil, grpcErr.CreateRequestObjectStatusError(err)
 	}
@@ -56,7 +56,7 @@ func (s *StorageServer) ListTransactions(ctx context.Context, r *pb.ListTransact
 		)
 	}
 
-	txs, err := s.txService.GetTransactionsInPeriod(ctx, reqObj.UserId, reqObj.Begin, reqObj.End)
+	txs, err := s.txService.GetTransactionsInPeriod(ctx, reqObj.UserId, reqObj.Begin, reqObj.End, reqObj.PageSize)
 	if err != nil {
 	    return nil, grpcErr.CreateResultStatusError(err, errorCodes)
 	}

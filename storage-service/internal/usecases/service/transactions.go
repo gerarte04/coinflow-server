@@ -104,8 +104,13 @@ func (s *TransactionsService) GetTransaction(ctx context.Context, userId uuid.UU
 	return s.txRepo.GetTransaction(ctx, userId, txId)
 }
 
-func (s *TransactionsService) GetTransactionsInPeriod(ctx context.Context, userId uuid.UUID, begin time.Time, end time.Time) ([]*models.Transaction, error) {
-	return s.txRepo.GetTransactionsInPeriod(ctx, userId, begin, end)
+func (s *TransactionsService) GetTransactionsInPeriod(
+	ctx context.Context,
+	userId uuid.UUID,
+	begin time.Time, end time.Time,
+	limit int,
+) ([]*models.Transaction, error) {
+	return s.txRepo.GetTransactionsInPeriod(ctx, userId, begin, end, limit)
 }
 
 func (s *TransactionsService) GetAndPutCategory(ctx context.Context, tx *models.Transaction) error {

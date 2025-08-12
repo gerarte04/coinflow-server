@@ -14,6 +14,8 @@ type ServiceConfig struct {
 	CategoryChanBuffer int           `yaml:"category_chan_buffer" env:"CATEGORY_CHAN_BUFFER" env-default:"128"`
 	CategoryTimeout    time.Duration `yaml:"category_timeout" env:"CATEGORY_TIMEOUT" env-default:"5m"`
 
+	DefaultPageSize int `yaml:"default_page_size" env:"DEFAULT_PAGE_SIZE" env-default:"10"`
+
 	HttpCodeHeaderName string `yaml:"http_code_header_name" env:"HTTP_CODE_HEADER_NAME" env-default:"x-http-code"`
 }
 

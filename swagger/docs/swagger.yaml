@@ -248,14 +248,14 @@ paths:
         name: end_time
         required: true
         type: string
-      - description: Requested page size
+      - description: Requested page size (optional, default is 10)
         in: query
         name: page_size
         type: integer
-      - description: Requested page token
+      - description: Last timestamp used in previous page (optional, for keyset pagination)
         in: query
         name: page_token
-        type: integer
+        type: string
       produces:
       - application/json
       responses:

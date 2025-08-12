@@ -17,4 +17,7 @@ service:
   do_translate: true
   category_chan_buffer: 128
   category_timeout: 5m
+
+  default_page_size: 10
+
   http_code_header_name: x-http-code

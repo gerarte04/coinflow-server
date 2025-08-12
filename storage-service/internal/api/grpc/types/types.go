@@ -4,9 +4,11 @@ import (
 	pb "coinflow/coinflow-server/gen/storage_service/golang"
 	pkgGrpc "coinflow/coinflow-server/pkg/grpc"
 	"coinflow/coinflow-server/pkg/utils"
+	"coinflow/coinflow-server/storage-service/config"
 	"coinflow/coinflow-server/storage-service/internal/models"
 	"context"
 	"fmt"
+	"net/url"
 	"time"
 
 	"github.com/google/uuid"
@@ -55,9 +57,15 @@ type ListTransactionsRequestObject struct {
 	Begin time.Time
 	End time.Time
 	UserId uuid.UUID
+
+	PageSize int
 }
 
-func CreateListTransactionsRequestObject(ctx context.Context, r *pb.ListTransactionsRequest) (*ListTransactionsRequestObject, error) {
+func CreateListTransactionsRequestObject(
+	ctx context.Context,
+	r *pb.ListTransactionsRequest,
+	cfg config.ServiceConfig,
+) (*ListTransactionsRequestObject, error) {
 	const op = "CreateListTransactionsRequestObject"
 
 	usrId, err := getUserId(ctx)
@@ -65,10 +73,34 @@ func CreateListTransactionsRequestObject(ctx context.Context, r *pb.ListTransact
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
+	pageSize := cfg.DefaultPageSize
+
+	if r.PageSize < 0 {
+		return nil, fmt.Errorf("%s: %w", op, ErrorInvalidPageSize)
+	} else if r.PageSize != 0 {
+		pageSize = int(r.PageSize)
+	}
+
+	begin, end := r.BeginTime.AsTime(), r.EndTime.AsTime()
+
+	pageToken, err := url.QueryUnescape(r.PageToken)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %s: %w", op, ErrorInvalidPageToken.Error(), err)
+	}
+
+	if len(pageToken) > 0 {
+		if lt, err := time.Parse(time.RFC3339, pageToken); err != nil {
+			return nil, fmt.Errorf("%s: %s: %w", op, ErrorInvalidPageToken.Error(), err)
+		} else {
+			end = lt
+		}
+	}
+
 	return &ListTransactionsRequestObject{
-		Begin: r.BeginTime.AsTime(),
-		End: r.EndTime.AsTime(),
+		Begin: begin,
+		End: end,
 		UserId: usrId,
+		PageSize: pageSize,
 	}, nil
 }
 
@@ -118,7 +150,12 @@ func GetProtobufTxFromModel(tx *models.Transaction) (*pb.Transaction, error) {
 func CreateListTransactionsResponse(txs []*models.Transaction) (*pb.ListTransactionsResponse, error) {
 	const op = "CreateListTransactionsResponse"
 
+	if len(txs) == 0 {
+		return &pb.ListTransactionsResponse{}, nil
+	}
+
 	var pbTxs []*pb.Transaction
+	nextToken := txs[0].Timestamp
 
 	for _, tx := range txs {
 		pbTx, err := GetProtobufTxFromModel(tx)
@@ -127,7 +164,14 @@ func CreateListTransactionsResponse(txs []*models.Transaction) (*pb.ListTransact
 		}
 
 		pbTxs = append(pbTxs, pbTx)
+
+		if nextToken.After(tx.Timestamp) {
+			nextToken = tx.Timestamp
+		}
 	}
 
-	return &pb.ListTransactionsResponse{Txs: pbTxs}, nil
+	return &pb.ListTransactionsResponse{
+		Txs: pbTxs,
+		NextPageToken: nextToken.Format(time.RFC3339Nano),
+	}, nil
 }
