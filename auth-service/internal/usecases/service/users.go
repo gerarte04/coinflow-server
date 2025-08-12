@@ -46,16 +46,26 @@ func NewUserService(
 		jwtCfg: jwtCfg,
 		privateKey: privateKey,
 		publicKey: publicKey,
-	}, nil
-}
+		}, nil
+	}
 
-func (s *UserService) generateNewTokenPair(usrId uuid.UUID) (*usecases.TokenPair, error) {
-	const op = "UserService.GenerateNewTokenPair"
+	func removePassword(usr *models.User, err error) (*models.User, error) {
+		if err != nil {
+			return nil, err
+		}
+	
+		usr.Password = ""
+	
+		return usr, nil
+	}
 
-	accessClaims := pkgCrypto.TokenClaims{
-		Iss: s.jwtCfg.Issuer,
-		Sub: usrId.String(),
-		Exp: time.Now().Add(s.jwtCfg.AccessExpirationTime),
+	func (s *UserService) generateNewTokenPair(usrId uuid.UUID) (*usecases.TokenPair, error) {
+		const op = "UserService.GenerateNewTokenPair"
+		
+		accessClaims := pkgCrypto.TokenClaims{
+			Iss: s.jwtCfg.Issuer,
+			Sub: usrId.String(),
+			Exp: time.Now().Add(s.jwtCfg.AccessExpirationTime),
 	}
 
 	accessToken, err := pkgCrypto.GenerateJwtToken(accessClaims, s.privateKey)
@@ -77,20 +87,20 @@ func (s *UserService) generateNewTokenPair(usrId uuid.UUID) (*usecases.TokenPair
 	return &usecases.TokenPair{Access: accessToken, Refresh: refreshToken}, nil
 }
 
-func (s *UserService) Login(ctx context.Context, login, password string) (*usecases.TokenPair, error) {
+func (s *UserService) Login(ctx context.Context, login, password string) (*models.User, *usecases.TokenPair, error) {
 	const op = "UserService.Login"
 
-	usr, err := s.usersRepo.GetUserByCred(ctx, login, password)
+	usr, err := removePassword(s.usersRepo.GetUserByCred(ctx, login, password))
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	tokens, err := s.generateNewTokenPair(usr.Id)
 	if err != nil {
-		return nil, fmt.Errorf("%s: %w", op, err)
+		return nil, nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	return tokens, nil
+	return usr, tokens, nil
 }
 
 func (s *UserService) Refresh(ctx context.Context, refreshToken string) (*usecases.TokenPair, error) {
@@ -123,9 +133,9 @@ func (s *UserService) Refresh(ctx context.Context, refreshToken string) (*usecas
 }
 
 func (s *UserService) Register(ctx context.Context, usr *models.User) (*models.User, error) {
-	return s.usersRepo.PostUser(ctx, usr)
+	return removePassword(s.usersRepo.PostUser(ctx, usr))
 }
 
 func (s *UserService) GetUserData(ctx context.Context, usrId uuid.UUID) (*models.User, error) {
-	return s.usersRepo.GetUser(ctx, usrId)
+	return removePassword(s.usersRepo.GetUser(ctx, usrId))
 }

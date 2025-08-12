@@ -32,14 +32,23 @@ func (s *AuthServer) setAccessCookie(ctx context.Context, token string) {
 }
 
 func (s *AuthServer) Login(ctx context.Context, r *pb.LoginRequest) (*pb.LoginResponse, error) {
-	tokens, err := s.usrService.Login(ctx, r.Login, r.Password)
+	usr, tokens, err := s.usrService.Login(ctx, r.Login, r.Password)
 	if err != nil {
 		return nil, grpcErr.CreateResultStatusError(err, errorCodes)
 	}
 
 	s.setAccessCookie(ctx, tokens.Access)
 
-	return &pb.LoginResponse{AccessToken: tokens.Access, RefreshToken: tokens.Refresh}, nil
+	pbUsr, err := types.GetProtobufUserFromModel(usr)
+	if err != nil {
+		return nil, grpcErr.CreateResponseStatusError(err)
+	}
+
+	return &pb.LoginResponse{
+		User: pbUsr,
+		AccessToken: tokens.Access,
+		RefreshToken: tokens.Refresh,
+	}, nil
 }
 
 func (s *AuthServer) Refresh(ctx context.Context, r *pb.RefreshRequest) (*pb.RefreshResponse, error) {

@@ -27,6 +27,7 @@ func register(t *testing.T, usr tu.Payload) uuid.UUID {
 	tu.ValidateResult(t, decoded, usr, 
 		tu.ValidateOpt{Key: "registration_timestamp", CheckValue: false},
 		tu.ValidateOpt{Key: "id", CheckValue: false},
+		tu.ValidateOpt{Key: "password", Ignore: true},
 	)
 
 	userId, err := uuid.Parse(decoded["id"].(string))

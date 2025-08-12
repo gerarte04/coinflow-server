@@ -301,8 +301,9 @@ func (x *GetUserRequest) GetUserId() string {
 
 type LoginResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	AccessToken   string                 `protobuf:"bytes,1,opt,name=access_token,json=accessToken,proto3" json:"access_token,omitempty"`
-	RefreshToken  string                 `protobuf:"bytes,2,opt,name=refresh_token,json=refreshToken,proto3" json:"refresh_token,omitempty"`
+	User          *User                  `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
+	AccessToken   string                 `protobuf:"bytes,2,opt,name=access_token,json=accessToken,proto3" json:"access_token,omitempty"`
+	RefreshToken  string                 `protobuf:"bytes,3,opt,name=refresh_token,json=refreshToken,proto3" json:"refresh_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -335,6 +336,13 @@ func (x *LoginResponse) ProtoReflect() protoreflect.Message {
 // Deprecated: Use LoginResponse.ProtoReflect.Descriptor instead.
 func (*LoginResponse) Descriptor() ([]byte, []int) {
 	return file_auth_service_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *LoginResponse) GetUser() *User {
+	if x != nil {
+		return x.User
+	}
+	return nil
 }
 
 func (x *LoginResponse) GetAccessToken() string {
@@ -424,10 +432,11 @@ const file_auth_service_proto_rawDesc = "" +
 	"\x11CreateUserRequest\x12)\n" +
 	"\x03usr\x18\x01 \x01(\v2\x12.auth_service.UserB\x03\xe0A\x02R\x03usr\".\n" +
 	"\x0eGetUserRequest\x12\x1c\n" +
-	"\auser_id\x18\x01 \x01(\tB\x03\xe0A\x02R\x06userId\"W\n" +
-	"\rLoginResponse\x12!\n" +
-	"\faccess_token\x18\x01 \x01(\tR\vaccessToken\x12#\n" +
-	"\rrefresh_token\x18\x02 \x01(\tR\frefreshToken\"Y\n" +
+	"\auser_id\x18\x01 \x01(\tB\x03\xe0A\x02R\x06userId\"\x7f\n" +
+	"\rLoginResponse\x12&\n" +
+	"\x04user\x18\x01 \x01(\v2\x12.auth_service.UserR\x04user\x12!\n" +
+	"\faccess_token\x18\x02 \x01(\tR\vaccessToken\x12#\n" +
+	"\rrefresh_token\x18\x03 \x01(\tR\frefreshToken\"Y\n" +
 	"\x0fRefreshResponse\x12!\n" +
 	"\faccess_token\x18\x01 \x01(\tR\vaccessToken\x12#\n" +
 	"\rrefresh_token\x18\x02 \x01(\tR\frefreshToken2\xfe\x02\n" +
@@ -464,19 +473,20 @@ var file_auth_service_proto_goTypes = []any{
 var file_auth_service_proto_depIdxs = []int32{
 	7, // 0: auth_service.User.registration_timestamp:type_name -> google.protobuf.Timestamp
 	0, // 1: auth_service.CreateUserRequest.usr:type_name -> auth_service.User
-	1, // 2: auth_service.Auth.Login:input_type -> auth_service.LoginRequest
-	2, // 3: auth_service.Auth.Refresh:input_type -> auth_service.RefreshRequest
-	3, // 4: auth_service.Auth.CreateUser:input_type -> auth_service.CreateUserRequest
-	4, // 5: auth_service.Auth.GetUser:input_type -> auth_service.GetUserRequest
-	5, // 6: auth_service.Auth.Login:output_type -> auth_service.LoginResponse
-	6, // 7: auth_service.Auth.Refresh:output_type -> auth_service.RefreshResponse
-	0, // 8: auth_service.Auth.CreateUser:output_type -> auth_service.User
-	0, // 9: auth_service.Auth.GetUser:output_type -> auth_service.User
-	6, // [6:10] is the sub-list for method output_type
-	2, // [2:6] is the sub-list for method input_type
-	2, // [2:2] is the sub-list for extension type_name
-	2, // [2:2] is the sub-list for extension extendee
-	0, // [0:2] is the sub-list for field type_name
+	0, // 2: auth_service.LoginResponse.user:type_name -> auth_service.User
+	1, // 3: auth_service.Auth.Login:input_type -> auth_service.LoginRequest
+	2, // 4: auth_service.Auth.Refresh:input_type -> auth_service.RefreshRequest
+	3, // 5: auth_service.Auth.CreateUser:input_type -> auth_service.CreateUserRequest
+	4, // 6: auth_service.Auth.GetUser:input_type -> auth_service.GetUserRequest
+	5, // 7: auth_service.Auth.Login:output_type -> auth_service.LoginResponse
+	6, // 8: auth_service.Auth.Refresh:output_type -> auth_service.RefreshResponse
+	0, // 9: auth_service.Auth.CreateUser:output_type -> auth_service.User
+	0, // 10: auth_service.Auth.GetUser:output_type -> auth_service.User
+	7, // [7:11] is the sub-list for method output_type
+	3, // [3:7] is the sub-list for method input_type
+	3, // [3:3] is the sub-list for extension type_name
+	3, // [3:3] is the sub-list for extension extendee
+	0, // [0:3] is the sub-list for field type_name
 }
 
 func init() { file_auth_service_proto_init() }
