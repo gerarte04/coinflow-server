@@ -7,14 +7,14 @@ import (
 )
 
 type Transaction struct {
-	Id uuid.UUID            `json:"id"`
-	UserId uuid.UUID        `json:"user_id"`
-	Type string             `json:"type"`
+	Id     uuid.UUID
+	UserId uuid.UUID
+	Type   string
 
-	Target string           `json:"target"`
-	Description string      `json:"description"`
-	Category string         `json:"category"`
-	Cost float64            `json:"cost"`
+	Target      string
+	Description string
+	Category    string
+	Cost        float64
 
-	Timestamp time.Time     `json:"timestamp"`
+	Timestamp time.Time
 }
