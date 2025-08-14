@@ -1,29 +1,15 @@
 package grpc
 
 import (
-	"fmt"
+	"errors"
 
 	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
-func CreateRequestObjectStatusError(err error) error {
-	return status.Error(codes.InvalidArgument, fmt.Sprintf("creating request object: %s", err.Error()))
-}
+var (
+	ErrorUserIdsDontMatch = errors.New("user ids in request and JWT aren't matching")
 
-func CreateResultStatusError(err error) error {
-	var code codes.Code
-	var msg string
-
-	switch err {
-	default:
-		code = codes.Internal
-		msg = fmt.Sprintf("unexpected error: %s", err.Error())
+	errorCodes = map[error]codes.Code{
+		ErrorUserIdsDontMatch: codes.PermissionDenied,
 	}
-
-	return status.Error(code, msg)
-}
-
-func CreateResponseStatusError(err error) error {
-	return status.Error(codes.Internal, fmt.Sprintf("creating response: %s", err.Error()))
-}
+)

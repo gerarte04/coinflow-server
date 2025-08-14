@@ -1,10 +1,12 @@
 package grpc
 
 import (
+	"coinflow/coinflow-server/pkg/utils"
 	"context"
 	"fmt"
 	"strconv"
 
+	"github.com/google/uuid"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
 )
@@ -25,4 +27,18 @@ func GetHeader(ctx context.Context, name string) (string, error) {
 
 func SetResponseCode(ctx context.Context, name string, code int) {
 	grpc.SetHeader(ctx, metadata.Pairs(name, strconv.Itoa(code)))
+}
+
+func GetUserId(ctx context.Context, name string) (uuid.UUID, error) {
+	val, err := GetHeader(ctx, name)
+	if err != nil {
+		return uuid.Nil, err
+	}
+
+	id, err := utils.ParseStringToUuid(val)
+	if err != nil {
+		return uuid.Nil, err
+	}
+
+	return id, nil
 }

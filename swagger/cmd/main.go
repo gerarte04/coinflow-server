@@ -29,7 +29,7 @@ import (
 // @Router /transaction/id/{tx_id} [get]
 func GetTransaction() {}
 
-// @Summary Get transactions in period between begin and end
+// @Summary Get transactions within time interval
 // @Description Time should be presented in RFC3339 format.
 // @Tags transactions
 // @Accept json
@@ -62,6 +62,51 @@ func ListTransactions() {}
 // @Failure 500 {object} string "Internal error"
 // @Router /commit [post]
 func CreateTransaction() {}
+
+// Summary -------------------------------------------
+
+// @Summary Get summary of transactions within time interval
+// @Tags summary
+// @Produce json
+// @Param user_id query string true "User ID"
+// @Param begin_time query string true "Begin time in RFC3339"
+// @Param end_time query string true "End time in RFC3339"
+// @Success 200 {object} string "OK"
+// @Failure 400 {object} string "Bad request"
+// @Failure 401 {object} string "Unauthorized"
+// @Failure 403 {object} string "Forbidden"
+// @Failure 500 {object} string "Internal error"
+// @Router /summary/period [get]
+func GetSummaryInPeriod() {}
+
+// @Summary Get summary of transactions for last N months
+// @Tags summary
+// @Produce json
+// @Param user_id query string true "User ID"
+// @Param n query string false "Count of last months (non-negative, optional, default is 1)"
+// @Param cur_time query string false "Current in RFC3339, optional"
+// @Param timezone query string false "Supported timezone (ex. Europe/Moscow, optional, default is UTC)"
+// @Success 200 {object} string "OK"
+// @Failure 400 {object} string "Bad request"
+// @Failure 401 {object} string "Unauthorized"
+// @Failure 403 {object} string "Forbidden"
+// @Failure 500 {object} string "Internal error"
+// @Router /summary/last-months [get]
+func GetSummaryInLastNMonths() {}
+
+// @Summary Get summary of transactions for different categories (within time interval)
+// @Tags summary
+// @Produce json
+// @Param user_id query string true "User ID"
+// @Param begin_time query string true "Begin time in RFC3339"
+// @Param end_time query string true "End time in RFC3339"
+// @Success 200 {object} string "OK"
+// @Failure 400 {object} string "Bad request"
+// @Failure 401 {object} string "Unauthorized"
+// @Failure 403 {object} string "Forbidden"
+// @Failure 500 {object} string "Internal error"
+// @Router /summary/categories [get]
+func GetSummaryByCategories() {}
 
 // Users ---------------------------------------------
 

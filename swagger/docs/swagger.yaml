@@ -188,6 +188,142 @@ paths:
       summary: Commit transaction
       tags:
       - transactions
+  /summary/categories:
+    get:
+      parameters:
+      - description: User ID
+        in: query
+        name: user_id
+        required: true
+        type: string
+      - description: Begin time in RFC3339
+        in: query
+        name: begin_time
+        required: true
+        type: string
+      - description: End time in RFC3339
+        in: query
+        name: end_time
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "403":
+          description: Forbidden
+          schema:
+            type: string
+        "500":
+          description: Internal error
+          schema:
+            type: string
+      summary: Get summary of transactions for different categories (within time interval)
+      tags:
+      - summary
+  /summary/last-months:
+    get:
+      parameters:
+      - description: User ID
+        in: query
+        name: user_id
+        required: true
+        type: string
+      - description: Count of last months (non-negative, optional, default is 1)
+        in: query
+        name: "n"
+        type: string
+      - description: Current in RFC3339, optional
+        in: query
+        name: cur_time
+        required: true
+        type: string
+      - description: Supported timezone (ex. Europe/Moscow, optional, default is UTC)
+        in: query
+        name: timezone
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "403":
+          description: Forbidden
+          schema:
+            type: string
+        "500":
+          description: Internal error
+          schema:
+            type: string
+      summary: Get summary of transactions for last N months
+      tags:
+      - summary
+  /summary/period:
+    get:
+      parameters:
+      - description: User ID
+        in: query
+        name: user_id
+        required: true
+        type: string
+      - description: Begin time in RFC3339
+        in: query
+        name: begin_time
+        required: true
+        type: string
+      - description: End time in RFC3339
+        in: query
+        name: end_time
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "403":
+          description: Forbidden
+          schema:
+            type: string
+        "500":
+          description: Internal error
+          schema:
+            type: string
+      summary: Get summary of transactions within time interval
+      tags:
+      - summary
   /transaction/id/{tx_id}:
     get:
       description: 'WARNING: Viewing other user''s transactions is not allowed.'
@@ -283,7 +419,7 @@ paths:
           description: Internal error
           schema:
             type: string
-      summary: Get transactions in period between begin and end
+      summary: Get transactions within time interval
       tags:
       - transactions
   /user/{user_id}:

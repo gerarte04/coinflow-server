@@ -51,6 +51,11 @@ static_resources:
                   prefix: /v1/commit
                 requires:
                   provider_name: provider1
+
+              - match:
+                  prefix: /v1/summary
+                requires:
+                  provider_name: provider1
           
           - name: envoy.filters.http.lua
             typed_config:
@@ -106,6 +111,12 @@ static_resources:
                     prefix: /v1/commit
                   route:
                     cluster: storage-service
+
+                - name: route_summary
+                  match:
+                    prefix: /v1/summary
+                  route:
+                    cluster: collection-service
 
                 - name: route_swagger
                   match:

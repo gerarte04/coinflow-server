@@ -2,7 +2,6 @@ package clickhouse
 
 import (
 	"context"
-	"crypto/tls"
 	"fmt"
 	"time"
 
@@ -30,9 +29,6 @@ func NewClickhouseConn(cfg ClickhouseConfig) (driver.Conn, error) {
 			Database: cfg.DbName,
 			Username: cfg.User,
 			Password: cfg.Password,
-		},
-		TLS: &tls.Config{
-			InsecureSkipVerify: true,
 		},
 	})
 

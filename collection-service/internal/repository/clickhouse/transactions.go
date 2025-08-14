@@ -1,4 +1,4 @@
-package postgres
+package clickhouse
 
 import (
 	"coinflow/coinflow-server/collection-service/internal/models"
@@ -46,8 +46,7 @@ func (r *TransactionRepo) GetSummaryInLastNMonths(
 	ctx context.Context,
 	userId uuid.UUID,
 	n int,
-	curTime time.Time,
-	timezone string,
+	curTime time.Time, timezone string,
 ) ([]*models.Summary, error) {
 	const op = "TransactionRepo.GetSummaryInLastNMonths"
 

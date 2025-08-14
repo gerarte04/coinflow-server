@@ -7,6 +7,7 @@
 package golang
 
 import (
+	_ "google.golang.org/genproto/googleapis/api/annotations"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
@@ -22,33 +23,29 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type Transaction struct {
+type Summary struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Target        string                 `protobuf:"bytes,2,opt,name=target,proto3" json:"target,omitempty"`
-	Description   string                 `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
-	Type          string                 `protobuf:"bytes,4,opt,name=type,proto3" json:"type,omitempty"`
-	Category      string                 `protobuf:"bytes,5,opt,name=category,proto3" json:"category,omitempty"`
-	Cost          float64                `protobuf:"fixed64,6,opt,name=cost,proto3" json:"cost,omitempty"`
-	Timestamp     *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=timestamp,proto3" json:"timestamp,omitempty"`
+	Count         uint64                 `protobuf:"varint,1,opt,name=count,proto3" json:"count,omitempty"`
+	Sum           float64                `protobuf:"fixed64,2,opt,name=sum,proto3" json:"sum,omitempty"`
+	Avg           float64                `protobuf:"fixed64,3,opt,name=avg,proto3" json:"avg,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *Transaction) Reset() {
-	*x = Transaction{}
+func (x *Summary) Reset() {
+	*x = Summary{}
 	mi := &file_collection_service_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *Transaction) String() string {
+func (x *Summary) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*Transaction) ProtoMessage() {}
+func (*Summary) ProtoMessage() {}
 
-func (x *Transaction) ProtoReflect() protoreflect.Message {
+func (x *Summary) ProtoReflect() protoreflect.Message {
 	mi := &file_collection_service_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -60,56 +57,348 @@ func (x *Transaction) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Transaction.ProtoReflect.Descriptor instead.
-func (*Transaction) Descriptor() ([]byte, []int) {
+// Deprecated: Use Summary.ProtoReflect.Descriptor instead.
+func (*Summary) Descriptor() ([]byte, []int) {
 	return file_collection_service_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *Transaction) GetId() string {
+func (x *Summary) GetCount() uint64 {
 	if x != nil {
-		return x.Id
-	}
-	return ""
-}
-
-func (x *Transaction) GetTarget() string {
-	if x != nil {
-		return x.Target
-	}
-	return ""
-}
-
-func (x *Transaction) GetDescription() string {
-	if x != nil {
-		return x.Description
-	}
-	return ""
-}
-
-func (x *Transaction) GetType() string {
-	if x != nil {
-		return x.Type
-	}
-	return ""
-}
-
-func (x *Transaction) GetCategory() string {
-	if x != nil {
-		return x.Category
-	}
-	return ""
-}
-
-func (x *Transaction) GetCost() float64 {
-	if x != nil {
-		return x.Cost
+		return x.Count
 	}
 	return 0
 }
 
-func (x *Transaction) GetTimestamp() *timestamppb.Timestamp {
+func (x *Summary) GetSum() float64 {
 	if x != nil {
-		return x.Timestamp
+		return x.Sum
+	}
+	return 0
+}
+
+func (x *Summary) GetAvg() float64 {
+	if x != nil {
+		return x.Avg
+	}
+	return 0
+}
+
+type GetSummaryInPeriodRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	BeginTime     *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=begin_time,json=beginTime,proto3" json:"begin_time,omitempty"`
+	EndTime       *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=end_time,json=endTime,proto3" json:"end_time,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetSummaryInPeriodRequest) Reset() {
+	*x = GetSummaryInPeriodRequest{}
+	mi := &file_collection_service_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetSummaryInPeriodRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetSummaryInPeriodRequest) ProtoMessage() {}
+
+func (x *GetSummaryInPeriodRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_collection_service_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetSummaryInPeriodRequest.ProtoReflect.Descriptor instead.
+func (*GetSummaryInPeriodRequest) Descriptor() ([]byte, []int) {
+	return file_collection_service_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *GetSummaryInPeriodRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *GetSummaryInPeriodRequest) GetBeginTime() *timestamppb.Timestamp {
+	if x != nil {
+		return x.BeginTime
+	}
+	return nil
+}
+
+func (x *GetSummaryInPeriodRequest) GetEndTime() *timestamppb.Timestamp {
+	if x != nil {
+		return x.EndTime
+	}
+	return nil
+}
+
+type GetSummaryInLastNMonthsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	N             int64                  `protobuf:"varint,2,opt,name=n,proto3" json:"n,omitempty"`
+	CurTime       *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=cur_time,json=curTime,proto3" json:"cur_time,omitempty"`
+	Timezone      string                 `protobuf:"bytes,4,opt,name=timezone,proto3" json:"timezone,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetSummaryInLastNMonthsRequest) Reset() {
+	*x = GetSummaryInLastNMonthsRequest{}
+	mi := &file_collection_service_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetSummaryInLastNMonthsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetSummaryInLastNMonthsRequest) ProtoMessage() {}
+
+func (x *GetSummaryInLastNMonthsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_collection_service_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetSummaryInLastNMonthsRequest.ProtoReflect.Descriptor instead.
+func (*GetSummaryInLastNMonthsRequest) Descriptor() ([]byte, []int) {
+	return file_collection_service_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *GetSummaryInLastNMonthsRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *GetSummaryInLastNMonthsRequest) GetN() int64 {
+	if x != nil {
+		return x.N
+	}
+	return 0
+}
+
+func (x *GetSummaryInLastNMonthsRequest) GetCurTime() *timestamppb.Timestamp {
+	if x != nil {
+		return x.CurTime
+	}
+	return nil
+}
+
+func (x *GetSummaryInLastNMonthsRequest) GetTimezone() string {
+	if x != nil {
+		return x.Timezone
+	}
+	return ""
+}
+
+type GetSummaryByCategoriesRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	BeginTime     *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=begin_time,json=beginTime,proto3" json:"begin_time,omitempty"`
+	EndTime       *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=end_time,json=endTime,proto3" json:"end_time,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetSummaryByCategoriesRequest) Reset() {
+	*x = GetSummaryByCategoriesRequest{}
+	mi := &file_collection_service_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetSummaryByCategoriesRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetSummaryByCategoriesRequest) ProtoMessage() {}
+
+func (x *GetSummaryByCategoriesRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_collection_service_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetSummaryByCategoriesRequest.ProtoReflect.Descriptor instead.
+func (*GetSummaryByCategoriesRequest) Descriptor() ([]byte, []int) {
+	return file_collection_service_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *GetSummaryByCategoriesRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *GetSummaryByCategoriesRequest) GetBeginTime() *timestamppb.Timestamp {
+	if x != nil {
+		return x.BeginTime
+	}
+	return nil
+}
+
+func (x *GetSummaryByCategoriesRequest) GetEndTime() *timestamppb.Timestamp {
+	if x != nil {
+		return x.EndTime
+	}
+	return nil
+}
+
+type GetSummaryInPeriodResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Summary       *Summary               `protobuf:"bytes,1,opt,name=summary,proto3" json:"summary,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetSummaryInPeriodResponse) Reset() {
+	*x = GetSummaryInPeriodResponse{}
+	mi := &file_collection_service_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetSummaryInPeriodResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetSummaryInPeriodResponse) ProtoMessage() {}
+
+func (x *GetSummaryInPeriodResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_collection_service_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetSummaryInPeriodResponse.ProtoReflect.Descriptor instead.
+func (*GetSummaryInPeriodResponse) Descriptor() ([]byte, []int) {
+	return file_collection_service_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *GetSummaryInPeriodResponse) GetSummary() *Summary {
+	if x != nil {
+		return x.Summary
+	}
+	return nil
+}
+
+type GetSummaryInLastNMonthsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Summaries     []*Summary             `protobuf:"bytes,1,rep,name=summaries,proto3" json:"summaries,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetSummaryInLastNMonthsResponse) Reset() {
+	*x = GetSummaryInLastNMonthsResponse{}
+	mi := &file_collection_service_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetSummaryInLastNMonthsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetSummaryInLastNMonthsResponse) ProtoMessage() {}
+
+func (x *GetSummaryInLastNMonthsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_collection_service_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetSummaryInLastNMonthsResponse.ProtoReflect.Descriptor instead.
+func (*GetSummaryInLastNMonthsResponse) Descriptor() ([]byte, []int) {
+	return file_collection_service_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *GetSummaryInLastNMonthsResponse) GetSummaries() []*Summary {
+	if x != nil {
+		return x.Summaries
+	}
+	return nil
+}
+
+type GetSummaryByCategoriesResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Summaries     map[string]*Summary    `protobuf:"bytes,1,rep,name=summaries,proto3" json:"summaries,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetSummaryByCategoriesResponse) Reset() {
+	*x = GetSummaryByCategoriesResponse{}
+	mi := &file_collection_service_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetSummaryByCategoriesResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetSummaryByCategoriesResponse) ProtoMessage() {}
+
+func (x *GetSummaryByCategoriesResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_collection_service_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetSummaryByCategoriesResponse.ProtoReflect.Descriptor instead.
+func (*GetSummaryByCategoriesResponse) Descriptor() ([]byte, []int) {
+	return file_collection_service_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *GetSummaryByCategoriesResponse) GetSummaries() map[string]*Summary {
+	if x != nil {
+		return x.Summaries
 	}
 	return nil
 }
@@ -118,17 +407,40 @@ var File_collection_service_proto protoreflect.FileDescriptor
 
 const file_collection_service_proto_rawDesc = "" +
 	"\n" +
-	"\x18collection-service.proto\x12\x12collection_service\x1a\x1fgoogle/protobuf/timestamp.proto\"\xd5\x01\n" +
-	"\vTransaction\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x12\x16\n" +
-	"\x06target\x18\x02 \x01(\tR\x06target\x12 \n" +
-	"\vdescription\x18\x03 \x01(\tR\vdescription\x12\x12\n" +
-	"\x04type\x18\x04 \x01(\tR\x04type\x12\x1a\n" +
-	"\bcategory\x18\x05 \x01(\tR\bcategory\x12\x12\n" +
-	"\x04cost\x18\x06 \x01(\x01R\x04cost\x128\n" +
-	"\ttimestamp\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\ttimestamp2\f\n" +
+	"\x18collection-service.proto\x12\x12collection_service\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"C\n" +
+	"\aSummary\x12\x14\n" +
+	"\x05count\x18\x01 \x01(\x04R\x05count\x12\x10\n" +
+	"\x03sum\x18\x02 \x01(\x01R\x03sum\x12\x10\n" +
+	"\x03avg\x18\x03 \x01(\x01R\x03avg\"\xb5\x01\n" +
+	"\x19GetSummaryInPeriodRequest\x12\x1c\n" +
+	"\auser_id\x18\x01 \x01(\tB\x03\xe0A\x02R\x06userId\x12>\n" +
 	"\n" +
-	"CollectionB\x1fZ\x1dgen/collection_service/golangb\x06proto3"
+	"begin_time\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x02R\tbeginTime\x12:\n" +
+	"\bend_time\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x02R\aendTime\"\x9f\x01\n" +
+	"\x1eGetSummaryInLastNMonthsRequest\x12\x1c\n" +
+	"\auser_id\x18\x01 \x01(\tB\x03\xe0A\x02R\x06userId\x12\f\n" +
+	"\x01n\x18\x02 \x01(\x03R\x01n\x125\n" +
+	"\bcur_time\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\acurTime\x12\x1a\n" +
+	"\btimezone\x18\x04 \x01(\tR\btimezone\"\xb9\x01\n" +
+	"\x1dGetSummaryByCategoriesRequest\x12\x1c\n" +
+	"\auser_id\x18\x01 \x01(\tB\x03\xe0A\x02R\x06userId\x12>\n" +
+	"\n" +
+	"begin_time\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x02R\tbeginTime\x12:\n" +
+	"\bend_time\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x02R\aendTime\"S\n" +
+	"\x1aGetSummaryInPeriodResponse\x125\n" +
+	"\asummary\x18\x01 \x01(\v2\x1b.collection_service.SummaryR\asummary\"\\\n" +
+	"\x1fGetSummaryInLastNMonthsResponse\x129\n" +
+	"\tsummaries\x18\x01 \x03(\v2\x1b.collection_service.SummaryR\tsummaries\"\xdc\x01\n" +
+	"\x1eGetSummaryByCategoriesResponse\x12_\n" +
+	"\tsummaries\x18\x01 \x03(\v2A.collection_service.GetSummaryByCategoriesResponse.SummariesEntryR\tsummaries\x1aY\n" +
+	"\x0eSummariesEntry\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x121\n" +
+	"\x05value\x18\x02 \x01(\v2\x1b.collection_service.SummaryR\x05value:\x028\x012\xe6\x03\n" +
+	"\n" +
+	"Collection\x12\x8f\x01\n" +
+	"\x12GetSummaryInPeriod\x12-.collection_service.GetSummaryInPeriodRequest\x1a..collection_service.GetSummaryInPeriodResponse\"\x1a\x82\xd3\xe4\x93\x02\x14\x12\x12/v1/summary/period\x12\xa3\x01\n" +
+	"\x17GetSummaryInLastNMonths\x122.collection_service.GetSummaryInLastNMonthsRequest\x1a3.collection_service.GetSummaryInLastNMonthsResponse\"\x1f\x82\xd3\xe4\x93\x02\x19\x12\x17/v1/summary/last-months\x12\x9f\x01\n" +
+	"\x16GetSummaryByCategories\x121.collection_service.GetSummaryByCategoriesRequest\x1a2.collection_service.GetSummaryByCategoriesResponse\"\x1e\x82\xd3\xe4\x93\x02\x18\x12\x16/v1/summary/categoriesB\x1fZ\x1dgen/collection_service/golangb\x06proto3"
 
 var (
 	file_collection_service_proto_rawDescOnce sync.Once
@@ -142,18 +454,39 @@ func file_collection_service_proto_rawDescGZIP() []byte {
 	return file_collection_service_proto_rawDescData
 }
 
-var file_collection_service_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
+var file_collection_service_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
 var file_collection_service_proto_goTypes = []any{
-	(*Transaction)(nil),           // 0: collection_service.Transaction
-	(*timestamppb.Timestamp)(nil), // 1: google.protobuf.Timestamp
+	(*Summary)(nil),                         // 0: collection_service.Summary
+	(*GetSummaryInPeriodRequest)(nil),       // 1: collection_service.GetSummaryInPeriodRequest
+	(*GetSummaryInLastNMonthsRequest)(nil),  // 2: collection_service.GetSummaryInLastNMonthsRequest
+	(*GetSummaryByCategoriesRequest)(nil),   // 3: collection_service.GetSummaryByCategoriesRequest
+	(*GetSummaryInPeriodResponse)(nil),      // 4: collection_service.GetSummaryInPeriodResponse
+	(*GetSummaryInLastNMonthsResponse)(nil), // 5: collection_service.GetSummaryInLastNMonthsResponse
+	(*GetSummaryByCategoriesResponse)(nil),  // 6: collection_service.GetSummaryByCategoriesResponse
+	nil,                                     // 7: collection_service.GetSummaryByCategoriesResponse.SummariesEntry
+	(*timestamppb.Timestamp)(nil),           // 8: google.protobuf.Timestamp
 }
 var file_collection_service_proto_depIdxs = []int32{
-	1, // 0: collection_service.Transaction.timestamp:type_name -> google.protobuf.Timestamp
-	1, // [1:1] is the sub-list for method output_type
-	1, // [1:1] is the sub-list for method input_type
-	1, // [1:1] is the sub-list for extension type_name
-	1, // [1:1] is the sub-list for extension extendee
-	0, // [0:1] is the sub-list for field type_name
+	8,  // 0: collection_service.GetSummaryInPeriodRequest.begin_time:type_name -> google.protobuf.Timestamp
+	8,  // 1: collection_service.GetSummaryInPeriodRequest.end_time:type_name -> google.protobuf.Timestamp
+	8,  // 2: collection_service.GetSummaryInLastNMonthsRequest.cur_time:type_name -> google.protobuf.Timestamp
+	8,  // 3: collection_service.GetSummaryByCategoriesRequest.begin_time:type_name -> google.protobuf.Timestamp
+	8,  // 4: collection_service.GetSummaryByCategoriesRequest.end_time:type_name -> google.protobuf.Timestamp
+	0,  // 5: collection_service.GetSummaryInPeriodResponse.summary:type_name -> collection_service.Summary
+	0,  // 6: collection_service.GetSummaryInLastNMonthsResponse.summaries:type_name -> collection_service.Summary
+	7,  // 7: collection_service.GetSummaryByCategoriesResponse.summaries:type_name -> collection_service.GetSummaryByCategoriesResponse.SummariesEntry
+	0,  // 8: collection_service.GetSummaryByCategoriesResponse.SummariesEntry.value:type_name -> collection_service.Summary
+	1,  // 9: collection_service.Collection.GetSummaryInPeriod:input_type -> collection_service.GetSummaryInPeriodRequest
+	2,  // 10: collection_service.Collection.GetSummaryInLastNMonths:input_type -> collection_service.GetSummaryInLastNMonthsRequest
+	3,  // 11: collection_service.Collection.GetSummaryByCategories:input_type -> collection_service.GetSummaryByCategoriesRequest
+	4,  // 12: collection_service.Collection.GetSummaryInPeriod:output_type -> collection_service.GetSummaryInPeriodResponse
+	5,  // 13: collection_service.Collection.GetSummaryInLastNMonths:output_type -> collection_service.GetSummaryInLastNMonthsResponse
+	6,  // 14: collection_service.Collection.GetSummaryByCategories:output_type -> collection_service.GetSummaryByCategoriesResponse
+	12, // [12:15] is the sub-list for method output_type
+	9,  // [9:12] is the sub-list for method input_type
+	9,  // [9:9] is the sub-list for extension type_name
+	9,  // [9:9] is the sub-list for extension extendee
+	0,  // [0:9] is the sub-list for field type_name
 }
 
 func init() { file_collection_service_proto_init() }
@@ -167,7 +500,7 @@ func file_collection_service_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_collection_service_proto_rawDesc), len(file_collection_service_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   1,
+			NumMessages:   8,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

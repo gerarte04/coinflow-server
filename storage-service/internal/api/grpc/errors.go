@@ -9,7 +9,7 @@ import (
 )
 
 var(
-	ErrorUserIdsDontMatch = errors.New("user ids in request and header aren't matching")
+	ErrorUserIdsDontMatch = errors.New("user ids in request and JWT aren't matching")
 
 	errorCodes = map[error]codes.Code{
 		utils.ErrorInvalidId: codes.InvalidArgument,

@@ -1,32 +1,49 @@
 package service
 
 import (
+	"coinflow/coinflow-server/collection-service/internal/models"
 	"coinflow/coinflow-server/collection-service/internal/repository"
 	"context"
-	"fmt"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 type CollectionService struct {
-	catsRepo repository.CategoriesRepo
-	categories []string
+	txRepo repository.TransactionRepo
 }
 
 func NewCollectionService(
-	catsRepo repository.CategoriesRepo,
+	txRepo repository.TransactionRepo,
 ) (*CollectionService, error) {
 	const op = "NewCollectionService"
 
-	ctx, cancel := context.WithTimeout(context.Background(), 300 * time.Millisecond)
-	defer cancel()
-
-	categories, err := catsRepo.GetCategories(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("%s: %w", op, err)
-	}
-
 	return &CollectionService{
-		catsRepo: catsRepo,
-		categories: categories,
+		txRepo: txRepo,
 	}, nil
+}
+
+func (s *CollectionService) GetSummaryInPeriod(
+	ctx context.Context,
+	userId uuid.UUID,
+	begin time.Time, end time.Time,
+) (*models.Summary, error) {
+	return s.txRepo.GetSummaryInPeriod(ctx, userId, begin, end)
+}
+
+func (s *CollectionService) GetSummaryInLastNMonths(
+	ctx context.Context,
+	userId uuid.UUID,
+	n int,
+	curTime time.Time, timezone string,
+) ([]*models.Summary, error) {
+	return s.txRepo.GetSummaryInLastNMonths(ctx, userId, n, curTime, timezone)
+}
+
+func (s *CollectionService) GetSummaryByCategories(
+	ctx context.Context,
+	userId uuid.UUID,
+	begin time.Time, end time.Time,
+) (map[string]*models.Summary, error) {
+	return s.txRepo.GetSummaryByCategories(ctx, userId, begin, end)
 }

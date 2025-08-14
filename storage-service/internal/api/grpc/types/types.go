@@ -16,20 +16,6 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-func getUserId(ctx context.Context) (uuid.UUID, error) {
-	val, err := pkgGrpc.GetHeader(ctx, "user-id")
-	if err != nil {
-		return uuid.Nil, err
-	}
-
-	id, err := utils.ParseStringToUuid(val)
-	if err != nil {
-		return uuid.Nil, err
-	}
-
-	return id, nil
-}
-
 // Requests -------------------------------------------
 
 type GetTransactionRequestObject struct {
@@ -45,7 +31,7 @@ func CreateGetTransactionRequestObject(ctx context.Context, r *pb.GetTransaction
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	usrId, err := getUserId(ctx)
+	usrId, err := pkgGrpc.GetUserId(ctx, "user-id")
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
@@ -68,7 +54,7 @@ func CreateListTransactionsRequestObject(
 ) (*ListTransactionsRequestObject, error) {
 	const op = "CreateListTransactionsRequestObject"
 
-	usrId, err := getUserId(ctx)
+	usrId, err := pkgGrpc.GetUserId(ctx, "user-id")
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
@@ -118,7 +104,7 @@ func MakeCreateTransactionRequestObject(ctx context.Context, r *pb.CreateTransac
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	usrId, err := getUserId(ctx)
+	usrId, err := pkgGrpc.GetUserId(ctx, "user-id")
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}

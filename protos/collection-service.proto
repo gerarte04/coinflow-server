@@ -4,24 +4,67 @@ package collection_service;
 
 option go_package = "gen/collection_service/golang";
 
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
 import "google/protobuf/timestamp.proto";
 
-message Transaction {
-	string id = 1;
-	string target = 2;
-	string description = 3;
-	string type = 4;
-	string category = 5;
-	double cost = 6;
-	google.protobuf.Timestamp timestamp = 7;
+message Summary {
+	uint64 count = 1;
+	double sum = 2;
+	double avg = 3;
 }
 
 // Requests ----------------------------------
 
+message GetSummaryInPeriodRequest {
+	string user_id = 1 [(google.api.field_behavior) = REQUIRED];
+	google.protobuf.Timestamp begin_time = 2 [(google.api.field_behavior) = REQUIRED];
+	google.protobuf.Timestamp end_time = 3 [(google.api.field_behavior) = REQUIRED];
+}
+
+message GetSummaryInLastNMonthsRequest {
+	string user_id = 1 [(google.api.field_behavior) = REQUIRED];
+	int64 n = 2;
+	google.protobuf.Timestamp cur_time = 3;
+	string timezone = 4;
+}
+
+message GetSummaryByCategoriesRequest {
+	string user_id = 1 [(google.api.field_behavior) = REQUIRED];
+	google.protobuf.Timestamp begin_time = 2 [(google.api.field_behavior) = REQUIRED];
+	google.protobuf.Timestamp end_time = 3 [(google.api.field_behavior) = REQUIRED];
+}
+
 // Responses ---------------------------------
+
+message GetSummaryInPeriodResponse {
+	Summary summary = 1;
+}
+
+message GetSummaryInLastNMonthsResponse {
+	repeated Summary summaries = 1;
+}
+
+message GetSummaryByCategoriesResponse {
+	map<string, Summary> summaries = 1;
+}
 
 // Service -----------------------------------
 
 service Collection {
-
+	rpc GetSummaryInPeriod(GetSummaryInPeriodRequest) returns (GetSummaryInPeriodResponse) {
+		option (google.api.http) = {
+			get: "/v1/summary/period"
+		};
+	}
+	rpc GetSummaryInLastNMonths(GetSummaryInLastNMonthsRequest) returns (GetSummaryInLastNMonthsResponse) {
+		option (google.api.http) = {
+			get: "/v1/summary/last-months"
+		};
+	}
+	rpc GetSummaryByCategories(GetSummaryByCategoriesRequest) returns (GetSummaryByCategoriesResponse) {
+		option (google.api.http) = {
+			get: "/v1/summary/categories"
+		};
+	}
 }

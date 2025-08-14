@@ -7,7 +7,10 @@
 package golang
 
 import (
+	context "context"
 	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -15,10 +18,19 @@ import (
 // Requires gRPC-Go v1.64.0 or later.
 const _ = grpc.SupportPackageIsVersion9
 
+const (
+	Collection_GetSummaryInPeriod_FullMethodName      = "/collection_service.Collection/GetSummaryInPeriod"
+	Collection_GetSummaryInLastNMonths_FullMethodName = "/collection_service.Collection/GetSummaryInLastNMonths"
+	Collection_GetSummaryByCategories_FullMethodName  = "/collection_service.Collection/GetSummaryByCategories"
+)
+
 // CollectionClient is the client API for Collection service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CollectionClient interface {
+	GetSummaryInPeriod(ctx context.Context, in *GetSummaryInPeriodRequest, opts ...grpc.CallOption) (*GetSummaryInPeriodResponse, error)
+	GetSummaryInLastNMonths(ctx context.Context, in *GetSummaryInLastNMonthsRequest, opts ...grpc.CallOption) (*GetSummaryInLastNMonthsResponse, error)
+	GetSummaryByCategories(ctx context.Context, in *GetSummaryByCategoriesRequest, opts ...grpc.CallOption) (*GetSummaryByCategoriesResponse, error)
 }
 
 type collectionClient struct {
@@ -29,10 +41,43 @@ func NewCollectionClient(cc grpc.ClientConnInterface) CollectionClient {
 	return &collectionClient{cc}
 }
 
+func (c *collectionClient) GetSummaryInPeriod(ctx context.Context, in *GetSummaryInPeriodRequest, opts ...grpc.CallOption) (*GetSummaryInPeriodResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetSummaryInPeriodResponse)
+	err := c.cc.Invoke(ctx, Collection_GetSummaryInPeriod_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *collectionClient) GetSummaryInLastNMonths(ctx context.Context, in *GetSummaryInLastNMonthsRequest, opts ...grpc.CallOption) (*GetSummaryInLastNMonthsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetSummaryInLastNMonthsResponse)
+	err := c.cc.Invoke(ctx, Collection_GetSummaryInLastNMonths_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *collectionClient) GetSummaryByCategories(ctx context.Context, in *GetSummaryByCategoriesRequest, opts ...grpc.CallOption) (*GetSummaryByCategoriesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetSummaryByCategoriesResponse)
+	err := c.cc.Invoke(ctx, Collection_GetSummaryByCategories_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CollectionServer is the server API for Collection service.
 // All implementations must embed UnimplementedCollectionServer
 // for forward compatibility.
 type CollectionServer interface {
+	GetSummaryInPeriod(context.Context, *GetSummaryInPeriodRequest) (*GetSummaryInPeriodResponse, error)
+	GetSummaryInLastNMonths(context.Context, *GetSummaryInLastNMonthsRequest) (*GetSummaryInLastNMonthsResponse, error)
+	GetSummaryByCategories(context.Context, *GetSummaryByCategoriesRequest) (*GetSummaryByCategoriesResponse, error)
 	mustEmbedUnimplementedCollectionServer()
 }
 
@@ -43,6 +88,15 @@ type CollectionServer interface {
 // pointer dereference when methods are called.
 type UnimplementedCollectionServer struct{}
 
+func (UnimplementedCollectionServer) GetSummaryInPeriod(context.Context, *GetSummaryInPeriodRequest) (*GetSummaryInPeriodResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetSummaryInPeriod not implemented")
+}
+func (UnimplementedCollectionServer) GetSummaryInLastNMonths(context.Context, *GetSummaryInLastNMonthsRequest) (*GetSummaryInLastNMonthsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetSummaryInLastNMonths not implemented")
+}
+func (UnimplementedCollectionServer) GetSummaryByCategories(context.Context, *GetSummaryByCategoriesRequest) (*GetSummaryByCategoriesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetSummaryByCategories not implemented")
+}
 func (UnimplementedCollectionServer) mustEmbedUnimplementedCollectionServer() {}
 func (UnimplementedCollectionServer) testEmbeddedByValue()                    {}
 
@@ -64,13 +118,80 @@ func RegisterCollectionServer(s grpc.ServiceRegistrar, srv CollectionServer) {
 	s.RegisterService(&Collection_ServiceDesc, srv)
 }
 
+func _Collection_GetSummaryInPeriod_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetSummaryInPeriodRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CollectionServer).GetSummaryInPeriod(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Collection_GetSummaryInPeriod_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CollectionServer).GetSummaryInPeriod(ctx, req.(*GetSummaryInPeriodRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Collection_GetSummaryInLastNMonths_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetSummaryInLastNMonthsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CollectionServer).GetSummaryInLastNMonths(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Collection_GetSummaryInLastNMonths_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CollectionServer).GetSummaryInLastNMonths(ctx, req.(*GetSummaryInLastNMonthsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Collection_GetSummaryByCategories_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetSummaryByCategoriesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CollectionServer).GetSummaryByCategories(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Collection_GetSummaryByCategories_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CollectionServer).GetSummaryByCategories(ctx, req.(*GetSummaryByCategoriesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Collection_ServiceDesc is the grpc.ServiceDesc for Collection service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var Collection_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "collection_service.Collection",
 	HandlerType: (*CollectionServer)(nil),
-	Methods:     []grpc.MethodDesc{},
-	Streams:     []grpc.StreamDesc{},
-	Metadata:    "collection-service.proto",
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "GetSummaryInPeriod",
+			Handler:    _Collection_GetSummaryInPeriod_Handler,
+		},
+		{
+			MethodName: "GetSummaryInLastNMonths",
+			Handler:    _Collection_GetSummaryInLastNMonths_Handler,
+		},
+		{
+			MethodName: "GetSummaryByCategories",
+			Handler:    _Collection_GetSummaryByCategories_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "collection-service.proto",
 }

@@ -8,7 +8,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type TransactionsRepo interface {
+type TransactionRepo interface {
 	GetSummaryInPeriod(
 		ctx context.Context,
 		userId uuid.UUID,
@@ -19,8 +19,7 @@ type TransactionsRepo interface {
 		ctx context.Context,
 		userId uuid.UUID,
 		n int,
-		curTime time.Time,
-		timezone string,
+		curTime time.Time, timezone string,
 	) ([]*models.Summary, error)
 
 	GetSummaryByCategories(

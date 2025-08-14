@@ -3,11 +3,11 @@ package main
 import (
 	"coinflow/coinflow-server/collection-service/config"
 	apiGrpc "coinflow/coinflow-server/collection-service/internal/api/grpc"
-	"coinflow/coinflow-server/collection-service/internal/repository/postgres"
+	"coinflow/coinflow-server/collection-service/internal/repository/clickhouse"
 	"coinflow/coinflow-server/collection-service/internal/usecases/service"
 	pb "coinflow/coinflow-server/gen/collection_service/golang"
 	pkgConfig "coinflow/coinflow-server/pkg/config"
-	pkgPostgres "coinflow/coinflow-server/pkg/database/postgres"
+	pkgClickhouse "coinflow/coinflow-server/pkg/database/clickhouse"
 	"log"
 	"net"
 
@@ -19,20 +19,20 @@ func main() {
 	flg := pkgConfig.ParseFlags()
 	pkgConfig.MustLoadConfig(flg.ConfigPath, &cfg)
 
-	lis, err := net.Listen("tcp", cfg.CollectionSvcCfg.Host + ":" + cfg.CollectionSvcCfg.Port)
+	lis, err := net.Listen("tcp", cfg.CollectionSvcCfg.Host+":"+cfg.CollectionSvcCfg.Port)
 
 	if err != nil {
 		log.Fatalf("failed to listen address: %s", err.Error())
 	}
 
-	pool, err := pkgPostgres.NewPostgresPool(cfg.PostgresCfg)
+	conn, err := pkgClickhouse.NewClickhouseConn(cfg.ClickhouseCfg)
 
 	if err != nil {
 		log.Fatalf("%s", err.Error())
 	}
 
-	catsRepo := postgres.NewCategoriesRepo(pool)
-	collectSvc, err := service.NewCollectionService(catsRepo)
+	txRepo := clickhouse.NewTransactionRepo(conn)
+	collectSvc, err := service.NewCollectionService(txRepo)
 
 	if err != nil {
 		log.Fatalf("%s", err.Error())
