@@ -32,7 +32,7 @@ var (
 	exampleTx = tu.Payload{
 		"type": "purchase",
 		"target": "Coffee Point",
-		"description": "Purchased latte and croissant",
+		"description": "Latte and croissant",
 		"category": "food",
 		"cost": float64(400),
 	}

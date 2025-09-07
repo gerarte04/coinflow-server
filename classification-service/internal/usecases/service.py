@@ -5,9 +5,9 @@ from transformers import pipeline
 from usecases.object import CategoryServiceInterface
 
 class CategoryService(CategoryServiceInterface):
-	def __init__(self, model_name):
+	def __init__(self, model_name, device):
 		super().__init__()
-		self.clf = pipeline("zero-shot-classification", model = model_name)
+		self.clf = pipeline("zero-shot-classification", model = model_name, device = device)
 
 	def DetectCategory(self, text, labels):
 		if len(labels) == 0:

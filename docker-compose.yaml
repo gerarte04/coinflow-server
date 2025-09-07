@@ -59,6 +59,14 @@ services:
       - CLASSIFICATION_MODEL_NAME=${CLASSIFICATION_MODEL_NAME}
       - GRPC_CLASSIFICATION_SERVICE_HOST=${GRPC_CLASSIFICATION_SERVICE_HOST}
       - GRPC_CLASSIFICATION_SERVICE_PORT=${GRPC_CLASSIFICATION_SERVICE_PORT}
+    runtime: nvidia
+    deploy:
+      resources:
+        reservations:
+          devices:
+          - driver: nvidia
+            count: 1
+            capabilities: [gpu]
 
   postgres:
     image: postgres:latest

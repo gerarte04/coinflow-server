@@ -1,9 +1,8 @@
-FROM python:3.13.3-slim-bookworm
+FROM pytorch/pytorch:2.8.0-cuda12.9-cudnn9-runtime
 
-RUN pip install torch --index-url https://download.pytorch.org/whl/cpu
 RUN pip install huggingface_hub[cli,hf_xet] transformers grpcio-tools
 
-RUN huggingface-cli download facebook/bart-large-mnli --include model.safetensors
+RUN hf download typeform/distilbert-base-uncased-mnli --include model.safetensors
 
 WORKDIR /run
 
