@@ -46,15 +46,26 @@ services:
       context: .
       dockerfile: collection-service/Dockerfile
     depends_on:
-      classification-service:
-        condition: service_started
       clickhouse:
         condition: service_healthy
 
-  classification-service:
+  clf-service-cpu:
     build:
       context: .
-      dockerfile: classification-service/Dockerfile
+      dockerfile: classification-service/docker/cpu/Dockerfile
+    hostname: classification-service
+    environment:
+      - CLASSIFICATION_MODEL_NAME=${CLASSIFICATION_MODEL_NAME}
+      - GRPC_CLASSIFICATION_SERVICE_HOST=${GRPC_CLASSIFICATION_SERVICE_HOST}
+      - GRPC_CLASSIFICATION_SERVICE_PORT=${GRPC_CLASSIFICATION_SERVICE_PORT}
+    profiles:
+      - cpu
+
+  clf-service-cuda:
+    build:
+      context: .
+      dockerfile: classification-service/docker/cuda/Dockerfile
+    hostname: classification-service
     environment:
       - CLASSIFICATION_MODEL_NAME=${CLASSIFICATION_MODEL_NAME}
       - GRPC_CLASSIFICATION_SERVICE_HOST=${GRPC_CLASSIFICATION_SERVICE_HOST}
@@ -67,6 +78,8 @@ services:
           - driver: nvidia
             count: 1
             capabilities: [gpu]
+    profiles:
+      - cuda
 
   postgres:
     image: postgres:latest

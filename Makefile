@@ -15,11 +15,16 @@ gen_descriptor_set:
 build_services:
 	docker compose build
 
-launch_services: build_services
-	docker compose up --force-recreate
+launch_services: launch_services_cpu
+
+launch_services_cpu: build_services
+	docker compose --profile cpu up --force-recreate
+
+launch_services_cuda: build_services
+	docker compose --profile cuda up --force-recreate
 
 launch_services_with_tests: build_services
-	docker compose --profile test up --force-recreate --abort-on-container-exit --exit-code-from tester
+	docker compose --profile test --profile cpu up --force-recreate --abort-on-container-exit --exit-code-from tester
 
 stop_services:
 	docker compose down -v
