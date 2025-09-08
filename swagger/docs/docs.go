@@ -326,15 +326,13 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Current in RFC3339, optional",
                         "name": "cur_time",
-                        "in": "query",
-                        "required": true
+                        "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "Supported timezone (ex. Europe/Moscow, optional, default is UTC)",
                         "name": "timezone",
-                        "in": "query",
-                        "required": true
+                        "in": "query"
                     }
                 ],
                 "responses": {

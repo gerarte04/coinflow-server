@@ -8,6 +8,7 @@ import (
 	"coinflow/coinflow-server/collection-service/internal/models"
 	pb "coinflow/coinflow-server/gen/collection_service/golang"
 	pkgGrpc "coinflow/coinflow-server/pkg/grpc"
+	"coinflow/coinflow-server/pkg/vars"
 
 	"github.com/jinzhu/copier"
 
@@ -67,8 +68,9 @@ func CreateGetSummaryInLastNMonthsRequestObject(
 	}
 
 	curTime := time.Now()
-
-	if tm := r.CurTime.AsTime(); !tm.IsZero() {
+	zeroTime, _ := time.Parse(time.RFC3339, vars.ZeroTimeGrpc)
+	
+	if tm := r.CurTime.AsTime(); !tm.Equal(zeroTime) {
 		curTime = tm
 	}
 
